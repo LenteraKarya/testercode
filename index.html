@@ -12,2455 +12,27 @@
     <meta property="og:url" content="https://jualankita.com">
     <meta property="og:image" content="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/main/assets/images/logo-jualan-kita.png">
     <title>Jualan Kita | Platform Jual Beli Online Terpercaya</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/main/assets/images/logo-jualan-kita.png" type="image/png">
-    <style>
-        :root {
-            --primary: #2a4365; /* Deep blue */
-            --secondary: #4299e1; /* Light blue */
-            --accent: #e67e22; /* Warm orange */
-            --light: #f8f9fa;
-            --dark: #1a365d;
-            --text: #4a5568;
-            --text-light: #718096;
-            --success: #38a169;
-            --warning: #dd6b20;
-            --transition: all 0.3s ease;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
-            --shadow-xl: 0 20px 50px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.1);
-            --gold: #d4af37; /* Gold color for premium accents */
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-            color: var(--text);
-            line-height: 1.7;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        
-        h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        /* Loading Screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease-out;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 1.2s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
-            margin-bottom: 25px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Premium Particle Animation */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-        
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, var(--gold), rgba(212, 175, 55, 0));
-            border-radius: 50%;
-            animation: float linear infinite;
-            filter: blur(1px);
-            opacity: 0;
-            transform: translateY(100vh);
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-20vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        /* Premium Header with Gradient and 3D Effect */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: white;
-            padding: 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            isolation: isolate;
-        }
-        
-        .header-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(42, 67, 101, 0.9), rgba(26, 54, 93, 0.95));
-            z-index: -1;
-        }
-        
-        /* Premium 3D Effect for Header Content */
-        .header-content {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            animation: fadeIn 1.2s ease-out;
-            perspective: 1000px;
-            transform-style: preserve-3d;
-        }
-        
-        .header-content::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: -50px;
-            right: -50px;
-            bottom: -50px;
-            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.1), transparent 70%);
-            z-index: -1;
-            border-radius: 20px;
-            transform: translateZ(-50px);
-        }
-        
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px) scale(0.98);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .logo {
-            font-size: 4.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            font-family: 'Playfair Display', serif;
-            letter-spacing: 1px;
-            position: relative;
-        }
-        
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 3px;
-        }
-        
-        .logo img {
-            height: 120px;
-            width: auto;
-            animation: pulse 3s infinite ease-in-out;
-            filter: drop-shadow(0 0 10px rgba(230, 126, 34, 0.3));
-        }
-        
-        @keyframes pulse {
-            0% { 
-                transform: scale(1); 
-                opacity: 0.9;
-            }
-            50% { 
-                transform: scale(1.1); 
-                opacity: 1;
-                filter: drop-shadow(0 0 20px rgba(230, 126, 34, 0.7));
-            }
-            100% { 
-                transform: scale(1); 
-                opacity: 0.9;
-            }
-        }
-        
-        .tagline {
-            font-size: 2rem;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            font-weight: 300;
-            line-height: 1.4;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.3s forwards;
-            font-family: 'Playfair Display', serif;
-            position: relative;
-        }
-        
-        .tagline::before, .tagline::after {
-            content: '❝';
-            position: absolute;
-            font-size: 3rem;
-            color: var(--gold);
-            opacity: 0.5;
-        }
-        
-        .tagline::before {
-            top: -30px;
-            left: -30px;
-        }
-        
-        .tagline::after {
-            bottom: -40px;
-            right: -30px;
-            transform: rotate(180deg);
-        }
-        
-        /* Search Bar in Header */
-        .header-search {
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            position: relative;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.5s forwards;
-        }
-        
-        .header-search input {
-            width: 100%;
-            padding: 1.2rem 2rem;
-            border-radius: 50px;
-            border: none;
-            font-size: 1.1rem;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-            padding-right: 4.5rem;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .header-search input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.3), var(--shadow-xl);
-        }
-        
-        .header-search button {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .header-search button:hover {
-            background: #d9731f;
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .header-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-top: 1.5rem;
-            opacity: 0;
-            animation: fadeInUp 1s ease-out 0.6s forwards;
-        }
-        
-        .scroll-down {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 2.5rem;
-            animation: bounce 2s infinite;
-            cursor: pointer;
-            z-index: 2;
-            opacity: 0.7;
-            transition: var(--transition);
-        }
-        
-        .scroll-down:hover {
-            opacity: 1;
-            transform: translateY(5px) translateX(-50%);
-            color: var(--gold);
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
-            40% { transform: translateY(-15px) translateX(-50%); }
-            60% { transform: translateY(-7px) translateX(-50%); }
-        }
-        
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        /* Navigation */
-        nav {
-            background-color: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-            transition: var(--transition);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        nav.scrolled {
-            background-color: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
-            padding: 0.5rem 0;
-        }
-        
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 1.5rem;
-            transition: var(--transition);
-        }
-        
-        nav.scrolled .nav-container {
-            padding: 0.8rem 1.5rem;
-        }
-        
-        .nav-logo {
-            font-weight: 600;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Playfair Display', serif;
-            letter-spacing: 0.5px;
-        }
-        
-        .nav-logo img {
-            height: 40px;
-            width: auto;
-            transition: var(--transition);
-        }
-        
-        /* Nav Search */
-        .nav-search {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 2rem;
-            position: relative;
-            display: none; /* Hidden by default on mobile */
-        }
-        
-        .nav-search input {
-            width: 100%;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            border: 1px solid #e0e0e0;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            padding-right: 3rem;
-        }
-        
-        .nav-search input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
-        }
-        
-        .nav-search button {
-            position: absolute;
-            right: 0.8rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .nav-search button:hover {
-            color: var(--accent);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-links a {
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-            padding: 0.5rem 0;
-            font-size: 1.05rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: var(--accent);
-            transition: var(--transition);
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        /* Mobile Menu Toggle */
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 1.8rem;
-            cursor: pointer;
-            z-index: 1001;
-        }
-        
-        /* Search Toggle Button for Mobile */
-        .search-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 1.3rem;
-            cursor: pointer;
-            margin-right: 1rem;
-        }
-        
-        /* Sections */
-        section {
-            padding: 6rem 0;
-            position: relative;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 4rem;
-            color: var(--dark);
-            position: relative;
-            font-size: 2.5rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 4px;
-            background: var(--accent);
-            margin: 1.5rem auto 0;
-            border-radius: 2px;
-        }
-        
-        /* Services Section */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 3rem;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: 16px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
-            text-align: center;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            transform: translateY(0);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--accent), var(--gold));
-        }
-        
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            border-color: rgba(230, 126, 34, 0.1);
-        }
-        
-        .service-icon {
-            font-size: 3.5rem;
-            color: var(--accent);
-            margin-bottom: 2rem;
-            transition: var(--transition);
-            display: inline-block;
-        }
-        
-        .service-card:hover .service-icon {
-            transform: scale(1.1) rotate(5deg);
-            filter: drop-shadow(0 5px 10px rgba(230, 126, 34, 0.2));
-        }
-        
-        .service-title {
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-            color: var(--dark);
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .service-card p {
-            color: var(--text-light);
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-        
-        /* Gallery Section */
-        .gallery-intro {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-        
-        .gallery-intro p {
-            color: var(--text-light);
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.15rem;
-            line-height: 1.8;
-        }
-        
-        .category-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 4rem;
-            flex-wrap: wrap;
-        }
-        
-        .category-btn {
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .category-btn.active, .category-btn:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.2);
-        }
 
-        /* New Category Buttons */
-        .product-categories {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin: 2rem auto 3rem;
-            max-width: 1000px;
-        }
-
-        .product-category-btn {
-            padding: 0.7rem 1.5rem;
-            border-radius: 50px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-
-        .product-category-btn:hover {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(66, 153, 225, 0.2);
-        }
-
-        .product-category-btn.active {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(66, 153, 225, 0.3);
-        }
-        
-        /* UPDATED GALLERY GRID - 2 COLUMNS INSTEAD OF 3 */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-            gap: 3rem;
-            margin-top: 2rem;
-        }
-        
-        .gallery-item {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s forwards;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .gallery-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            border-color: rgba(230, 126, 34, 0.1);
-        }
-        
-        .gallery-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--accent);
-            color: white;
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 1;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            letter-spacing: 0.5px;
-        }
-        
-        .gallery-badge.rental {
-            background: var(--secondary);
-        }
-        
-        .gallery-badge.promo {
-            background: var(--success);
-        }
-        
-        .gallery-badge.seller {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 1;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .gallery-badge.seller:hover {
-            background: var(--dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .gallery-image-container {
-            position: relative;
-            overflow: hidden;
-            height: 350px; /* Increased height for more premium look */
-            aspect-ratio: 16/9;
-        }
-        
-        .gallery-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.8s ease;
-            cursor: pointer;
-        }
-        
-        .gallery-item:hover .gallery-image {
-            transform: scale(1.08);
-        }
-        
-        .gallery-details {
-            padding: 2.5rem;
-        }
-        
-        .gallery-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--dark);
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .gallery-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-        
-        .gallery-code {
-            background: rgba(66, 153, 225, 0.1);
-            color: var(--secondary);
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
-        .gallery-seller {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .gallery-seller i {
-            color: var(--accent);
-        }
-        
-        .gallery-price {
-            color: var(--accent);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .gallery-price .original-price {
-            font-size: 0.9rem;
-            text-decoration: line-through;
-            color: var(--text-light);
-            font-weight: normal;
-        }
-        
-        .gallery-price .discount {
-            background: var(--success);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-        
-        /* Gallery Detail Expanded View */
-        .gallery-detail-expanded {
-            display: none;
-            padding: 0 2rem 2rem;
-            margin-top: -1.5rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, padding 0.5s ease;
-        }
-        
-        .gallery-detail-expanded.active {
-            display: block;
-            max-height: 1500px;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .gallery-carousel {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        .gallery-main-image {
-            width: 100%;
-            height: 500px; /* Increased height for better viewing */
-            object-fit: contain;
-            background-color: #f9f9f9;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            display: block;
-            cursor: zoom-in;
-            transition: transform 0.3s ease;
-        }
-        
-        .gallery-main-image:hover {
-            transform: scale(1.02);
-        }
-        
-        .gallery-thumbnails {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            padding-bottom: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) #f1f1f1;
-        }
-        
-        .gallery-thumbnails::-webkit-scrollbar {
-            height: 6px;
-        }
-        
-        .gallery-thumbnails::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        
-        .gallery-thumbnails::-webkit-scrollbar-thumb {
-            background-color: var(--accent);
-            border-radius: 10px;
-        }
-        
-        .thumbnail {
-            width: 100px; /* Slightly larger thumbnails */
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-            flex-shrink: 0;
-            aspect-ratio: 1/1;
-        }
-        
-        .thumbnail:hover, .thumbnail.active {
-            border-color: var(--accent);
-            transform: scale(1.05);
-        }
-        
-        .gallery-description {
-            color: var(--text-light);
-            font-size: 1.05rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-        
-        .gallery-specs {
-            margin-top: 1.5rem;
-            border-top: 1px solid #eee;
-            padding-top: 1.5rem;
-        }
-        
-        .spec-item {
-            display: flex;
-            margin-bottom: 1rem;
-        }
-        
-        .spec-label {
-            font-weight: 600;
-            color: var(--dark);
-            min-width: 120px;
-        }
-        
-        .spec-value {
-            color: var(--text-light);
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 2.2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            text-decoration: none;
-        }
-        
-        .btn i {
-            font-size: 1.1rem;
-        }
-        
-        .btn-primary {
-            background-color: var(--accent);
-            color: white;
-            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background-color: #d9731f;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-        }
-        
-        .btn-outline:hover {
-            background-color: var(--accent);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.3);
-        }
-        
-        .btn-accent {
-            background-color: var(--accent);
-            color: white;
-        }
-        
-        .btn-accent:hover {
-            background-color: #d9731f;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #2f855a;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(56, 161, 105, 0.3);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 1.2rem;
-            margin-top: 2rem;
-        }
-        
-        .btn-small {
-            padding: 0.8rem 1.5rem;
-            font-size: 0.95rem;
-        }
-        
-        /* NEW: Improved Product Action Buttons */
-        .gallery-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .btn-detail {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: rgba(66, 153, 225, 0.1);
-            color: var(--secondary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .btn-detail:hover {
-            background-color: rgba(66, 153, 225, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .btn-detail i {
-            transition: transform 0.3s ease;
-        }
-        
-        .btn-detail.active i {
-            transform: rotate(180deg);
-        }
-        
-        .btn-order {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: var(--success);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            width: 100%;
-            text-align: center;
-            text-decoration: none;
-        }
-        
-        .btn-order:hover {
-            background-color: #2f855a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(56, 161, 105, 0.3);
-        }
-        
-        .btn-whatsapp {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: #25D366;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            width: 100%;
-            text-align: center;
-            text-decoration: none;
-        }
-        
-        .btn-whatsapp:hover {
-            background-color: #128C7E;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-        }
-        
-        .btn-call {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            width: 100%;
-            text-align: center;
-            text-decoration: none;
-        }
-        
-        .btn-call:hover {
-            background-color: var(--dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(42, 67, 101, 0.3);
-        }
-        
-        /* IMPROVED: Pre-order Toggle Button */
-        .btn-preorder-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: rgba(221, 107, 32, 0.15);
-            color: var(--warning);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid rgba(221, 107, 32, 0.2);
-            width: 100%;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-        
-        .btn-preorder-toggle:hover {
-            background-color: rgba(221, 107, 32, 0.25);
-            transform: translateY(-2px);
-            border-color: rgba(221, 107, 32, 0.3);
-        }
-        
-        .btn-preorder-toggle.active {
-            background-color: rgba(221, 107, 32, 0.25);
-            border-color: var(--warning);
-        }
-        
-        /* NEW: Price Variations */
-        .price-variations {
-            margin: 1.5rem 0;
-            border-top: 1px solid #eee;
-            padding-top: 1.5rem;
-        }
-        
-        .price-variation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem;
-            border-radius: 8px;
-            margin-bottom: 0.8rem;
-            transition: var(--transition);
-            background-color: rgba(248, 249, 250, 0.5);
-            cursor: pointer;
-        }
-        
-        .price-variation:hover {
-            background-color: rgba(230, 126, 34, 0.05);
-        }
-        
-        .price-variation.active {
-            background-color: rgba(230, 126, 34, 0.1);
-            border-left: 3px solid var(--accent);
-        }
-        
-        .price-variation-name {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .price-variation-value {
-            font-weight: 600;
-            color: var(--accent);
-        }
-        
-        /* NEW: Quantity Selector */
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .quantity-label {
-            font-weight: 500;
-            color: var(--dark);
-            min-width: 80px;
-        }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(66, 153, 225, 0.1);
-            color: var(--secondary);
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .quantity-btn:hover {
-            background-color: rgba(66, 153, 225, 0.2);
-        }
-        
-        .quantity-input {
-            width: 60px;
-            text-align: center;
-            padding: 0.5rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        
-        .quantity-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
-        }
-        
-        .unit-selector {
-            margin-left: 1rem;
-        }
-        
-        .unit-selector select {
-            padding: 0.5rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            background-color: white;
-        }
-        
-        .unit-selector select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        
-        /* NEW: Total Price Display */
-        .total-price {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background-color: rgba(56, 161, 105, 0.1);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .total-price-label {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .total-price-value {
-            font-weight: 700;
-            color: var(--success);
-            font-size: 1.2rem;
-        }
-        
-        /* IMPROVED: Pre-order Form */
-        .preorder-form {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background-color: rgba(255, 251, 235, 0.8);
-            border-radius: 12px;
-            border: 1px dashed var(--warning);
-            display: none;
-            transition: var(--transition);
-        }
-        
-        .preorder-form.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .preorder-title {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: var(--dark);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .preorder-title i {
-            color: var(--warning);
-        }
-        
-        .preorder-input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: white;
-        }
-        
-        .preorder-input:focus {
-            outline: none;
-            border-color: var(--warning);
-            box-shadow: 0 0 0 3px rgba(221, 107, 32, 0.1);
-        }
-        
-        .preorder-note {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-        
-        .btn-preorder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.8rem;
-            border-radius: 8px;
-            background-color: var(--warning);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .btn-preorder:hover {
-            background-color: #c05621;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(221, 107, 32, 0.3);
-        }
-        
-        /* UPDATED: Developer Notes - HIDDEN */
-        .developer-notes {
-            display: none;
-        }
-        
-        /* Contact Section */
-        .contact-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 4rem;
-        }
-        
-        .contact-info {
-            background: white;
-            padding: 4rem 3rem;
-            border-radius: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-        }
-        
-        .contact-info:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            border-color: rgba(230, 126, 34, 0.1);
-        }
-        
-        .contact-info h3 {
-            margin-bottom: 2.5rem;
-            color: var(--dark);
-            font-size: 2rem;
-            position: relative;
-            padding-bottom: 1.5rem;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .contact-info h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-        
-        .contact-detail {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.8rem;
-            margin-bottom: 2.5rem;
-        }
-        
-        .contact-icon {
-            font-size: 1.8rem;
-            color: var(--accent);
-            margin-top: 0.3rem;
-            min-width: 40px;
-            text-align: center;
-        }
-        
-        .contact-text h4 {
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            font-size: 1.2rem;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .contact-text p {
-            color: var(--text-light);
-            line-height: 1.8;
-            font-size: 1.05rem;
-        }
-        
-        .contact-form {
-            background: white;
-            padding: 4rem 3rem;
-            border-radius: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-        }
-        
-        .contact-form:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            border-color: rgba(230, 126, 34, 0.1);
-        }
-        
-        .contact-form h3 {
-            margin-bottom: 2.5rem;
-            color: var(--dark);
-            font-size: 2rem;
-            position: relative;
-            padding-bottom: 1.5rem;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .contact-form h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-        
-        .form-group {
-            margin-bottom: 2rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 1rem;
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 1.05rem;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 1.2rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1.05rem;
-            transition: var(--transition);
-            background-color: #f9f9f9;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
-            background-color: white;
-        }
-        
-        .form-group textarea {
-            min-height: 180px;
-            resize: vertical;
-        }
-        
-        /* Form Status */
-        .form-status {
-            padding: 1.2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            display: none;
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-        
-        .form-status.success {
-            background-color: rgba(56, 161, 105, 0.1);
-            color: var(--success);
-            border: 1px solid var(--success);
-            display: block;
-        }
-        
-        .form-status.error {
-            background-color: rgba(230, 126, 34, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            display: block;
-        }
-        
-        /* Floating Contact Buttons */
-        .contact-bar {
-            position: fixed;
-            bottom: 3rem;
-            right: 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            z-index: 100;
-        }
-        
-        .contact-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .contact-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(0);
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-        
-        .contact-btn:hover::after {
-            transform: scale(1);
-        }
-        
-        .contact-btn:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .whatsapp {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-        }
-        
-        .order {
-            background: linear-gradient(135deg, var(--accent), #d9731f);
-        }
-        
-        .phone {
-            background: linear-gradient(135deg, var(--success), #2f855a);
-        }
-        
-        /* PREMIUM FOOTER DESIGN */
-        footer {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            color: white;
-            padding: 6rem 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://raw.githubusercontent.com/LenteraKarya/jualan-kita/main/assets/images/logo-jualan-kita.png') center/cover fixed;
-            opacity: 0.03;
-            z-index: 0;
-        }
-        
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem 4rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            position: relative;
-            z-index: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer-col {
-            padding: 0 1rem;
-        }
-        
-        .footer-col h3 {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            padding-bottom: 1rem;
-            font-family: 'Playfair Display', serif;
-            color: white;
-        }
-        
-        .footer-col h3::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 2px;
-        }
-        
-        .footer-about {
-            grid-column: 1 / -1;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .footer-about h3::after {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .footer-about p {
-            margin-bottom: 2rem;
-            line-height: 1.8;
-            font-size: 1.05rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-logo img {
-            height: 50px;
-            width: auto;
-            filter: brightness(0) invert(1);
-        }
-        
-        .footer-logo span {
-            font-size: 1.8rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-            color: white;
-        }
-        
-        /* Updated Footer Links */
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 1.2rem;
-            position: relative;
-            padding-left: 20px;
-        }
-        
-        .footer-links li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background-color: var(--gold);
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-        
-        .footer-links li:hover::before {
-            transform: translateY(-50%) scale(1.3);
-            background-color: white;
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-            display: inline-block;
-            padding: 0.5rem 0;
-            font-size: 1.05rem;
-            position: relative;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-            transform: translateX(10px);
-        }
-        
-        /* Payment Methods Section */
-        .payment-methods {
-            margin-top: 2rem;
-            text-align: center;
-        }
-        
-        .payment-methods h4 {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 400;
-        }
-        
-        .payment-icons {
-            display: flex;
-            justify-content: center;
-            margin-top: 1rem;
-        }
-        
-        .payment-icon {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: var(--transition);
-        }
-        
-        .payment-icon:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .newsletter-form {
-            margin-top: 1.5rem;
-        }
-        
-        .newsletter-form input {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .newsletter-form input:focus {
-            outline: none;
-            background-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2);
-        }
-        
-        .newsletter-form input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .newsletter-form button {
-            width: 100%;
-            font-size: 1rem;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding: 2rem 0;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.6);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .copyright a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .copyright a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 1px;
-            bottom: -2px;
-            left: 0;
-            background-color: var(--gold);
-            transition: var(--transition);
-        }
-        
-        .copyright a:hover {
-            color: white;
-        }
-        
-        .copyright a:hover::after {
-            width: 100%;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .modal.show {
-            opacity: 1;
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 550px;
-            width: 90%;
-            padding: 4rem;
-            position: relative;
-            animation: modalFadeIn 0.5s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: translateY(0);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: var(--transition);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .close-modal:hover {
-            color: var(--accent);
-            transform: rotate(90deg);
-            background: rgba(230, 126, 34, 0.1);
-        }
-        
-        .modal h2 {
-            margin-bottom: 2.5rem;
-            color: var(--dark);
-            font-size: 2rem;
-            position: relative;
-            padding-bottom: 1.5rem;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .modal h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-        
-        /* Search Modal */
-        .search-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .search-modal.show {
-            display: flex;
-            opacity: 1;
-        }
-        
-        .search-modal-content {
-            background: transparent;
-            max-width: 800px;
-            width: 90%;
-            padding: 2rem 0;
-            position: relative;
-        }
-        
-        .search-modal-input {
-            width: 100%;
-            padding: 1.5rem 2rem;
-            border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            background: transparent;
-            color: white;
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-        
-        .search-modal-input:focus {
-            outline: none;
-            border-bottom-color: var(--accent);
-        }
-        
-        .search-modal-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .close-search-modal {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 2rem;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.7);
-            transition: var(--transition);
-        }
-        
-        .close-search-modal:hover {
-            color: var(--accent);
-            transform: rotate(90deg);
-        }
-        
-        .search-results {
-            margin-top: 2rem;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 1rem;
-        }
-        
-        .search-result-item {
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            transition: var(--transition);
-            border-left: 3px solid transparent;
-        }
-        
-        .search-result-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-left-color: var(--accent);
-            transform: translateX(5px);
-        }
-        
-        .search-result-item h3 {
-            color: white;
-            margin-bottom: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .search-result-item p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.95rem;
-        }
-        
-        .search-result-item .category {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: rgba(230, 126, 34, 0.2);
-            color: var(--accent);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        
-        .search-result-item .price {
-            color: var(--accent);
-            font-weight: 600;
-            margin-top: 0.5rem;
-            display: block;
-        }
-        
-        .no-results {
-            color: rgba(255, 255, 255, 0.5);
-            text-align: center;
-            padding: 2rem;
-            font-size: 1.1rem;
-        }
-        
-        /* Image Zoom Modal */
-        .image-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 3000;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .image-modal.show {
-            display: flex;
-            opacity: 1;
-        }
-        
-        .image-modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        }
-        
-        .image-modal-content img {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .close-image-modal {
-            position: absolute;
-            top: -40px;
-            right: -10px;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .close-image-modal:hover {
-            color: var(--accent);
-            transform: rotate(90deg);
-        }
-        
-        /* Audio Element for Button Sounds */
-        audio {
-            display: none;
-        }
-        
-        /* Lazy Loading */
-        .lazy {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .lazy.loaded {
-            opacity: 1;
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .logo {
-                font-size: 4rem;
-            }
-            
-            .logo img {
-                height: 100px;
-            }
-            
-            .tagline {
-                font-size: 1.8rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-            
-            .gallery-main-image {
-                height: 400px;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .logo {
-                font-size: 3.5rem;
-            }
-            
-            .logo img {
-                height: 90px;
-            }
-            
-            .tagline {
-                font-size: 1.6rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .contact-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .contact-info, .contact-form {
-                padding: 3rem;
-            }
-            
-            .gallery-main-image {
-                height: 350px;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            }
-            
-            .gallery-details {
-                padding: 2rem;
-            }
-            
-            .gallery-detail-expanded {
-                padding: 0 1.5rem 1.5rem;
-            }
-            
-            /* Improved Mobile Navigation */
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 80%;
-                max-width: 400px;
-                height: 100vh;
-                background: white;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 1.5rem;
-                transition: var(--transition);
-                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                padding-top: 80px;
-                overflow-y: auto;
-            }
-            
-            .nav-links.active {
-                right: 0;
-            }
-            
-            .mobile-menu-toggle, .search-toggle {
-                display: block;
-            }
-            
-            .nav-search {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                padding: 1rem;
-                background: white;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-            
-            .nav-search.active {
-                display: block;
-            }
-            
-            .nav-container {
-                padding: 1rem;
-            }
-            
-            .contact-bar {
-                bottom: 2rem;
-                right: 2rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            header {
-                min-height: auto;
-                padding: 0;
-            }
-            
-            .logo {
-                font-size: 3rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .logo img {
-                height: 80px;
-            }
-            
-            .tagline {
-                font-size: 1.4rem;
-            }
-            
-            .header-search {
-                max-width: 90%;
-                margin-bottom: 2rem;
-            }
-            
-            .header-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .nav-container {
-                flex-direction: row;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            }
-            
-            .gallery-main-image {
-                height: 300px;
-            }
-            
-            .gallery-details {
-                padding: 1.5rem;
-            }
-            
-            .gallery-detail-expanded {
-                padding: 0 1rem 1rem;
-            }
-            
-            .contact-bar {
-                bottom: 1.5rem;
-                right: 1.5rem;
-            }
-            
-            .contact-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 1.8rem;
-            }
-            
-            .footer-container {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .footer-about {
-                grid-column: 1 / -1;
-            }
-            
-            .modal-content {
-                padding: 3rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .logo {
-                font-size: 2.5rem;
-            }
-            
-            .logo img {
-                height: 70px;
-            }
-            
-            .tagline {
-                font-size: 1.3rem;
-            }
-            
-            .header-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            .section-title {
-                font-size: 1.7rem;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .gallery-main-image {
-                height: 250px;
-            }
-            
-            .gallery-details {
-                padding: 1.5rem;
-            }
-            
-            .gallery-detail-expanded {
-                padding: 0 1rem 1rem;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .contact-info, .contact-form {
-                padding: 2.5rem 2rem;
-            }
-            
-            .contact-bar {
-                bottom: 1rem;
-                right: 1rem;
-            }
-            
-            .contact-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 1.6rem;
-            }
-            
-            .footer-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                padding: 2.5rem 2rem;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .logo img {
-                height: 60px;
-            }
-            
-            .tagline {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
-            .gallery-main-image {
-                height: 200px;
-            }
-            
-            .thumbnail {
-                width: 70px;
-                height: 70px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen">
         <div class="loading-spinner"></div>
         <h2 style="color: white; font-family: 'Playfair Display', serif; margin-top: 1.5rem;">Jualan Kita</h2>
     </div>
     
-    <!-- Background Music - Autoplay and Loop -->
-    <audio id="bgMusic" loop autoplay>
+    <audio id="bgMusic" loop>
         <source src="https://github.com/LenteraKarya/jualan-kita/blob/main/assets/audio/Musik%20website.mp3?raw=true" type="audio/mpeg">
     </audio>
     
-    <!-- Partikel Animasi -->
     <div class="particles" id="particles"></div>
     
-    <!-- Header Modern -->
     <header id="home">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -2470,27 +42,19 @@
             </div>
             <p class="tagline">Semua Bisa Jualan & Semua Bisa Pesan</p>
             
-            <!-- Search Bar in Header -->
             <div class="header-search">
                 <input type="text" id="headerSearchInput" placeholder="Cari produk atau layanan...">
-                <button id="headerSearchBtn"><i class="fas fa-search"></i></button>
+                <button id="headerSearchBtn" aria-label="Cari"><i class="fas fa-search"></i></button>
             </div>
             
             <div class="header-buttons">
-                <a href="#gallery" class="btn btn-primary">
-                    <i class="fas fa-images"></i> Lihat Karya & Jualan Kami
-                </a>
-                <a href="#contact" class="btn btn-outline">
-                    <i class="fas fa-envelope"></i> Hubungi Kami
-                </a>
+                <a href="#gallery" class="btn btn-primary"><i class="fas fa-images"></i> Lihat Karya & Jualan Kami</a>
+                <a href="#contact" class="btn btn-outline"><i class="fas fa-envelope"></i> Hubungi Kami</a>
             </div>
-            <a href="#services" class="scroll-down">
-                <i class="fas fa-chevron-down"></i>
-            </a>
+            <a href="#services" class="scroll-down" aria-label="Scroll ke bawah"><i class="fas fa-chevron-down"></i></a>
         </div>
     </header>
     
-    <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
@@ -2498,19 +62,13 @@
                 <span>Jualan Kita</span>
             </a>
             
-            <!-- Nav Search (Hidden on mobile) -->
             <div class="nav-search" id="navSearch">
                 <input type="text" placeholder="Cari produk atau layanan...">
-                <button><i class="fas fa-search"></i></button>
+                <button aria-label="Cari"><i class="fas fa-search"></i></button>
             </div>
             
-            <button class="search-toggle" id="searchToggle">
-                <i class="fas fa-search"></i>
-            </button>
-            
-            <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
+            <button class="search-toggle" id="searchToggle" aria-label="Tampilkan pencarian"><i class="fas fa-search"></i></button>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Tampilkan menu"><i class="fas fa-bars"></i></button>
             
             <div class="nav-links" id="navLinks">
                 <a href="#home">Beranda</a>
@@ -2521,35 +79,28 @@
         </div>
     </nav>
     
-    <div class="container">
-        <!-- Services Section -->
+    <main class="container">
         <section class="services" id="services">
             <h2 class="section-title">Layanan Kami</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
+                    <div class="service-icon"><i class="fas fa-calendar-alt"></i></div>
                     <h3 class="service-title">Jasa Sewa</h3>
                     <p>Pilihan sewa fleksibel untuk dekorasi, peralatan, dan berbagai kebutuhan acara Anda.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
+                    <div class="service-icon"><i class="fas fa-bullhorn"></i></div>
                     <h3 class="service-title">Solusi Promosi</h3>
                     <p>Material pemasaran kreatif dan strategi untuk meningkatkan visibilitas merek produk Anda.</p>
                 </div>
             </div>
         </section>
         
-        <!-- Gallery Section -->
         <section class="gallery" id="gallery">
             <h2 class="section-title">Galeri Kami</h2>
             <div class="gallery-intro">
                 <p>Jelajahi koleksi karya dan layanan premium kami. Klik "Detail" untuk melihat lebih banyak gambar dan informasi.</p>
                 
-                <!-- New Product Categories -->
                 <div class="product-categories">
                     <button class="product-category-btn active" data-category="all">Semua Kategori</button>
                     <button class="product-category-btn" data-category="food">Makanan & Minuman</button>
@@ -2572,9 +123,7 @@
             </div>
             
             <div class="gallery-grid">
-<!=========================================================== ARDIWILIS FARM 2575 ===========================================================>
-                <!-- GALLERY ITEM - LIVESTOCK PRODUCT -->
-                <div class="gallery-item" data-category="livestock" data-type="promo">
+                <div class="gallery-item" data-category="livestock" data-type="promo" data-whatsapp="6285258544543">
                     <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: Ardiwillis Farm</a>
                     <span class="gallery-badge promo">Promosi</span>
                     <div class="gallery-image-container">
@@ -2586,153 +135,59 @@
                             <span class="gallery-code">Kode: AWF-2025-2575</span>
                             <span class="gallery-seller"><i class="fas fa-store"></i> Ardiwillis Farm</span>
                         </div>
-                        <p class="gallery-price">
-                            Rp 8.000
-                            <span class="original-price">Rp 10.000</span>
-                            <span class="discount">10%</span>
-                        </p>
-                        
-                        <!-- Price Variations -->
+                        <p class="gallery-price">Rp 8.000 <span class="original-price">Rp 10.000</span><span class="discount">10%</span></p>
                         <div class="price-variations">
-                            <div class="price-variation active" data-price="8000">
-                                <span class="price-variation-name">Ecer (per ekor)</span>
-                                <span class="price-variation-value">Rp 8.000</span>
-                            </div>
-                            <div class="price-variation" data-price="75000">
-                                <span class="price-variation-name">10 ekor</span>
-                                <span class="price-variation-value">Rp 75.000</span>
-                            </div>
-                            <div class="price-variation" data-price="700000">
-                                <span class="price-variation-name">100 ekor</span>
-                                <span class="price-variation-value">Rp 700.000</span>
-                            </div>
+                            <div class="price-variation active" data-price="8000"><span class="price-variation-name">Ecer (per ekor)</span><span class="price-variation-value">Rp 8.000</span></div>
+                            <div class="price-variation" data-price="75000"><span class="price-variation-name">10 ekor</span><span class="price-variation-value">Rp 75.000</span></div>
+                            <div class="price-variation" data-price="700000"><span class="price-variation-name">100 ekor</span><span class="price-variation-value">Rp 700.000</span></div>
                         </div>
-                        
-                        <!-- Quantity Selector -->
                         <div class="quantity-selector">
                             <span class="quantity-label">Jumlah:</span>
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1">
-                                <button class="quantity-btn plus">+</button>
+                                <button class="quantity-btn minus" aria-label="Kurangi jumlah">-</button>
+                                <input type="number" class="quantity-input" value="1" min="1" aria-label="Jumlah">
+                                <button class="quantity-btn plus" aria-label="Tambah jumlah">+</button>
                             </div>
-                            <div class="unit-selector">
-                                <select class="unit-select">
-                                    <option value="pcs">pcs</option>
-                                    <option value="kg">kg</option>
-                                    <option value="biji">biji</option>
-                                    <option value="ekor">ekor</option> 
-                                </select>
-                            </div>
+                            <div class="unit-selector"><select class="unit-select"><option value="pcs">pcs</option><option value="kg">kg</option><option value="biji">biji</option><option value="ekor">ekor</option></select></div>
                         </div>
-                        
-                        <!-- Total Price -->
-                        <div class="total-price">
-                            <span class="total-price-label">Total Harga:</span>
-                            <span class="total-price-value">Rp 8.000</span>
-                        </div>
-                        
-                        <!-- Action Buttons -->
+                        <div class="total-price"><span class="total-price-label">Total Harga:</span><span class="total-price-value">Rp 8.000</span></div>
                         <div class="gallery-actions">
-                            <button class="btn-detail" data-target="details-AWF-2025-2575">
-                                <i class="fas fa-chevron-down"></i> Detail Produk
-                            </button>
-                            <button class="btn-order">
-                                <i class="fas fa-shopping-cart"></i> Pesan Sekarang
-                            </button>
-                            <button class="btn-preorder-toggle">
-                                <i class="fas fa-calendar-check"></i> Pre-Order
-                            </button>
+                            <button class="btn-detail" data-target="details-AWF-2025-2575"><i class="fas fa-chevron-down"></i> Detail Produk</button>
+                            <button class="btn-order"><i class="fas fa-shopping-cart"></i> Pesan Sekarang</button>
+                            <button class="btn-preorder-toggle"><i class="fas fa-calendar-check"></i> Pre-Order</button>
                         </div>
-                        
-                        <!-- Pre-order Form -->
                         <div class="preorder-form">
-                            <div class="preorder-title">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Form Uang Muka (DP)</span>
-                            </div>
+                            <div class="preorder-title"><i class="fas fa-money-bill-wave"></i><span>Form Uang Muka (DP)</span></div>
                             <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
-                            <p class="preorder-note">
-                                * Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. 
-                                Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.
-                            </p>
-                            <button class="btn-preorder">
-                                <i class="fas fa-paper-plane"></i> Kirim Pre-Order
-                            </button>
+                            <p class="preorder-note">* Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.</p>
+                            <button class="btn-preorder"><i class="fas fa-paper-plane"></i> Kirim Pre-Order</button>
                         </div>
-                        
                         <div id="details-AWF-2025-2575" class="gallery-detail-expanded">
                             <div class="gallery-carousel">
                                 <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ayam2%20-%20Ardiwilis%20Farm.jpeg" alt="Produk Unggulan Ardiwillis Farm" class="gallery-main-image lazy" loading="lazy" id="main-image-livestock">
                                 <div class="gallery-thumbnails">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/telur2%20-%20Ardiwilis%20Farm.jpeg" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-livestock">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/telur2%20-%20Ardiwilis%20Farm.jpeg" alt="Telur Tetas" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-livestock">
                                     <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ayam1%20-%20Ardiwilis%20Farm.jpeg" alt="DOC Ayam" class="thumbnail lazy" loading="lazy" data-main-image="main-image-livestock">
                                     <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ayam4%20-%20Ardiwilis%20Farm.jpeg" alt="Ayam Karkas" class="thumbnail lazy" loading="lazy" data-main-image="main-image-livestock">
                                     <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ayam3%20-%20Ardiwilis%20Farm.jpeg" alt="Ayam Bakar" class="thumbnail lazy" loading="lazy" data-main-image="main-image-livestock">
                                 </div>
                             </div>
-                            
                             <div class="gallery-content">
-                                <p class="gallery-description">
-                                    Ardiwillis Farm menyediakan produk unggulan peternakan ayam berkualitas tinggi. 
-                                    Kami menyediakan telur tetas fertil dengan daya tetas tinggi, DOC (Day Old Chicken) 
-                                    berbagai strain unggul, ayam karkas segar, dan ayam bakar siap saji dengan bumbu khas. 
-                                    Semua produk dihasilkan dari peternakan yang dikelola secara profesional dengan standar 
-                                    kesehatan dan kebersihan tinggi. (Note: Harga tersebut bukan harga tetap, & bisa berubah)
-                                </p>
-                                
+                                <p class="gallery-description">Ardiwillis Farm menyediakan produk unggulan peternakan ayam berkualitas tinggi. Kami menyediakan telur tetas fertil, DOC (Day Old Chicken), ayam karkas segar, dan ayam bakar siap saji. (Note: Harga dapat berubah)</p>
                                 <div class="gallery-specs">
-                                    <div class="spec-item">
-                                        <span class="spec-label">Kode Produk:</span>
-                                        <span class="spec-value">AWF-2025-2575</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Gerai:</span>
-                                        <span class="spec-value">Ardiwillis Farm</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Jenis:</span>
-                                        <span class="spec-value">Ayam Pedaging</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Usia:</span>
-                                        <span class="spec-value">DOC (1 hari)</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Strain:</span>
-                                        <span class="spec-value">Cobb 500</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Garansi:</span>
-                                        <span class="spec-value">Hidup sampai diterima</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Minimal Order:</span>
-                                        <span class="spec-value">10 ekor</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Catatan:</span>
-                                        <span class="spec-value">Harga bisa berubah sewaktu-waktu</span>
-                                    </div>
+                                    <div class="spec-item"><span class="spec-label">Kode:</span><span class="spec-value">AWF-2025-2575</span></div>
+                                    <div class="spec-item"><span class="spec-label">Gerai:</span><span class="spec-value">Ardiwillis Farm</span></div>
                                 </div>
                             </div>
-                            
                             <div class="gallery-actions-expanded">
-                                <a href="https://wa.me/6285258544543?text=Halo%20Ardiwillis%20Farm,%20saya%20tertarik%20dengan%20Paket%20Lengkap%20Ternak%20Ayam%20(AWF-2025-001)%20dan%20ingin%20bertanya%20lebih%20lanjut." class="btn-whatsapp" target="_blank">
-                                    <i class="fab fa-whatsapp"></i> Chat via WhatsApp
-                                </a>
-                                <a href="tel:+6285258544543" class="btn-call">
-                                    <i class="fas fa-phone-alt"></i> Telepon Sekarang
-                                </a>
+                                <a href="https://wa.me/6285258544543" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+                                <a href="tel:+6285258544543" class="btn-call"><i class="fas fa-phone-alt"></i> Telepon Sekarang</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-<!=========================================================== CHOLIS PRADIPA 2688 ===========================================================>
-                
-             <!-- GALLERY ITEM 2 - PROMOTIONAL ITEM -->
-                <div class="gallery-item" data-category="fishery" data-type="promo">
+                <div class="gallery-item" data-category="fishery" data-type="promo" data-whatsapp="6282334393922">
                     <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: PRADIPA</a>
                     <span class="gallery-badge promo">Promosi</span>
                     <div class="gallery-image-container">
@@ -2744,139 +199,56 @@
                             <span class="gallery-code">Kode: PRD-2025-2688</span>
                             <span class="gallery-seller"><i class="fas fa-store"></i> PRADIPA</span>
                         </div>
-                        <p class="gallery-price">
-                            Rp 30.000 - Rp 35.000
-                        </p>
-                        
-                        <!-- Price Variations -->
+                        <p class="gallery-price">Rp 30.000 - Rp 35.000</p>
                         <div class="price-variations">
-                            <div class="price-variation active" data-price="35000">
-                                <span class="price-variation-name">Ikan Bogek/Mendut</span>
-                                <span class="price-variation-value">Rp 35.000/kg</span>
-                            </div>
-                            <div class="price-variation" data-price="30000">
-                                <span class="price-variation-name">Ikan Mangla/Swangi</span>
-                                <span class="price-variation-value">Rp 30.000/kg</span>
-                            </div>
-                            <div class="price-variation" data-price="35000">
-                                <span class="price-variation-name">Ikan Sebelah/Sulfis</span>
-                                <span class="price-variation-value">Rp 35.000/kg</span>
-                            </div>
+                            <div class="price-variation active" data-price="35000"><span class="price-variation-name">Ikan Bogek/Mendut</span><span class="price-variation-value">Rp 35.000/kg</span></div>
+                            <div class="price-variation" data-price="30000"><span class="price-variation-name">Ikan Mangla/Swangi</span><span class="price-variation-value">Rp 30.000/kg</span></div>
+                            <div class="price-variation" data-price="35000"><span class="price-variation-name">Ikan Sebelah/Sulfis</span><span class="price-variation-value">Rp 35.000/kg</span></div>
                         </div>
-                        
-                        <!-- Quantity Selector -->
                         <div class="quantity-selector">
-                            <span class="quantity-label">Jumlah:</span>
+                           <span class="quantity-label">Jumlah:</span>
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1">
-                                <button class="quantity-btn plus">+</button>
+                                <button class="quantity-btn minus" aria-label="Kurangi jumlah">-</button>
+                                <input type="number" class="quantity-input" value="1" min="1" aria-label="Jumlah">
+                                <button class="quantity-btn plus" aria-label="Tambah jumlah">+</button>
                             </div>
-                            <div class="unit-selector">
-                                <select class="unit-select">
-                                    <option value="kg" selected>kg</option>
-                                    <option value="ekor">ekor</option>
-                                    <option value="pack">pack</option>
-                                </select>
-                            </div>
+                            <div class="unit-selector"><select class="unit-select"><option value="kg" selected>kg</option><option value="ekor">ekor</option><option value="pack">pack</option></select></div>
                         </div>
-                        
-                        <!-- Total Price -->
-                        <div class="total-price">
-                            <span class="total-price-label">Total Harga:</span>
-                            <span class="total-price-value">Rp 35.000</span>
-                        </div>
-                        
-                        <!-- Action Buttons -->
+                        <div class="total-price"><span class="total-price-label">Total Harga:</span><span class="total-price-value">Rp 35.000</span></div>
                         <div class="gallery-actions">
-                            <button class="btn-detail" data-target="details-PRD-2025-2688">
-                                <i class="fas fa-chevron-down"></i> Detail Produk
-                            </button>
-                            <button class="btn-order">
-                                <i class="fas fa-shopping-cart"></i> Pesan Sekarang
-                            </button>
-                            <button class="btn-preorder-toggle">
-                                <i class="fas fa-calendar-check"></i> Pre-Order
-                            </button>
+                            <button class="btn-detail" data-target="details-PRD-2025-2688"><i class="fas fa-chevron-down"></i> Detail Produk</button>
+                            <button class="btn-order"><i class="fas fa-shopping-cart"></i> Pesan Sekarang</button>
+                            <button class="btn-preorder-toggle"><i class="fas fa-calendar-check"></i> Pre-Order</button>
                         </div>
-                        
-                        <!-- Pre-order Form -->
                         <div class="preorder-form">
-                            <div class="preorder-title">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Form Uang Muka (DP)</span>
-                            </div>
+                             <div class="preorder-title"><i class="fas fa-money-bill-wave"></i><span>Form Uang Muka (DP)</span></div>
                             <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
-                            <p class="preorder-note">
-                                * Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. 
-                                Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.
-                            </p>
-                            <button class="btn-preorder">
-                                <i class="fas fa-paper-plane"></i> Kirim Pre-Order
-                            </button>
+                            <p class="preorder-note">* Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.</p>
+                            <button class="btn-preorder"><i class="fas fa-paper-plane"></i> Kirim Pre-Order</button>
                         </div>
-                        
                         <div id="details-PRD-2025-2688" class="gallery-detail-expanded">
                             <div class="gallery-carousel">
-                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20mangla%20swangi.jpeg" alt="Produk Hasil Laut - Tampilan Utama" class="gallery-main-image lazy" loading="lazy" id="main-image-1">
+                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20mangla%20swangi.jpeg" alt="Produk Hasil Laut - Tampilan Utama" class="gallery-main-image lazy" loading="lazy" id="main-image-pradipa">
                                 <div class="gallery-thumbnails">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20bogek%20%20mendut.jpeg" alt="Produk Hasil Laut - Tampilan Utama" class="thumbnail active lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20sulfis%20sebelah.jpeg" alt="Produk Hasil Laut - Kemasan" class="thumbnail lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/manglaku.jpeg" alt="Produk Hasil Laut - Segar" class="thumbnail lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20bogek%20%20mendut.jpeg" alt="Ikan Bogek" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-pradipa">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/ikan%20sulfis%20sebelah.jpeg" alt="Ikan Sulfis" class="thumbnail lazy" loading="lazy" data-main-image="main-image-pradipa">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/cholis-pradipa/manglaku.jpeg" alt="Ikan Mangla" class="thumbnail lazy" loading="lazy" data-main-image="main-image-pradipa">
                                 </div>
                             </div>
-                            
-                            <p class="gallery-description">
-                                PRADIPA menghadirkan hasil laut segar langsung dari perairan Panarukan. Kami menyediakan berbagai jenis ikan berkualitas tinggi yang ditangkap dengan metode ramah lingkungan. Setiap produk kami melalui proses seleksi ketat untuk memastikan kesegaran dan kualitas terbaik untuk pelanggan. Dengan pengalaman bertahun-tahun di bidang hasil laut, kami berkomitmen memberikan produk terbaik dengan harga kompetitif.
-                            </p>
-                            
+                             <p class="gallery-description">PRADIPA menghadirkan hasil laut segar langsung dari perairan Panarukan. Kami menyediakan berbagai jenis ikan berkualitas tinggi yang ditangkap dengan metode ramah lingkungan. (Note: Harga dapat berubah)</p>
                             <div class="gallery-specs">
-                                <div class="spec-item">
-                                    <span class="spec-label">Kode Produk:</span>
-                                    <span class="spec-value">PRD-2025-2688</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Gerai:</span>
-                                    <span class="spec-value">PRADIPA</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Pemilik:</span>
-                                    <span class="spec-value">Fajar Nur Cholis</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Alamat:</span>
-                                    <span class="spec-value">Tanah Anyar RT 3 RW 02 Desa Kilensari, Panarukan</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Kontak:</span>
-                                    <span class="spec-value">082334393922 | quenie89@gmail.com</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Produk Unggulan:</span>
-                                    <span class="spec-value">Ikan Bogek/Mendut (Rp35.000/kg), Ikan Mangla/Swangi (Rp30.000/kg), Ikan Sebelah/Sulfis (Rp35.000/kg)</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Catatan:</span>
-                                    <span class="spec-value">Harga bisa berubah sewaktu-waktu</span>
-                                </div>
+                                <div class="spec-item"><span class="spec-label">Kode:</span><span class="spec-value">PRD-2025-2688</span></div>
+                                <div class="spec-item"><span class="spec-label">Gerai:</span><span class="spec-value">PRADIPA</span></div>
                             </div>
-                            
                             <div class="gallery-actions-expanded">
-                                <a href="https://wa.me/6282334393922?text=Halo%20PRADIPA,%20saya%20tertarik%20dengan%20produk%20hasil%20laut%20Anda%20dan%20ingin%20bertanya%20lebih%20lanjut." class="btn-whatsapp" target="_blank">
-                                    <i class="fab fa-whatsapp"></i> Chat via WhatsApp
-                                </a>
-                                <a href="tel:+6282334393922" class="btn-call">
-                                    <i class="fas fa-phone-alt"></i> Telepon Sekarang
-                                </a>
+                                <a href="https://wa.me/6282334393922" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+                                <a href="tel:+6282334393922" class="btn-call"><i class="fas fa-phone-alt"></i> Telepon Sekarang</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-<!=========================================================== MOCHI UMA 2830 ===========================================================>
-
-             <!-- GALLERY ITEM 2 - PROMOTIONAL ITEM -->
-                <div class="gallery-item" data-category="snack" data-type="promo">
+                <div class="gallery-item" data-category="snack" data-type="promo" data-whatsapp="6289679013099">
                     <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: Mochi UMA</a>
                     <span class="gallery-badge promo">Promo Spesial</span>
                     <div class="gallery-image-container">
@@ -2888,301 +260,114 @@
                             <span class="gallery-code">Kode: MCU-2025-2830</span>
                             <span class="gallery-seller"><i class="fas fa-store"></i> Mochi UMA</span>
                         </div>
-                        <p class="gallery-price">
-                            Rp 10.000
-                        </p>
-                        
-                        <!-- Price Variations -->
+                        <p class="gallery-price">Rp 10.000</p>
                         <div class="price-variations">
-                            <div class="price-variation active" data-price="10000">
-                                <span class="price-variation-name">Pancake Durian</span>
-                                <span class="price-variation-value">Rp 10.000</span>
-                            </div>
-                            <div class="price-variation" data-price="10000">
-                                <span class="price-variation-name">Mochi</span>
-                                <span class="price-variation-value">Rp 10.000 (3pcs)</span>
-                            </div>
-                            <div class="price-variation" data-price="10000">
-                                <span class="price-variation-name">Cireng Ayam Suwir</span>
-                                <span class="price-variation-value">Rp 10.000</span>
-                            </div>
-                            <div class="price-variation" data-price="10000">
-                                <span class="price-variation-name">Corndog Coklat</span>
-                                <span class="price-variation-value">Rp 10.000 (isi 3)</span>
-                            </div>
+                            <div class="price-variation active" data-price="10000"><span class="price-variation-name">Pancake Durian</span><span class="price-variation-value">Rp 10.000</span></div>
+                            <div class="price-variation" data-price="10000"><span class="price-variation-name">Mochi (3pcs)</span><span class="price-variation-value">Rp 10.000</span></div>
+                            <div class="price-variation" data-price="10000"><span class="price-variation-name">Cireng Ayam Suwir</span><span class="price-variation-value">Rp 10.000</span></div>
                         </div>
-                        
-                        <!-- Quantity Selector -->
                         <div class="quantity-selector">
                             <span class="quantity-label">Jumlah:</span>
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1">
-                                <button class="quantity-btn plus">+</button>
+                                <button class="quantity-btn minus" aria-label="Kurangi jumlah">-</button>
+                                <input type="number" class="quantity-input" value="1" min="1" aria-label="Jumlah">
+                                <button class="quantity-btn plus" aria-label="Tambah jumlah">+</button>
                             </div>
-                            <div class="unit-selector">
-                                <select class="unit-select">
-                                    <option value="pcs" selected>pcs</option>
-                                    <option value="pack">pack</option>
-                                    <option value="set">set</option>
-                                    <option value="lusin">lusin</option>
-                                </select>
-                            </div>
+                            <div class="unit-selector"><select class="unit-select"><option value="pcs" selected>pcs</option><option value="pack">pack</option></select></div>
                         </div>
-                        
-                        <!-- Total Price -->
-                        <div class="total-price">
-                            <span class="total-price-label">Total Harga:</span>
-                            <span class="total-price-value">Rp 10.000</span>
-                        </div>
-                        
-                        <!-- Action Buttons -->
+                        <div class="total-price"><span class="total-price-label">Total Harga:</span><span class="total-price-value">Rp 10.000</span></div>
                         <div class="gallery-actions">
-                            <button class="btn-detail" data-target="details-MCU-2025-2830">
-                                <i class="fas fa-chevron-down"></i> Detail Produk
-                            </button>
-                            <button class="btn-order">
-                                <i class="fas fa-shopping-cart"></i> Pesan Sekarang
-                            </button>
-                            <button class="btn-preorder-toggle">
-                                <i class="fas fa-calendar-check"></i> Pre-Order
-                            </button>
+                            <button class="btn-detail" data-target="details-MCU-2025-2830"><i class="fas fa-chevron-down"></i> Detail Produk</button>
+                            <button class="btn-order"><i class="fas fa-shopping-cart"></i> Pesan Sekarang</button>
+                            <button class="btn-preorder-toggle"><i class="fas fa-calendar-check"></i> Pre-Order</button>
                         </div>
-                        
-                        <!-- Pre-order Form -->
                         <div class="preorder-form">
-                            <div class="preorder-title">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Form Uang Muka (DP)</span>
-                            </div>
+                            <div class="preorder-title"><i class="fas fa-money-bill-wave"></i><span>Form Uang Muka (DP)</span></div>
                             <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
-                            <p class="preorder-note">
-                                * Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. 
-                                Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.
-                            </p>
-                            <button class="btn-preorder">
-                                <i class="fas fa-paper-plane"></i> Kirim Pre-Order
-                            </button>
+                            <p class="preorder-note">* Untuk pre-order, harap masukkan nominal uang muka minimal 40%.</p>
+                            <button class="btn-preorder"><i class="fas fa-paper-plane"></i> Kirim Pre-Order</button>
                         </div>
-                        
                         <div id="details-MCU-2025-2830" class="gallery-detail-expanded">
                             <div class="gallery-carousel">
-                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/kue-ulink.jpeg" alt="Promo Produk Mochi UMA" class="gallery-main-image lazy" loading="lazy" id="main-image-1">
+                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/kue-ulink.jpeg" alt="Promo Produk Mochi UMA" class="gallery-main-image lazy" loading="lazy" id="main-image-uma">
                                 <div class="gallery-thumbnails">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/pancake-durian.jpeg" alt="Promo Pancake Durian" class="thumbnail active lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/mochi.jpeg" alt="Promo Aneka Mochi" class="thumbnail lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/cireng.jpeg" alt="Promo Cireng Ayam Suwir" class="thumbnail lazy" loading="lazy" onclick="changeMainImage('main-image-1', this)">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/pancake-durian.jpeg" alt="Pancake Durian" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-uma">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/mochi.jpeg" alt="Aneka Mochi" class="thumbnail lazy" loading="lazy" data-main-image="main-image-uma">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/mochi-uma/cireng.jpeg" alt="Cireng Ayam Suwir" class="thumbnail lazy" loading="lazy" data-main-image="main-image-uma">
                                 </div>
                             </div>
-                            
-                            <p class="gallery-description">
-                                <strong>PROMO SPESIAL!</strong> Mochi UMA menghadirkan paket promo aneka kue lezat dengan harga spesial. Nikmati berbagai pilihan kue premium dengan diskon menarik untuk waktu terbatas. Setiap produk dibuat dengan bahan pilihan dan teknik khusus untuk menjamin cita rasa autentik. Jangan lewatkan kesempatan ini untuk menikmati kue berkualitas dengan harga terjangkau!
-                            </p>
-                            
+                            <p class="gallery-description"><strong>PROMO SPESIAL!</strong> Mochi UMA menghadirkan paket promo aneka kue lezat dengan harga spesial. Jangan lewatkan kesempatan ini!</p>
                             <div class="gallery-specs">
-                                <div class="spec-item">
-                                    <span class="spec-label">Kode Promo:</span>
-                                    <span class="spec-value">MCU-2025-2830</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Nama UMKM:</span>
-                                    <span class="spec-value">Mochi UMA</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Pemilik:</span>
-                                    <span class="spec-value">ULink</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Alamat:</span>
-                                    <span class="spec-value">Jl. Wijaya Kusuma Samping Bidan Ika</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Kontak:</span>
-                                    <span class="spec-value">089679013099 | nurilaneeh@gmail.com</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Media Sosial:</span>
-                                    <span class="spec-value">TikTok @mochi.uma3</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Daftar Promo:</span>
-                                    <span class="spec-value">
-                                        • Pancake Durian hanya Rp10.000<br>
-                                        • Mochi 3pcs Rp10.000<br>
-                                        • Cireng Ayam Suwir Rp10.000<br>
-                                        • Corndog Coklat isi 3 Rp10.000
-                                    </span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Periode Promo:</span>
-                                    <span class="spec-value">Sampai 31 Agustus 2025</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Catatan:</span>
-                                    <span class="spec-value">Harga bisa berubah sewaktu-waktu</span>
-                                </div>
+                                <div class="spec-item"><span class="spec-label">Kode:</span><span class="spec-value">MCU-2025-2830</span></div>
+                                <div class="spec-item"><span class="spec-label">Gerai:</span><span class="spec-value">Mochi UMA</span></div>
                             </div>
-                            
                             <div class="gallery-actions-expanded">
-                                <a href="https://wa.me/6289679013099?text=Halo%20Mochi%20UMA,%20saya%20tertarik%20dengan%20promo%20Anda%20dan%20ingin%20bertanya%20lebih%20lanjut." class="btn-whatsapp" target="_blank">
-                                    <i class="fab fa-whatsapp"></i> Chat via WhatsApp
-                                </a>
-                                <a href="tel:+6289679013099" class="btn-call">
-                                    <i class="fas fa-phone-alt"></i> Telepon Sekarang
-                                </a>
+                                <a href="https://wa.me/6289679013099" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+                                <a href="tel:+6289679013099" class="btn-call"><i class="fas fa-phone-alt"></i> Telepon Sekarang</a>
                             </div>
                         </div>
                     </div>
                 </div>
-<!=========================================================== UD JAYA MAKMUR 3038 ===========================================================>
 
-                            <!-- GALLERY ITEM - SALT PRODUCT -->
-                    <div class="gallery-item" data-category="agriculture" data-type="all">
-                        <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: UD Jaya Makmur</a>
-                        <div class="gallery-image-container">
-                            <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam1.jpeg" alt="Garam Krosok Geo Membran" class="gallery-image lazy" loading="lazy">
+                <div class="gallery-item" data-category="agriculture" data-type="all" data-whatsapp="6287816295963">
+                    <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: UD Jaya Makmur</a>
+                    <div class="gallery-image-container">
+                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam1.jpeg" alt="Garam Krosok Geo Membran" class="gallery-image lazy" loading="lazy">
+                    </div>
+                    <div class="gallery-details">
+                        <h3 class="gallery-title">Garam Krosok Geo Membran Premium</h3>
+                        <div class="gallery-meta">
+                            <span class="gallery-code">Kode: UDJ-2025-3038</span>
+                            <span class="gallery-seller"><i class="fas fa-store"></i> UD Jaya Makmur</span>
                         </div>
-                        <div class="gallery-details">
-                            <h3 class="gallery-title">Garam Krosok Geo Membran Premium</h3>
-                            <div class="gallery-meta">
-                                <span class="gallery-code">Kode: UDJ-2025-3038</span>
-                                <span class="gallery-seller"><i class="fas fa-store"></i> UD Jaya Makmur</span>
+                        <p class="gallery-price">Rp 2.500/kg</p>
+                        <div class="price-variations">
+                            <div class="price-variation active" data-price="2500"><span class="price-variation-name">Per Kilo</span><span class="price-variation-value">Rp 2.500/kg</span></div>
+                            <div class="price-variation" data-price="8750000"><span class="price-variation-name">3.5 Ton (Min. Order)</span><span class="price-variation-value">Rp 8.750.000</span></div>
+                        </div>
+                        <div class="quantity-selector">
+                            <span class="quantity-label">Jumlah:</span>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" aria-label="Kurangi jumlah">-</button>
+                                <input type="number" class="quantity-input" value="3500" min="3500" step="100" aria-label="Jumlah">
+                                <button class="quantity-btn plus" aria-label="Tambah jumlah">+</button>
                             </div>
-                            <p class="gallery-price">
-                                Rp 2.500/kg
-                            </p>
-                            
-                            <!-- Price Variations -->
-                            <div class="price-variations">
-                                <div class="price-variation active" data-price="2500">
-                                    <span class="price-variation-name">Per Kilo</span>
-                                    <span class="price-variation-value">Rp 2.500/kg</span>
-                                </div>
-                                <div class="price-variation" data-price="8750000">
-                                    <span class="price-variation-name">3.5 Ton (Minimal Order)</span>
-                                    <span class="price-variation-value">Rp 8.750.000</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Quantity Selector -->
-                            <div class="quantity-selector">
-                                <span class="quantity-label">Jumlah:</span>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" class="quantity-input" value="3500" min="3500" step="100">
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                <div class="unit-selector">
-                                    <select class="unit-select">
-                                        <option value="kg" selected>kg</option>
-                                        <option value="ton">ton</option>
-                                    </select>
+                            <div class="unit-selector"><select class="unit-select"><option value="kg" selected>kg</option><option value="ton">ton</option></select></div>
+                        </div>
+                        <div class="total-price"><span class="total-price-label">Total Harga:</span><span class="total-price-value">Rp 8.750.000</span></div>
+                        <div class="gallery-actions">
+                            <button class="btn-detail" data-target="details-UDJ-2025-3038"><i class="fas fa-chevron-down"></i> Detail Produk</button>
+                            <button class="btn-order"><i class="fas fa-shopping-cart"></i> Pesan Sekarang</button>
+                            <button class="btn-preorder-toggle"><i class="fas fa-calendar-check"></i> Pre-Order</button>
+                        </div>
+                        <div class="preorder-form">
+                            <div class="preorder-title"><i class="fas fa-money-bill-wave"></i><span>Form Uang Muka (DP)</span></div>
+                            <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
+                            <p class="preorder-note">* Min. DP 40% dari total harga.</p>
+                            <button class="btn-preorder"><i class="fas fa-paper-plane"></i> Kirim Pre-Order</button>
+                        </div>
+                        <div id="details-UDJ-2025-3038" class="gallery-detail-expanded">
+                            <div class="gallery-carousel">
+                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam3.jpeg" alt="Garam Krosok Geo Membran" class="gallery-main-image lazy" loading="lazy" id="main-image-salt">
+                                <div class="gallery-thumbnails">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam4.jpeg" alt="Garam Krosok 1" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-salt">
+                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam2.jpeg" alt="Garam Krosok 2" class="thumbnail lazy" loading="lazy" data-main-image="main-image-salt">
                                 </div>
                             </div>
-                            
-                            <!-- Total Price -->
-                            <div class="total-price">
-                                <span class="total-price-label">Total Harga:</span>
-                                <span class="total-price-value">Rp 8.750.000</span>
+                            <p class="gallery-description"><strong>UD Jaya Makmur</strong> menghadirkan garam krosok geo membran premium dari Panarukan. Diproduksi dengan metode modern untuk menghasilkan garam berkualitas tinggi. Minimal pembelian 3.500 kg.</p>
+                            <div class="gallery-specs">
+                                <div class="spec-item"><span class="spec-label">Kode:</span><span class="spec-value">UDJ-2025-3038</span></div>
+                                <div class="spec-item"><span class="spec-label">Gerai:</span><span class="spec-value">UD Jaya Makmur</span></div>
                             </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="gallery-actions">
-                                <button class="btn-detail" data-target="details-UDJ-2025-3038">
-                                    <i class="fas fa-chevron-down"></i> Detail Produk
-                                </button>
-                                <button class="btn-order">
-                                    <i class="fas fa-shopping-cart"></i> Pesan Sekarang
-                                </button>
-                                <button class="btn-preorder-toggle">
-                                    <i class="fas fa-calendar-check"></i> Pre-Order
-                                </button>
-                            </div>
-                            
-                            <!-- Pre-order Form -->
-                            <div class="preorder-form">
-                                <div class="preorder-title">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>Form Uang Muka (DP)</span>
-                                </div>
-                                <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
-                                <p class="preorder-note">
-                                    * Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. 
-                                    Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.
-                                </p>
-                                <button class="btn-preorder">
-                                    <i class="fas fa-paper-plane"></i> Kirim Pre-Order
-                                </button>
-                            </div>
-                            
-                            <div id="details-UDJ-2025-3038" class="gallery-detail-expanded">
-                                <div class="gallery-carousel">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam3.jpeg" alt="Garam Krosok Geo Membran" class="gallery-main-image lazy" loading="lazy" id="main-image-salt">
-                                    <div class="gallery-thumbnails">
-                                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam4.jpeg" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-salt">
-                                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam3.jpeg" class="thumbnail lazy" loading="lazy" data-main-image="main-image-salt">
-                                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/ud-jaya-makmur/garam2.jpeg" class="thumbnail lazy" loading="lazy" data-main-image="main-image-salt">
-                                    </div>
-                                </div>
-                                
-                                <p class="gallery-description">
-                                    <strong>UD Jaya Makmur</strong> menghadirkan garam krosok geo membran premium berkualitas tinggi dari Panarukan. Garam kami diproduksi dengan metode geo membran yang menghasilkan garam dengan kadar NaCl tinggi (minimal 95%) dan rendah pengotor. Kami menyediakan garam dengan kualitas konsumsi dan industri, dikemas secara higienis dan siap dikirim ke seluruh Indonesia. Minimal pembelian 3.500 kg dengan layanan pengantaran langsung ke lokasi Anda. Garam kami cocok untuk berbagai kebutuhan mulai dari industri, rumah tangga, hingga pengolahan makanan. Anda juga bisa order ke Nomor Whatsapp : 082244014323 
-                                </p>
-                                
-                                <div class="gallery-specs">
-                                    <div class="spec-item">
-                                        <span class="spec-label">Kode Produk:</span>
-                                        <span class="spec-value">UDJ-2025-3038</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Nama UMKM:</span>
-                                        <span class="spec-value">UD Jaya Makmur</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Pemilik:</span>
-                                        <span class="spec-value">Zaini</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Alamat:</span>
-                                        <span class="spec-value">Kp. Sabrang RT 001 RW 001 Desa Wringin Anom, Panarukan</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Kontak:</span>
-                                        <span class="spec-value">087816295963 | jayamakmurpanarukan@gmail.com</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Jenis Produk:</span>
-                                        <span class="spec-value">Garam Krosok Geo Membran</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Harga:</span>
-                                        <span class="spec-value">Rp 2.500/kg (minimal 3.500 kg)</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Pengiriman:</span>
-                                        <span class="spec-value">Gratis ongkir untuk area tertentu (minimal 3.5 ton)</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <span class="spec-label">Catatan:</span>
-                                        <span class="spec-value">Harga bisa berubah sewaktu-waktu</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="gallery-actions-expanded">
-                                    <a href="https://wa.me/6287816295963?text=Halo%20UD%20Jaya%20Makmur,%20saya%20tertarik%20dengan%20produk%20garam%20krosok%20Anda%20dan%20ingin%20bertanya%20lebih%20lanjut." class="btn-whatsapp" target="_blank">
-                                        <i class="fab fa-whatsapp"></i> Chat via WhatsApp
-                                    </a>
-                                    <a href="tel:+6287816295963" class="btn-call">
-                                        <i class="fas fa-phone-alt"></i> Telepon Sekarang
-                                    </a>
-                                </div>
+                            <div class="gallery-actions-expanded">
+                                <a href="https://wa.me/6287816295963" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+                                <a href="tel:+6287816295963" class="btn-call"><i class="fas fa-phone-alt"></i> Telepon Sekarang</a>
                             </div>
                         </div>
                     </div>
-<!=========================================================== BU NJU 3184 ===========================================================>
+                </div>
 
-                <!-- GALLERY ITEM - DRIED FISH & SHRIMP PASTE -->
-                <div class="gallery-item" data-category="food" data-type="all">
+                <div class="gallery-item" data-category="food" data-type="all" data-whatsapp="6282327600708">
                     <a href="https://lenterakarya.github.io/umkm-online/" target="_blank" class="gallery-badge seller">Gerai: Bu Nju</a>
                     <div class="gallery-image-container">
                         <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Ikan-kering-kapasan-1kg-70k-sudah-bumbu-siap-goreng.jpeg" alt="Ikan Kering dan Terasi Puger" class="gallery-image lazy" loading="lazy">
@@ -3193,159 +378,48 @@
                             <span class="gallery-code">Kode: BNJ-2025-3184</span>
                             <span class="gallery-seller"><i class="fas fa-store"></i> Bu Nju</span>
                         </div>
-                        <p class="gallery-price">
-                            Rp 4.000 - Rp 80.000
-                        </p>
-                        
-                        <!-- Price Variations -->
+                        <p class="gallery-price">Rp 4.000 - Rp 80.000</p>
                         <div class="price-variations">
-                            <div class="price-variation active" data-price="80000">
-                                <span class="price-variation-name">Terasi Puger 1kg</span>
-                                <span class="price-variation-value">Rp 80.000</span>
-                            </div>
-                            <div class="price-variation" data-price="8000">
-                                <span class="price-variation-name">Terasi Puger 1ons</span>
-                                <span class="price-variation-value">Rp 8.000</span>
-                            </div>
-                            <div class="price-variation" data-price="4000">
-                                <span class="price-variation-name">Terasi Puger ½ons</span>
-                                <span class="price-variation-value">Rp 4.000</span>
-                            </div>
-                            <div class="price-variation" data-price="70000">
-                                <span class="price-variation-name">Ikan Kering (berbumbu)</span>
-                                <span class="price-variation-value">Rp 70.000/kg</span>
-                            </div>
-                            <div class="price-variation" data-price="60000">
-                                <span class="price-variation-name">Ikan Kering (polos)</span>
-                                <span class="price-variation-value">Rp 60.000/kg</span>
-                            </div>
+                            <div class="price-variation active" data-price="80000"><span class="price-variation-name">Terasi Puger 1kg</span><span class="price-variation-value">Rp 80.000</span></div>
+                            <div class="price-variation" data-price="70000"><span class="price-variation-name">Ikan Kering (berbumbu)</span><span class="price-variation-value">Rp 70.000/kg</span></div>
                         </div>
-                        
-                        <!-- Quantity Selector -->
                         <div class="quantity-selector">
                             <span class="quantity-label">Jumlah:</span>
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus">-</button>
-                                <input type="number" class="quantity-input" value="1" min="1">
-                                <button class="quantity-btn plus">+</button>
+                                <button class="quantity-btn minus" aria-label="Kurangi jumlah">-</button>
+                                <input type="number" class="quantity-input" value="1" min="1" aria-label="Jumlah">
+                                <button class="quantity-btn plus" aria-label="Tambah jumlah">+</button>
                             </div>
-                            <div class="unit-selector">
-                                <select class="unit-select">
-                                    <option value="pcs" selected>pcs</option>
-                                    <option value="kg">kg</option>
-                                    <option value="ons">ons</option>
-                                    <option value="pack">pack</option>
-                                </select>
-                            </div>
+                            <div class="unit-selector"><select class="unit-select"><option value="pcs" selected>pcs</option><option value="kg">kg</option></select></div>
                         </div>
-                        
-                        <!-- Total Price -->
-                        <div class="total-price">
-                            <span class="total-price-label">Total Harga:</span>
-                            <span class="total-price-value">Rp 80.000</span>
-                        </div>
-                        
-                        <!-- Action Buttons -->
+                        <div class="total-price"><span class="total-price-label">Total Harga:</span><span class="total-price-value">Rp 80.000</span></div>
                         <div class="gallery-actions">
-                            <button class="btn-detail" data-target="details-BNJ-2025-3184">
-                                <i class="fas fa-chevron-down"></i> Detail Produk
-                            </button>
-                            <button class="btn-order">
-                                <i class="fas fa-shopping-cart"></i> Pesan Sekarang
-                            </button>
-                            <button class="btn-preorder-toggle">
-                                <i class="fas fa-calendar-check"></i> Pre-Order
-                            </button>
+                            <button class="btn-detail" data-target="details-BNJ-2025-3184"><i class="fas fa-chevron-down"></i> Detail Produk</button>
+                            <button class="btn-order"><i class="fas fa-shopping-cart"></i> Pesan Sekarang</button>
                         </div>
-                        
-                        <!-- Pre-order Form -->
-                        <div class="preorder-form">
-                            <div class="preorder-title">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Form Uang Muka (DP)</span>
-                            </div>
-                            <input type="number" class="preorder-input" placeholder="Masukkan nominal DP (minimal 40%)">
-                            <p class="preorder-note">
-                                * Untuk pre-order, harap masukkan nominal uang muka minimal 40% dari total harga. 
-                                Kami akan menghubungi Anda untuk konfirmasi lebih lanjut.
-                            </p>
-                            <button class="btn-preorder">
-                                <i class="fas fa-paper-plane"></i> Kirim Pre-Order
-                            </button>
-                        </div>
-                        
                         <div id="details-BNJ-2025-3184" class="gallery-detail-expanded">
                             <div class="gallery-carousel">
-                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Terasi-puger-1kilo-80k.jpeg" alt="Ikan Kering dan Terasi Puger" class="gallery-main-image lazy" loading="lazy" id="main-image-bnju">
+                                <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Terasi-puger-1kilo-80k.jpeg" alt="Terasi Puger" class="gallery-main-image lazy" loading="lazy" id="main-image-bnju">
                                 <div class="gallery-thumbnails">
                                     <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Ikan-kapasan-1kg-60k-tanpa-bumbu.jpeg" class="thumbnail active lazy" loading="lazy" data-main-image="main-image-bnju">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Terasi-puger-1ons-utuh-8k.jpeg" class="thumbnail lazy" loading="lazy" data-main-image="main-image-bnju">
-                                    <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/produk/bu-nju/Terasi-puger-1ons8k-potongan-12biji.jpeg" class="thumbnail lazy" loading="lazy" data-main-image="main-image-bnju">
                                 </div>
                             </div>
-                            
-                            <p class="gallery-description">
-                                <strong>Bu Nju</strong> menghadirkan produk ikan kering dan terasi Puger berkualitas premium dari Panarukan. Terasi kami diproduksi secara tradisional dengan kualitas terbaik, memiliki aroma khas dan rasa gurih autentik. Ikan kering kami diproses secara higienis dengan dua varian: siap goreng (sudah berbumbu) dan polos (tanpa bumbu). Semua produk dibuat dengan bahan pilihan dan pengolahan yang menjaga cita rasa asli. Cocok untuk berbagai masakan rumahan hingga usaha kuliner.
-                            </p>
-                            
-                            <div class="gallery-specs">
-                                <div class="spec-item">
-                                    <span class="spec-label">Kode Produk:</span>
-                                    <span class="spec-value">BNJ-2025-3184</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Nama UMKM:</span>
-                                    <span class="spec-value">Bu Nju</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Pemilik:</span>
-                                    <span class="spec-value">Riqi</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Alamat:</span>
-                                    <span class="spec-value">Karangsari, Desa Kilensari, Kecamatan Panarukan</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Kontak:</span>
-                                    <span class="spec-value">082327600708 | vaiper.blood22@gmail.com</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Daftar Harga:</span>
-                                    <span class="spec-value">
-                                        • Terasi Puger 1kg: Rp80.000<br>
-                                        • Terasi Puger 1ons: Rp8.000<br>
-                                        • Terasi Puger ½ons: Rp4.000<br>
-                                        • Ikan kering berbumbu: Rp70.000/kg<br>
-                                        • Ikan kering polos: Rp60.000/kg
-                                    </span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Media Sosial:</span>
-                                    <span class="spec-value">TikTok @seesaretadek</span>
-                                </div>
-                                <div class="spec-item">
-                                    <span class="spec-label">Catatan:</span>
-                                    <span class="spec-value">Harga bisa berubah sewaktu-waktu</span>
-                                </div>
+                            <p class="gallery-description"><strong>Bu Nju</strong> menghadirkan produk ikan kering dan terasi Puger berkualitas premium dari Panarukan. Terasi kami memiliki aroma khas dan rasa gurih autentik.</p>
+                             <div class="gallery-specs">
+                                <div class="spec-item"><span class="spec-label">Kode:</span><span class="spec-value">BNJ-2025-3184</span></div>
+                                <div class="spec-item"><span class="spec-label">Gerai:</span><span class="spec-value">Bu Nju</span></div>
                             </div>
-                            
                             <div class="gallery-actions-expanded">
-                                <a href="https://wa.me/6282327600708?text=Halo%20Bu%20Nju,%20saya%20tertarik%20dengan%20produk%20ikan%20kering%20dan%20terasi%20Anda%20dan%20ingin%20bertanya%20lebih%20lanjut." class="btn-whatsapp" target="_blank">
-                                    <i class="fab fa-whatsapp"></i> Chat via WhatsApp
-                                </a>
-                                <a href="tel:+6282327600708" class="btn-call">
-                                    <i class="fas fa-phone-alt"></i> Telepon Sekarang
-                                </a>
+                                <a href="https://wa.me/6282327600708" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+                                <a href="tel:+6282327600708" class="btn-call"><i class="fas fa-phone-alt"></i> Telepon Sekarang</a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>   
         </section>
-
-<!=========================================================== NAMA UMKM TERBARU ===========================================================>
         
-        <!-- Contact Section -->
         <section class="contact" id="contact">
             <h2 class="section-title">Hubungi Kami</h2>
             <div class="contact-container">
@@ -3382,11 +456,10 @@
                 </div>
                 <div class="contact-form">
                     <h3>Kirim Pesan</h3>
-                    <div id="formStatus" class="form-status" style="display: none;"></div>
+                    <div id="formStatus" class="form-status"></div>
                     <form id="contactForm" action="https://formsubmit.co/lenterakaryasitubondo@gmail.com" method="POST">
                         <input type="hidden" name="_captcha" value="false">
-                        <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
-                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_next" value="https://jualankita.com/terimakasih.html"> <input type="hidden" name="_template" value="table">
                         <div class="form-group">
                             <label for="name">Nama Anda</label>
                             <input type="text" id="name" name="name" required>
@@ -3403,11 +476,11 @@
                             <label for="subject">Subjek</label>
                             <select id="subject" name="subject" required>
                                 <option value="" disabled selected>Pilih subjek</option>
-                                <option value="general">Pertanyaan Umum</option>
-                                <option value="order">Pemesanan Produk</option>
-                                <option value="rental">Pertanyaan Sewa</option>
-                                <option value="promo">Layanan Promosi</option>
-                                <option value="other">Lainnya</option>
+                                <option value="Pertanyaan Umum">Pertanyaan Umum</option>
+                                <option value="Pemesanan Produk">Pemesanan Produk</option>
+                                <option value="Pertanyaan Sewa">Pertanyaan Sewa</option>
+                                <option value="Layanan Promosi">Layanan Promosi</option>
+                                <option value="Lainnya">Lainnya</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3421,9 +494,8 @@
                 </div>
             </div>
         </section>
-    </div>
+    </main>
     
-    <!-- Floating Contact Buttons -->
     <div class="contact-bar">
         <a href="https://wa.me/6287865614222" class="contact-btn whatsapp" target="_blank" aria-label="Hubungi via WhatsApp">
             <i class="fab fa-whatsapp"></i>
@@ -3436,7 +508,6 @@
         </button>
     </div>
     
-    <!-- UPDATED FOOTER - MORE PROFESSIONAL AND PREMIUM -->
     <footer>
         <div class="footer-container">
             <div class="footer-col footer-about">
@@ -3444,7 +515,7 @@
                     <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/main/assets/images/logo-jualan-kita.png" alt="Jualan Kita Logo">
                     <span>Jualan Kita</span>
                 </div>
-                <p>Menyediakan produk kerajinan tangan berkualitas tinggi, jasa sewa, dan solusi promosi sejak tahun 2025. Komitmen kami adalah memberikan pengalaman berbelanja online yang menyenangkan dan memuaskan.</p>
+                <p>Menyediakan produk berkualitas, jasa sewa, dan solusi promosi. Komitmen kami adalah memberikan pengalaman terbaik untuk Anda.</p>
             </div>
             
             <div class="footer-col">
@@ -3459,36 +530,29 @@
             
             <div class="footer-col">
                 <h3>Newsletter</h3>
-                <p>Berlangganan newsletter kami untuk mendapatkan update produk terbaru dan penawaran spesial.</p>
+                <p>Dapatkan update produk terbaru dan penawaran spesial dari kami.</p>
                 <form class="newsletter-form">
                     <input type="email" placeholder="Alamat email Anda" required>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-envelope"></i> Berlangganan
-                    </button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-envelope"></i> Berlangganan</button>
                 </form>
-                
                 <div class="payment-methods">
                     <h4>Metode Pembayaran</h4>
                     <div class="payment-icons">
-                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/images/semua-logo-bank-min.png" alt="Payment Methods" class="payment-icon">
+                        <img src="https://raw.githubusercontent.com/LenteraKarya/jualan-kita/refs/heads/main/assets/images/semua-logo-bank-min.png" alt="Metode Pembayaran" class="payment-icon">
                     </div>
                 </div>
             </div>
         </div>
-        
         <div class="copyright">
             &copy; 2025 Jualan Kita. Semua hak dilindungi. | <a href="#">Kebijakan Privasi</a> | <a href="#">Syarat & Ketentuan</a>
         </div>
     </footer>
     
-    <!-- Order Modal -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal" aria-label="Tutup">&times;</span>
             <h2>Pesan Cepat</h2>
-            <form id="quickOrderForm" action="https://formsubmit.co/lenterakaryasitubondo@gmail.com" method="POST">
-                <input type="hidden" name="_subject" value="Pesan Cepat dari Website">
-                <input type="hidden" name="_captcha" value="false">
+            <form id="quickOrderForm">
                 <div class="form-group">
                     <label for="quick-name">Nama Anda</label>
                     <input type="text" id="quick-name" name="name" required>
@@ -3505,909 +569,20 @@
                     <label for="quick-message">Detail Tambahan</label>
                     <textarea id="quick-message" name="message"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane"></i> Kirim Permintaan
-                </button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim Permintaan</button>
             </form>
         </div>
     </div>
     
-    <!-- Search Modal -->
-    <div class="search-modal" id="searchModal">
-        <div class="search-modal-content">
-            <span class="close-search-modal">&times;</span>
-            <input type="text" class="search-modal-input" placeholder="Cari produk atau layanan..." id="searchModalInput">
-            <div class="search-results" id="searchResults">
-                <!-- Results will be populated here by JavaScript -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Image Zoom Modal -->
     <div class="image-modal" id="imageModal">
         <div class="image-modal-content">
-            <span class="close-image-modal">&times;</span>
+            <span class="close-image-modal" aria-label="Tutup">&times;</span>
             <img id="zoomedImage" src="" alt="Zoomed Image">
         </div>
     </div>
     
-    <!-- Audio Element for Button Sounds -->
     <audio id="buttonSound" src="https://github.com/LenteraKarya/Lentera-Karya/blob/main/assets/audio/audiotombol.mp3?raw=true"></audio>
     
-    <script>
-        // Loading Screen
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.querySelector('.loading-screen').classList.add('hidden');
-            }, 1200);
-            
-            // Try to play background music automatically
-            tryPlayMusic();
-        });
-        
-        // Background Music Control
-        const bgMusic = document.getElementById('bgMusic');
-        let isMusicPlaying = false;
-        
-        // Try to play music (will be muted until user interacts)
-        function tryPlayMusic() {
-            bgMusic.volume = 0.3;
-            const playPromise = bgMusic.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    isMusicPlaying = true;
-                })
-                .catch(error => {
-                    isMusicPlaying = false;
-                    // Music will play after user interaction
-                    document.addEventListener('click', function() {
-                        if (!isMusicPlaying) {
-                            bgMusic.play().then(_ => {
-                                isMusicPlaying = true;
-                            });
-                        }
-                    }, { once: true });
-                });
-            }
-        }
-        
-        // Mobile Menu Toggle
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const navLinks = document.getElementById('navLinks');
-        
-        mobileMenuToggle.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-            this.innerHTML = navLinks.classList.contains('active') ? 
-                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-            playButtonSound();
-        });
-        
-        // Search Toggle for Mobile
-        const searchToggle = document.getElementById('searchToggle');
-        const navSearch = document.getElementById('navSearch');
-        
-        searchToggle.addEventListener('click', function() {
-            navSearch.classList.toggle('active');
-            playButtonSound();
-        });
-        
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            });
-        });
-        
-        // Inisialisasi Partikel
-        function initParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 40;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                // Random size between 2px and 8px
-                const size = Math.random() * 6 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                // Random position
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                
-                // Random animation duration between 15s and 30s
-                const duration = Math.random() * 15 + 15;
-                particle.style.animationDuration = `${duration}s`;
-                
-                // Random delay
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                
-                // Random opacity
-                particle.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        // Efek Scroll Navbar
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-        
-        // Animasi Scroll untuk Gallery Items
-        function animateOnScroll() {
-            const galleryItems = document.querySelectorAll('.gallery-item');
-            const windowHeight = window.innerHeight;
-            const scrollPosition = window.scrollY + windowHeight;
-            
-            galleryItems.forEach((item, index) => {
-                const itemPosition = item.offsetTop;
-                
-                if (scrollPosition > itemPosition + 100) {
-                    item.style.animationDelay = `${index * 0.1}s`;
-                    item.style.animationName = 'fadeInUp';
-                }
-            });
-        }
-        
-        // Lazy Load Images
-        function lazyLoadImages() {
-            const lazyImages = document.querySelectorAll('.lazy');
-            
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src || img.src;
-                        img.classList.add('loaded');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            
-            lazyImages.forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-        
-        // Jalankan saat halaman dimuat
-        window.addEventListener('load', function() {
-            initParticles();
-            animateOnScroll();
-            lazyLoadImages();
-            
-            // Animasi header elements
-            setTimeout(() => {
-                document.querySelector('.tagline').style.animation = 'fadeInUp 1s ease-out 0.3s forwards';
-                document.querySelector('.header-search').style.animation = 'fadeInUp 1s ease-out 0.5s forwards';
-                document.querySelector('.header-buttons').style.animation = 'fadeInUp 1s ease-out 0.6s forwards';
-            }, 300);
-        });
-        
-        // Jalankan saat scroll
-        window.addEventListener('scroll', animateOnScroll);
-        
-        // Toggle description visibility
-        document.querySelectorAll('.btn-detail').forEach(button => {
-            button.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const expandedContent = document.getElementById(targetId);
-                expandedContent.classList.toggle('active');
-                
-                // Update button text and icon
-                if (expandedContent.classList.contains('active')) {
-                    this.innerHTML = '<i class="fas fa-chevron-up"></i> Sembunyikan Detail';
-                    this.classList.add('active');
-                } else {
-                    this.innerHTML = '<i class="fas fa-chevron-down"></i> Detail Produk';
-                    this.classList.remove('active');
-                }
-                
-                // Scroll to expanded content if opened
-                if (expandedContent.classList.contains('active')) {
-                    expandedContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-                
-                // Play button sound
-                playButtonSound();
-            });
-        });
-        
-        // Change main image in gallery carousel
-        function changeMainImage(mainImageId, thumbnail) {
-            const mainImage = document.getElementById(mainImageId);
-            mainImage.src = thumbnail.src;
-            mainImage.alt = thumbnail.alt;
-            
-            // Update active thumbnail
-            const thumbnails = thumbnail.parentElement.querySelectorAll('.thumbnail');
-            thumbnails.forEach(t => t.classList.remove('active'));
-            thumbnail.classList.add('active');
-            
-            playButtonSound();
-        }
-        
-        // Zoom image functionality for gallery images
-        document.querySelectorAll('.gallery-main-image, .thumbnail').forEach(img => {
-            img.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent triggering parent click events
-                
-                const zoomedImage = document.getElementById('zoomedImage');
-                zoomedImage.src = this.src;
-                zoomedImage.alt = this.alt;
-                
-                const imageModal = document.getElementById('imageModal');
-                imageModal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-                
-                playButtonSound();
-            });
-        });
-        
-        // Close image modal
-        document.querySelector('.close-image-modal').addEventListener('click', function() {
-            document.getElementById('imageModal').classList.remove('show');
-            document.body.style.overflow = '';
-        });
-        
-        // Close modal when clicking outside the content
-        window.addEventListener('click', function(e) {
-            if (e.target === document.getElementById('imageModal')) {
-                document.getElementById('imageModal').classList.remove('show');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // Price variation selection
-        document.querySelectorAll('.price-variation').forEach(variation => {
-            variation.addEventListener('click', function() {
-                // Remove active class from all variations
-                const variations = this.parentElement.querySelectorAll('.price-variation');
-                variations.forEach(v => v.classList.remove('active'));
-                
-                // Add active class to clicked variation
-                this.classList.add('active');
-                
-                // Update total price
-                updateTotalPrice(this.closest('.gallery-details'));
-                
-                playButtonSound();
-            });
-        });
-        
-        // Quantity controls
-        document.querySelectorAll('.quantity-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const input = this.parentElement.querySelector('.quantity-input');
-                let value = parseInt(input.value);
-                
-                if (this.classList.contains('plus')) {
-                    value++;
-                } else if (this.classList.contains('minus') && value > 1) {
-                    value--;
-                }
-                
-                input.value = value;
-                
-                // Update total price
-                updateTotalPrice(this.closest('.gallery-details'));
-                
-                playButtonSound();
-            });
-        });
-        
-        // Quantity input change
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            input.addEventListener('change', function() {
-                if (this.value < 1) this.value = 1;
-                
-                // Update total price
-                updateTotalPrice(this.closest('.gallery-details'));
-            });
-        });
-        
-        // Unit selector change
-        document.querySelectorAll('.unit-select').forEach(select => {
-            select.addEventListener('change', function() {
-                // Update price based on selected unit
-                const detailsContainer = this.closest('.gallery-details');
-                const variations = detailsContainer.querySelectorAll('.price-variation');
-                
-                // Find the variation that matches the selected unit
-                let selectedVariation = null;
-                variations.forEach(variation => {
-                    const variationName = variation.querySelector('.price-variation-name').textContent.toLowerCase();
-                    const selectedUnit = this.value.toLowerCase();
-                    
-                    if (variationName.includes(selectedUnit)) {
-                        selectedVariation = variation;
-                    }
-                });
-                
-                // If matching variation found, select it
-                if (selectedVariation) {
-                    variations.forEach(v => v.classList.remove('active'));
-                    selectedVariation.classList.add('active');
-                }
-                
-                // Update total price
-                updateTotalPrice(detailsContainer);
-                
-                playButtonSound();
-            });
-        });
-        
-        // Function to update total price
-        function updateTotalPrice(detailsContainer) {
-            const activeVariation = detailsContainer.querySelector('.price-variation.active');
-            const quantityInput = detailsContainer.querySelector('.quantity-input');
-            
-            if (activeVariation && quantityInput) {
-                const price = parseFloat(activeVariation.getAttribute('data-price'));
-                const quantity = parseInt(quantityInput.value);
-                const totalPrice = price * quantity;
-                
-                // Format price with thousand separators
-                const formattedPrice = new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0
-                }).format(totalPrice).replace('IDR', 'Rp');
-                
-                // Update total price display
-                const totalPriceElement = detailsContainer.querySelector('.total-price-value');
-                if (totalPriceElement) {
-                    totalPriceElement.textContent = formattedPrice;
-                }
-            }
-        }
-        
-        // Toggle pre-order form
-        document.querySelectorAll('.btn-preorder-toggle').forEach(button => {
-            button.addEventListener('click', function() {
-                const preorderForm = this.closest('.gallery-details').querySelector('.preorder-form');
-                preorderForm.classList.toggle('active');
-                
-                // Update button text
-                if (preorderForm.classList.contains('active')) {
-                    this.innerHTML = '<i class="fas fa-times"></i> Batal Pre-Order';
-                    this.classList.add('active');
-                } else {
-                    this.innerHTML = '<i class="fas fa-calendar-check"></i> Pre-Order';
-                    this.classList.remove('active');
-                }
-                
-                playButtonSound();
-            });
-        });
-        
-        // Submit pre-order
-        document.querySelectorAll('.btn-preorder').forEach(button => {
-            button.addEventListener('click', function() {
-                const preorderForm = this.closest('.preorder-form');
-                const dpInput = preorderForm.querySelector('.preorder-input');
-                const dpValue = parseFloat(dpInput.value);
-                
-                // Validate DP input
-                if (isNaN(dpValue) || dpValue <= 0) {
-                    alert('Mohon masukkan nominal DP yang valid');
-                    return;
-                }
-                
-                const detailsContainer = preorderForm.closest('.gallery-details');
-                const productTitle = detailsContainer.querySelector('.gallery-title').textContent;
-                const productCode = detailsContainer.querySelector('.gallery-code').textContent;
-                const totalPriceText = detailsContainer.querySelector('.total-price-value').textContent;
-                const totalPrice = parseFloat(totalPriceText.replace(/[^\d]/g, ''));
-                
-                // Calculate DP percentage
-                const dpPercentage = Math.round((dpValue / totalPrice) * 100);
-                
-                // Validate minimum DP (30%)
-                if (dpPercentage < 30) {
-                    alert(`Uang muka minimal 30% dari total harga (Rp ${Math.round(totalPrice * 0.3)})`);
-                    return;
-                }
-                
-                // Get WhatsApp number from seller link
-                let whatsappNumber = '6287865614222'; // Default
-                const sellerLink = detailsContainer.closest('.gallery-item').querySelector('.gallery-badge.seller');
-                if (sellerLink) {
-                    const href = sellerLink.getAttribute('href');
-                    const match = href.match(/wa\.me\/(\d+)/);
-                    if (match) {
-                        whatsappNumber = match[1];
-                    }
-                }
-                
-                // Prepare WhatsApp message
-                const message = `Halo, saya ingin melakukan pre-order produk:\n\n*${productTitle}* (${productCode})\n\nTotal Harga: ${totalPriceText}\nUang Muka: Rp ${dpValue.toLocaleString('id-ID')} (${dpPercentage}%)\n\nMohon info lebih lanjut mengenai cara pembayaran dan pengiriman. Terima kasih.`;
-                const encodedMessage = encodeURIComponent(message);
-                
-                // Open WhatsApp
-                window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-                
-                // Reset form
-                dpInput.value = '';
-                preorderForm.classList.remove('active');
-                this.closest('.gallery-details').querySelector('.btn-preorder-toggle').innerHTML = '<i class="fas fa-calendar-check"></i> Pre-Order';
-                this.closest('.gallery-details').querySelector('.btn-preorder-toggle').classList.remove('active');
-                
-                playButtonSound();
-            });
-        });
-        
-        // Order button functionality
-        document.querySelectorAll('.btn-order').forEach(button => {
-            button.addEventListener('click', function() {
-                const detailsContainer = this.closest('.gallery-details');
-                const productTitle = detailsContainer.querySelector('.gallery-title').textContent;
-                const productCode = detailsContainer.querySelector('.gallery-code').textContent;
-                const totalPrice = detailsContainer.querySelector('.total-price-value').textContent;
-                const quantity = detailsContainer.querySelector('.quantity-input').value;
-                const unit = detailsContainer.querySelector('.unit-select').value;
-                
-                // Get WhatsApp number from seller link
-                let whatsappNumber = '6287865614222'; // Default
-                const sellerLink = detailsContainer.closest('.gallery-item').querySelector('.gallery-badge.seller');
-                if (sellerLink) {
-                    const href = sellerLink.getAttribute('href');
-                    const match = href.match(/wa\.me\/(\d+)/);
-                    if (match) {
-                        whatsappNumber = match[1];
-                    }
-                }
-                
-                // Prepare WhatsApp message
-                const message = `Halo, saya ingin memesan produk:\n\n*${productTitle}* (${productCode})\n\nJumlah: ${quantity} ${unit}\nTotal Harga: ${totalPrice}\n\nMohon info lebih lanjut mengenai cara pembayaran dan pengiriman. Terima kasih.`;
-                const encodedMessage = encodeURIComponent(message);
-                
-                // Open WhatsApp
-                window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-                
-                playButtonSound();
-            });
-        });
-        
-        // Quick order modal
-        const quickOrderBtn = document.getElementById('quick-order');
-        const orderModal = document.getElementById('orderModal');
-        const closeModal = document.querySelector('.close-modal');
-        
-        quickOrderBtn.addEventListener('click', function() {
-            orderModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            playButtonSound();
-        });
-        
-        closeModal.addEventListener('click', function() {
-            orderModal.classList.remove('show');
-            document.body.style.overflow = '';
-        });
-        
-        window.addEventListener('click', function(e) {
-            if (e.target === orderModal) {
-                orderModal.classList.remove('show');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // Quick order form submission
-        document.getElementById('quickOrderForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-            
-            // Kirim ke FormSubmit.co (email)
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Kirim ke WhatsApp juga
-                    const name = form.querySelector('#quick-name').value;
-                    const phone = form.querySelector('#quick-phone').value;
-                    const product = form.querySelector('#quick-item').value;
-                    const message = form.querySelector('#quick-message').value || 'Tidak ada pesan tambahan';
-                    
-                    const whatsappMessage = `Pesan Cepat dari Website:\n\nNama: ${name}\nTelepon: ${phone}\nProduk: ${product}\nPesan: ${message}`;
-                    const encodedWhatsappMessage = encodeURIComponent(whatsappMessage);
-                    
-                    window.open(`https://wa.me/6287865614222?text=${encodedWhatsappMessage}`, '_blank');
-                    
-                    // Reset form
-                    form.reset();
-                    orderModal.classList.remove('show');
-                    document.body.style.overflow = '';
-                    
-                    // Tampilkan notifikasi sukses
-                    const formStatus = document.getElementById('formStatus');
-                    formStatus.textContent = 'Permintaan Anda telah terkirim. Kami akan segera menghubungi Anda.';
-                    formStatus.className = 'form-status success';
-                    formStatus.style.display = 'block';
-                    
-                    // Scroll ke form status
-                    formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    throw new Error('Gagal mengirim pesan');
-                }
-            })
-            .catch(error => {
-                // Jika gagal ke email, coba hanya ke WhatsApp
-                const name = form.querySelector('#quick-name').value;
-                const phone = form.querySelector('#quick-phone').value;
-                const product = form.querySelector('#quick-item').value;
-                const message = form.querySelector('#quick-message').value || 'Tidak ada pesan tambahan';
-                
-                const whatsappMessage = `Pesan Cepat dari Website:\n\nNama: ${name}\nTelepon: ${phone}\nProduk: ${product}\nPesan: ${message}`;
-                const encodedWhatsappMessage = encodeURIComponent(whatsappMessage);
-                
-                window.open(`https://wa.me/6287865614222?text=${encodedWhatsappMessage}`, '_blank');
-                
-                // Reset form
-                form.reset();
-                orderModal.classList.remove('show');
-                document.body.style.overflow = '';
-                
-                // Tampilkan notifikasi sukses
-                const formStatus = document.getElementById('formStatus');
-                formStatus.textContent = 'Permintaan Anda telah dikirim melalui WhatsApp. Kami akan segera menghubungi Anda.';
-                formStatus.className = 'form-status success';
-                formStatus.style.display = 'block';
-                
-                // Scroll ke form status
-                formStatus.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            })
-            .finally(() => {
-                // Reset button state
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
-            });
-            
-            playButtonSound();
-        });
-        
-        // Category filtering
-        document.querySelectorAll('.category-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                // Update active button
-                document.querySelectorAll('.category-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                this.classList.add('active');
-                
-                const type = this.dataset.type;
-                const galleryItems = document.querySelectorAll('.gallery-item');
-                
-                galleryItems.forEach(item => {
-                    if (type === 'all' || item.dataset.type === type) {
-                        item.style.display = 'block';
-                        item.style.animation = 'fadeInUp 0.6s forwards';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                
-                playButtonSound();
-            });
-        });
-
-        // Product category filtering
-        document.querySelectorAll('.product-category-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                // Update active button
-                document.querySelectorAll('.product-category-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                this.classList.add('active');
-                
-                const category = this.dataset.category;
-                const galleryItems = document.querySelectorAll('.gallery-item');
-                
-                galleryItems.forEach(item => {
-                    if (category === 'all' || item.dataset.category === category) {
-                        item.style.display = 'block';
-                        item.style.animation = 'fadeInUp 0.6s forwards';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                
-                playButtonSound();
-            });
-        });
-        
-        // Contact form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            const formStatus = document.getElementById('formStatus');
-            const submitBtn = document.getElementById('submitBtn');
-            const originalBtnText = submitBtn.innerHTML;
-            
-            // Reset status
-            formStatus.style.display = 'none';
-            
-            // Validasi form
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value.trim();
-            
-            if (!name || !email || !phone || !subject || !message) {
-                formStatus.textContent = 'Mohon lengkapi semua field yang wajib diisi';
-                formStatus.className = 'form-status error';
-                formStatus.style.display = 'block';
-                return;
-            }
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-            
-            // Kirim ke FormSubmit.co (email)
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Kirim ke WhatsApp juga
-                    const whatsappMessage = `*Pesan dari Website Jualan Kita*:\n\nNama: ${name}\nEmail: ${email}\nTelepon: ${phone}\nSubjek: ${document.getElementById('subject').options[document.getElementById('subject').selectedIndex].text}\nPesan: ${message}`;
-                    const encodedWhatsappMessage = encodeURIComponent(whatsappMessage);
-                    
-                    window.open(`https://wa.me/6287865614222?text=${encodedWhatsappMessage}`, '_blank');
-                    
-                    // Tampilkan pesan sukses
-                    formStatus.textContent = 'Terima kasih! Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.';
-                    formStatus.className = 'form-status success';
-                    formStatus.style.display = 'block';
-                    
-                    // Reset form
-                    form.reset();
-                } else {
-                    throw new Error('Gagal mengirim ke email');
-                }
-            })
-            .catch(error => {
-                // Jika gagal ke email, coba hanya ke WhatsApp
-                const whatsappMessage = `*Pesan dari Website Jualan Kita*:\n\nNama: ${name}\nEmail: ${email}\nTelepon: ${phone}\nSubjek: ${document.getElementById('subject').options[document.getElementById('subject').selectedIndex].text}\nPesan: ${message}`;
-                const encodedWhatsappMessage = encodeURIComponent(whatsappMessage);
-                
-                window.open(`https://wa.me/6287865614222?text=${encodedWhatsappMessage}`, '_blank');
-                
-                // Tampilkan pesan sukses
-                formStatus.textContent = 'Pesan Anda telah dikirim melalui WhatsApp. Kami akan segera menghubungi Anda.';
-                formStatus.className = 'form-status success';
-                formStatus.style.display = 'block';
-                
-                // Reset form
-                form.reset();
-            })
-            .finally(() => {
-                // Reset button state
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
-            });
-            
-            playButtonSound();
-        });
-        
-        // Newsletter form submission
-        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.querySelector('input').value;
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-            
-            // Kirim ke FormSubmit.co (email)
-            fetch('https://formsubmit.co/ajax/lenterakaryasitubondo@gmail.com', {
-                method: 'POST',
-                body: JSON.stringify({
-                    email: email,
-                    _subject: 'Berlangganan Newsletter'
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(`Terima kasih telah berlangganan dengan ${email}!`);
-                this.reset();
-            })
-            .catch(error => {
-                alert('Terjadi kesalahan. Silakan coba lagi nanti.');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
-            });
-            
-            playButtonSound();
-        });
-        
-        // Search functionality
-        const searchModal = document.getElementById('searchModal');
-        const searchModalInput = document.getElementById('searchModalInput');
-        const searchResults = document.getElementById('searchResults');
-        const closeSearchModal = document.querySelector('.close-search-modal');
-        
-        // Open search modal from header search
-        document.getElementById('headerSearchBtn').addEventListener('click', function() {
-            const query = document.getElementById('headerSearchInput').value.trim();
-            if (query) {
-                searchModalInput.value = query;
-                performSearch(query);
-            }
-            searchModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            playButtonSound();
-        });
-        
-        // Open search modal from nav search
-        document.querySelector('.nav-search button').addEventListener('click', function() {
-            const query = document.querySelector('.nav-search input').value.trim();
-            if (query) {
-                searchModalInput.value = query;
-                performSearch(query);
-            }
-            searchModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            playButtonSound();
-        });
-        
-        // Close search modal
-        closeSearchModal.addEventListener('click', function() {
-            searchModal.classList.remove('show');
-            document.body.style.overflow = '';
-        });
-        
-        // Search when pressing enter in search modal
-        searchModalInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch(this.value.trim());
-            }
-        });
-        
-        // Perform search function
-        function performSearch(query) {
-            if (!query) {
-                searchResults.innerHTML = '<div class="no-results">Masukkan kata kunci pencarian</div>';
-                return;
-            }
-            
-            // Simulate search results (in a real app, this would be an API call)
-            const galleryItems = document.querySelectorAll('.gallery-item');
-            const services = document.querySelectorAll('.service-card');
-            let resultsFound = false;
-            
-            searchResults.innerHTML = '';
-            
-            // Search in gallery items
-            galleryItems.forEach(item => {
-                const title = item.querySelector('.gallery-title').textContent.toLowerCase();
-                const description = item.querySelector('.gallery-description') ? item.querySelector('.gallery-description').textContent.toLowerCase() : '';
-                const category = item.dataset.category;
-                const code = item.querySelector('.gallery-code').textContent.toLowerCase();
-                const seller = item.querySelector('.gallery-seller').textContent.toLowerCase();
-                
-                if (title.includes(query.toLowerCase()) || 
-                    description.includes(query.toLowerCase()) || 
-                    code.includes(query.toLowerCase()) ||
-                    seller.includes(query.toLowerCase())) {
-                    resultsFound = true;
-                    const price = item.querySelector('.gallery-price').textContent;
-                    
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'search-result-item';
-                    resultItem.innerHTML = `
-                        <h3>${item.querySelector('.gallery-title').textContent}</h3>
-                        <p>${description.substring(0, 150)}...</p>
-                        <span class="price">${price}</span>
-                        <span class="category">${category === 'ojek' ? 'Ojek Online' : 
-                                           category === 'rental' ? 'Sewa' : 
-                                           category === 'promo' ? 'Promosi' : ''}</span>
-                    `;
-                    
-                    resultItem.addEventListener('click', function() {
-                        // Scroll to the item
-                        item.scrollIntoView({ behavior: 'smooth' });
-                        // Close search modal
-                        searchModal.classList.remove('show');
-                        document.body.style.overflow = '';
-                        // Expand the item details if collapsed
-                        const toggleBtn = item.querySelector('.btn-detail');
-                        if (toggleBtn && !toggleBtn.classList.contains('active')) {
-                            toggleBtn.click();
-                        }
-                    });
-                    
-                    searchResults.appendChild(resultItem);
-                }
-            });
-            
-            // Search in services
-            services.forEach(service => {
-                const title = service.querySelector('.service-title').textContent.toLowerCase();
-                const description = service.querySelector('p').textContent.toLowerCase();
-                
-                if (title.includes(query.toLowerCase()) || description.includes(query.toLowerCase())) {
-                    resultsFound = true;
-                    
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'search-result-item';
-                    resultItem.innerHTML = `
-                        <h3>${service.querySelector('.service-title').textContent}</h3>
-                        <p>${description.substring(0, 150)}...</p>
-                        <span class="category">Layanan</span>
-                    `;
-                    
-                    resultItem.addEventListener('click', function() {
-                        // Scroll to services section
-                        document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
-                        // Close search modal
-                        searchModal.classList.remove('show');
-                        document.body.style.overflow = '';
-                    });
-                    
-                    searchResults.appendChild(resultItem);
-                }
-            });
-            
-            if (!resultsFound) {
-                searchResults.innerHTML = '<div class="no-results">Tidak ditemukan hasil untuk "' + query + '"</div>';
-            }
-        }
-        
-        // Play button sound function
-        function playButtonSound() {
-            const sound = document.getElementById('buttonSound');
-            sound.currentTime = 0; // Putar ulang dari awal
-            sound.play().catch(e => console.log("Audio tidak dapat diputar:", e));
-        }
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                if (this.getAttribute('href') !== '#') {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        window.scrollTo({
-                            top: target.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
