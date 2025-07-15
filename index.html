@@ -15,6 +15,7 @@
             --danger: #e74c3c;
             --success: #2ecc71;
             --warning: #f39c12;
+            --info: #3498db;
         }
         
         * {
@@ -129,15 +130,30 @@
             letter-spacing: 1px;
         }
         
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
         .btn:hover {
             background: #e05a00;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
+        .btn-outline:hover {
+            background: rgba(255, 107, 0, 0.1);
+        }
+        
         .btn-block {
             display: block;
             width: 100%;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
         }
         
         .price-display {
@@ -205,6 +221,12 @@
             margin-top: 5px;
         }
         
+        .info-message {
+            color: var(--info);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
         footer {
             text-align: center;
             padding: 20px;
@@ -257,6 +279,47 @@
             font-weight: 600;
         }
         
+        .map-container {
+            height: 200px;
+            background-color: #eee;
+            border-radius: 8px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .map-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .coordinate-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .coordinate-group {
+            position: relative;
+        }
+        
+        .coordinate-group label {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -272,6 +335,10 @@
             
             .price-value {
                 font-size: 2rem;
+            }
+            
+            .coordinate-inputs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -309,6 +376,52 @@
                     </div>
                     <input type="text" id="alamatPenjemputan" name="alamatPenjemputan" placeholder="Alamat lengkap penjemputan" required>
                     <div id="locationError" class="error-message hidden"></div>
+                    
+                    <div class="coordinate-inputs hidden" id="pickupCoordsGroup">
+                        <div class="coordinate-group">
+                            <label for="pickupLat">Latitude Penjemputan</label>
+                            <input type="text" id="pickupLat" name="pickupLat" placeholder="Contoh: -7.70623" readonly>
+                        </div>
+                        <div class="coordinate-group">
+                            <label for="pickupLng">Longitude Penjemputan</label>
+                            <input type="text" id="pickupLng" name="pickupLng" placeholder="Contoh: 113.98348" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tujuan">Alamat Lengkap Tujuan</label>
+                    <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat lengkap tujuan" required>
+                    
+                    <div class="btn-group" style="margin-top: 10px;">
+                        <button type="button" id="manualLocationBtn" class="btn btn-outline">
+                            <i class="fas fa-map-pin"></i> Masukkan Koordinat Manual
+                        </button>
+                        <button type="button" id="calculateDistanceBtn" class="btn hidden">
+                            <i class="fas fa-calculator"></i> Hitung Jarak
+                        </button>
+                    </div>
+                    
+                    <div class="coordinate-inputs hidden" id="destinationCoordsGroup">
+                        <div class="coordinate-group">
+                            <label for="destLat">Latitude Tujuan</label>
+                            <input type="text" id="destLat" name="destLat" placeholder="Contoh: -7.70623">
+                        </div>
+                        <div class="coordinate-group">
+                            <label for="destLng">Longitude Tujuan</label>
+                            <input type="text" id="destLng" name="destLng" placeholder="Contoh: 113.98348">
+                        </div>
+                    </div>
+                    
+                    <div id="distanceResult" class="hidden">
+                        <div class="location-info">
+                            <i class="fas fa-route"></i> 
+                            <span id="distanceText">Perkiraan jarak: 0 km</span>
+                        </div>
+                        <div class="info-message">
+                            <i class="fas fa-info-circle"></i> Jarak ini adalah perkiraan garis lurus antara dua titik
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -321,18 +434,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="tujuan">Alamat Lengkap Tujuan</label>
-                    <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat lengkap tujuan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="jarak">Perkiraan Jarak Tempuh (km)</label>
+                    <label>Perkiraan Jarak Tempuh</label>
                     <div class="distance-input">
                         <input type="number" id="jarak" name="jarak" placeholder="Masukkan jarak dalam kilometer" min="1" max="100" required>
                         <span>kilometer</span>
                     </div>
                     <div id="jarakInfo" class="warning-message">
-                        <i class="fas fa-info-circle"></i> Perkiraan jarak bisa ditanyakan ke driver
+                        <i class="fas fa-info-circle"></i> Jika tidak yakin, gunakan tombol "Hitung Jarak" di atas
                     </div>
                 </div>
                 
@@ -398,9 +506,15 @@
         // Elemen DOM
         const orderForm = document.getElementById('orderForm');
         const getLocationBtn = document.getElementById('getLocationBtn');
+        const manualLocationBtn = document.getElementById('manualLocationBtn');
+        const calculateDistanceBtn = document.getElementById('calculateDistanceBtn');
         const locationStatus = document.getElementById('locationStatus');
         const locationText = document.getElementById('locationText');
         const locationError = document.getElementById('locationError');
+        const pickupCoordsGroup = document.getElementById('pickupCoordsGroup');
+        const destinationCoordsGroup = document.getElementById('destinationCoordsGroup');
+        const distanceResult = document.getElementById('distanceResult');
+        const distanceText = document.getElementById('distanceText');
         const priceResult = document.getElementById('priceResult');
         const totalPriceElement = document.getElementById('totalPrice');
         const loadingIndicator = document.getElementById('loadingIndicator');
@@ -412,14 +526,18 @@
         const distanceValueElement = document.getElementById('distanceValue');
         const passengerCountElement = document.getElementById('passengerCount');
         const finalPriceElement = document.getElementById('finalPrice');
+        const jarakInput = document.getElementById('jarak');
         
         // Variabel state
         let isFakeGPS = false;
+        let pickupCoords = null;
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
             // Event listeners
             getLocationBtn.addEventListener('click', getCurrentLocation);
+            manualLocationBtn.addEventListener('click', toggleManualCoordinates);
+            calculateDistanceBtn.addEventListener('click', calculateDistanceBetweenPoints);
             orderForm.addEventListener('submit', calculatePrice);
             confirmOrderBtn.addEventListener('click', confirmOrder);
             newOrderBtn.addEventListener('click', resetForm);
@@ -447,8 +565,24 @@
                             isFakeGPS = false;
                             locationText.textContent = 'Lokasi Anda telah ditemukan';
                             
+                            // Simpan koordinat penjemputan
+                            pickupCoords = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            
+                            // Tampilkan koordinat
+                            document.getElementById('pickupLat').value = pickupCoords.lat.toFixed(6);
+                            document.getElementById('pickupLng').value = pickupCoords.lng.toFixed(6);
+                            pickupCoordsGroup.classList.remove('hidden');
+                            
                             // Isi otomatis alamat penjemputan
                             document.getElementById('alamatPenjemputan').value = 'Lokasi Anda saat ini';
+                            
+                            // Aktifkan tombol hitung jarak jika koordinat tujuan sudah ada
+                            if (document.getElementById('destLat').value && document.getElementById('destLng').value) {
+                                calculateDistanceBtn.classList.remove('hidden');
+                            }
                         }, 
                         error => {
                             handleLocationError(error);
@@ -469,6 +603,75 @@
                 locationError.classList.remove('hidden');
                 locationText.textContent = 'Browser tidak mendukung';
             }
+        }
+        
+        // Fungsi untuk toggle input koordinat manual
+        function toggleManualCoordinates() {
+            if (destinationCoordsGroup.classList.contains('hidden')) {
+                destinationCoordsGroup.classList.remove('hidden');
+                manualLocationBtn.innerHTML = '<i class="fas fa-times"></i> Batal Input Manual';
+                
+                // Jika koordinat penjemputan sudah ada, aktifkan tombol hitung jarak
+                if (pickupCoords) {
+                    calculateDistanceBtn.classList.remove('hidden');
+                }
+            } else {
+                destinationCoordsGroup.classList.add('hidden');
+                manualLocationBtn.innerHTML = '<i class="fas fa-map-pin"></i> Masukkan Koordinat Manual';
+                calculateDistanceBtn.classList.add('hidden');
+                distanceResult.classList.add('hidden');
+            }
+        }
+        
+        // Fungsi untuk menghitung jarak antara dua titik
+        function calculateDistanceBetweenPoints() {
+            const destLat = parseFloat(document.getElementById('destLat').value);
+            const destLng = parseFloat(document.getElementById('destLng').value);
+            
+            if (isNaN(destLat) || isNaN(destLng)) {
+                alert('Harap masukkan koordinat tujuan yang valid!');
+                return;
+            }
+            
+            if (!pickupCoords) {
+                alert('Lokasi penjemputan belum ditentukan!');
+                return;
+            }
+            
+            // Hitung jarak menggunakan formula Haversine
+            const distance = calculateHaversineDistance(
+                pickupCoords.lat, pickupCoords.lng,
+                destLat, destLng
+            );
+            
+            // Bulatkan ke 1 desimal dan konversi km
+            const distanceKm = Math.round(distance / 1000 * 10) / 10;
+            
+            // Tampilkan hasil
+            distanceText.textContent = `Perkiraan jarak: ${distanceKm} km`;
+            distanceResult.classList.remove('hidden');
+            
+            // Isi otomatis input jarak
+            jarakInput.value = distanceKm;
+            
+            // Scroll ke input jarak
+            jarakInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Fungsi untuk menghitung jarak dengan formula Haversine
+        function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Radius bumi dalam meter
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+            
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            return R * c; // Jarak dalam meter
         }
         
         // Fungsi untuk mendeteksi Fake GPS
@@ -494,7 +697,7 @@
                 });
                 
                 // Bandingkan posisi pertama dan kedua
-                const distance = calculateDistance(
+                const distance = calculateHaversineDistance(
                     position.coords.latitude, 
                     position.coords.longitude,
                     highAccPosition.coords.latitude,
@@ -633,25 +836,18 @@
             successMessage.classList.add('hidden');
             priceResult.classList.add('hidden');
             locationStatus.classList.add('hidden');
+            pickupCoordsGroup.classList.add('hidden');
+            destinationCoordsGroup.classList.add('hidden');
+            distanceResult.classList.add('hidden');
+            calculateDistanceBtn.classList.add('hidden');
+            manualLocationBtn.innerHTML = '<i class="fas fa-map-pin"></i> Masukkan Koordinat Manual';
+            
+            // Reset state
+            pickupCoords = null;
+            isFakeGPS = false;
             
             // Scroll ke atas
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        // Fungsi untuk menghitung jarak (tidak digunakan, hanya untuk deteksi fake GPS)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Radius bumi dalam meter
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lon2-lon1) * Math.PI/180;
-            
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            
-            return R * c;
         }
     </script>
 </body>
