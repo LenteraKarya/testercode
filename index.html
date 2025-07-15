@@ -100,7 +100,7 @@
             font-weight: 500;
         }
         
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -109,7 +109,7 @@
             transition: all 0.3s;
         }
         
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
@@ -130,15 +130,30 @@
             letter-spacing: 1px;
         }
         
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
         .btn:hover {
             background: #e05a00;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
+        .btn-outline:hover {
+            background: rgba(255, 107, 0, 0.1);
+        }
+        
         .btn-block {
             display: block;
             width: 100%;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
         }
         
         .price-display {
@@ -187,6 +202,47 @@
             margin-top: 5px;
         }
         
+        .warning-message {
+            color: var(--warning);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .info-message {
+            color: var(--info);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .success-message {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .distance-input {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .distance-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .distance-input span {
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        
         .price-breakdown {
             margin-top: 15px;
             text-align: left;
@@ -216,25 +272,74 @@
             font-weight: 600;
         }
         
-        .distance-input {
+        .ai-helper {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid var(--info);
+        }
+        
+        .ai-helper-title {
+            font-weight: 600;
+            color: var(--info);
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
         }
         
-        .distance-input input {
-            flex: 1;
-            margin-right: 10px;
+        .ai-helper-title i {
+            margin-right: 8px;
         }
         
-        .distance-input span {
-            white-space: nowrap;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
+        .prompt-example {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
             font-size: 0.9rem;
+        }
+        
+        .prompt-example-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .ai-response {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         @media (max-width: 768px) {
@@ -252,6 +357,10 @@
             
             .price-value {
                 font-size: 2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
             }
         }
     </style>
@@ -271,79 +380,120 @@
     
     <div class="container">
         <div class="card">
-            <h2 class="card-title"><i class="fas fa-biking"></i> Pesan Ojek Sekarang</h2>
+            <div class="tab-container">
+                <div class="tab active" data-tab="order">Pesan Ojek</div>
+                <div class="tab" data-tab="ai-helper">Tanya AI Gratis</div>
+            </div>
             
-            <form id="orderForm">
-                <div class="form-group">
-                    <label for="nama">Nama Pemesan</label>
-                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap Anda" required>
-                </div>
+            <div id="orderTab" class="tab-content active">
+                <h2 class="card-title"><i class="fas fa-biking"></i> Pesan Ojek Sekarang</h2>
                 
-                <div class="form-group">
-                    <label for="penjemputan">Lokasi Penjemputan</label>
-                    <input type="text" id="penjemputan" name="penjemputan" placeholder="Masukkan alamat penjemputan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tujuan">Alamat Tujuan</label>
-                    <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat tujuan" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="penumpang">Jumlah Penumpang</label>
-                    <select id="penumpang" name="penumpang" required>
-                        <option value="" selected disabled>Pilih jumlah penumpang</option>
-                        <option value="1">1 Orang</option>
-                        <option value="2">2 Orang</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Perkiraan Jarak Tempuh (km)</label>
-                    <div class="distance-input">
-                        <input type="number" id="jarak" name="jarak" placeholder="Masukkan jarak" min="1" max="100" required>
-                        <span>km</span>
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="nama">Nama Pemesan</label>
+                        <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap Anda" required>
                     </div>
-                    <div class="info-message">
-                        <i class="fas fa-info-circle"></i> Jarak perkiraan berdasarkan rute tercepat
+                    
+                    <div class="form-group">
+                        <label for="penjemputan">Lokasi Penjemputan</label>
+                        <input type="text" id="penjemputan" name="penjemputan" placeholder="Masukkan alamat penjemputan" required>
                     </div>
-                </div>
+                    
+                    <div class="form-group">
+                        <label for="tujuan">Alamat Tujuan</label>
+                        <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat tujuan" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="penumpang">Jumlah Penumpang</label>
+                        <select id="penumpang" name="penumpang" required>
+                            <option value="" selected disabled>Pilih jumlah penumpang</option>
+                            <option value="1">1 Orang</option>
+                            <option value="2">2 Orang</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Perkiraan Jarak Tempuh (km)</label>
+                        <div class="distance-input">
+                            <input type="number" id="jarak" name="jarak" placeholder="Masukkan jarak" min="1" max="100" required>
+                            <span>km</span>
+                        </div>
+                        <div class="info-message">
+                            <i class="fas fa-info-circle"></i> Gunakan fitur "Tanya AI Gratis" jika tidak yakin dengan jarak
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="btn btn-block">
+                        <i class="fas fa-calculator"></i> Hitung Biaya
+                    </button>
+                </form>
                 
-                <button type="submit" id="submitBtn" class="btn btn-block">
-                    <i class="fas fa-calculator"></i> Hitung Biaya
-                </button>
-            </form>
+                <div id="priceResult" class="price-display hidden">
+                    <h3>Total Biaya Perjalanan</h3>
+                    <div class="price-value" id="totalPrice">Rp 0</div>
+                    
+                    <div class="price-breakdown">
+                        <p>
+                            <span class="label">Tarif Dasar:</span>
+                            <span class="value" id="basePrice">Rp 0</span>
+                        </p>
+                        <p>
+                            <span class="label">Jarak Tempuh:</span>
+                            <span class="value" id="distanceValue">0 km</span>
+                        </p>
+                        <p>
+                            <span class="label">Jumlah Penumpang:</span>
+                            <span class="value" id="passengerCount">1 orang</span>
+                        </p>
+                        <p>
+                            <span class="label">Biaya Tambahan:</span>
+                            <span class="value" id="additionalFee">Rp 0</span>
+                        </p>
+                        <p class="total">
+                            <span class="label">Total Biaya:</span>
+                            <span class="value" id="finalPrice">Rp 0</span>
+                        </p>
+                    </div>
+                    
+                    <button id="confirmOrderBtn" class="btn btn-block" style="margin-top: 15px;">
+                        <i class="fas fa-check"></i> Konfirmasi Pesanan
+                    </button>
+                </div>
+            </div>
             
-            <div id="priceResult" class="price-display hidden">
-                <h3>Total Biaya Perjalanan</h3>
-                <div class="price-value" id="totalPrice">Rp 0</div>
+            <div id="aiHelperTab" class="tab-content">
+                <h2 class="card-title"><i class="fas fa-robot"></i> Tanya AI Gratis</h2>
                 
-                <div class="price-breakdown">
-                    <p>
-                        <span class="label">Tarif Dasar:</span>
-                        <span class="value" id="basePrice">Rp 0</span>
-                    </p>
-                    <p>
-                        <span class="label">Jarak Tempuh:</span>
-                        <span class="value" id="distanceValue">0 km</span>
-                    </p>
-                    <p>
-                        <span class="label">Jumlah Penumpang:</span>
-                        <span class="value" id="passengerCount">1 orang</span>
-                    </p>
-                    <p>
-                        <span class="label">Biaya Tambahan:</span>
-                        <span class="value" id="additionalFee">Rp 0</span>
-                    </p>
-                    <p class="total">
-                        <span class="label">Total Biaya:</span>
-                        <span class="value" id="finalPrice">Rp 0</span>
-                    </p>
+                <div class="ai-helper">
+                    <div class="ai-helper-title">
+                        <i class="fas fa-lightbulb"></i> Konsultasi Jarak dengan AI
+                    </div>
+                    <p>Gunakan AI gratis ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda.</p>
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="aiPrompt">Pertanyaan Anda:</label>
+                        <textarea id="aiPrompt" rows="3" placeholder="Contoh: Berapa jarak dari Pasar Situbondo ke Terminal Situbondo?"></textarea>
+                    </div>
+                    
+                    <button id="askAiBtn" class="btn btn-block">
+                        <i class="fas fa-paper-plane"></i> Tanyakan ke AI
+                    </button>
+                    
+                    <div class="prompt-example">
+                        <div class="prompt-example-title">Contoh pertanyaan yang baik:</div>
+                        <p>1. "Berapa jarak dari Terminal Situbondo ke Pantai Pasir Putih?"</p>
+                        <p>2. "Perkiraan jarak antara Pasar Panarukan dan Kantor Bupati Situbondo?"</p>
+                        <p>3. "Berapa km dari Stasiun Situbondo ke RSUD Situbondo?"</p>
+                    </div>
+                    
+                    <div id="aiResponse" class="ai-response hidden">
+                        <div id="aiResponseContent"></div>
+                        <button id="useDistanceBtn" class="btn btn-outline" style="margin-top: 10px; width: 100%;" disabled>
+                            <i class="fas fa-check-circle"></i> Gunakan Jarak Ini
+                        </button>
+                    </div>
                 </div>
-                
-                <button id="confirmOrderBtn" class="btn btn-block" style="margin-top: 15px;">
-                    <i class="fas fa-check"></i> Konfirmasi Pesanan
-                </button>
             </div>
         </div>
         
@@ -374,6 +524,58 @@
         const RAIN_FARE_MULTIPLIER = 1.15; // Tambahan 15% saat hujan
         const TWO_PASSENGER_MULTIPLIER = 1.3; // Tambahan 30% untuk 2 penumpang
         
+        // Database pengetahuan lokal tentang jarak di Situbondo
+        const LOCATION_KNOWLEDGE = {
+            "terminal situbondo": {
+                "pantai pasir putih": 12,
+                "pasar situbondo": 3,
+                "rsud situbondo": 5,
+                "kantor bupati situbondo": 4,
+                "stasiun situbondo": 2
+            },
+            "pasar situbondo": {
+                "terminal situbondo": 3,
+                "pantai pasir putih": 15,
+                "rsud situbondo": 6,
+                "kantor bupati situbondo": 5,
+                "stasiun situbondo": 4
+            },
+            "pantai pasir putih": {
+                "terminal situbondo": 12,
+                "pasar situbondo": 15,
+                "rsud situbondo": 14,
+                "kantor bupati situbondo": 13,
+                "stasiun situbondo": 11
+            },
+            "rsud situbondo": {
+                "terminal situbondo": 5,
+                "pasar situbondo": 6,
+                "pantai pasir putih": 14,
+                "kantor bupati situbondo": 2,
+                "stasiun situbondo": 4
+            },
+            "kantor bupati situbondo": {
+                "terminal situbondo": 4,
+                "pasar situbondo": 5,
+                "pantai pasir putih": 13,
+                "rsud situbondo": 2,
+                "stasiun situbondo": 3
+            },
+            "stasiun situbondo": {
+                "terminal situbondo": 2,
+                "pasar situbondo": 4,
+                "pantai pasir putih": 11,
+                "rsud situbondo": 4,
+                "kantor bupati situbondo": 3
+            },
+            "pasar panarukan": {
+                "terminal situbondo": 18,
+                "pasar situbondo": 20,
+                "kantor bupati situbondo": 19,
+                "stasiun situbondo": 17
+            }
+        };
+        
         // Elemen DOM
         const orderForm = document.getElementById('orderForm');
         const priceResult = document.getElementById('priceResult');
@@ -381,12 +583,35 @@
         const successMessage = document.getElementById('successMessage');
         const confirmOrderBtn = document.getElementById('confirmOrderBtn');
         const newOrderBtn = document.getElementById('newOrderBtn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const askAiBtn = document.getElementById('askAiBtn');
+        const aiPrompt = document.getElementById('aiPrompt');
+        const aiResponse = document.getElementById('aiResponse');
+        const aiResponseContent = document.getElementById('aiResponseContent');
+        const useDistanceBtn = document.getElementById('useDistanceBtn');
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners untuk form pemesanan
             orderForm.addEventListener('submit', calculatePrice);
             confirmOrderBtn.addEventListener('click', confirmOrder);
             newOrderBtn.addEventListener('click', resetForm);
+            
+            // Event listeners untuk tab
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                });
+            });
+            
+            // Event listener untuk AI helper
+            askAiBtn.addEventListener('click', askAI);
+            useDistanceBtn.addEventListener('click', useSuggestedDistance);
         });
         
         // Fungsi untuk menghitung harga
@@ -475,6 +700,137 @@
             }, 800);
         }
         
+        // Fungsi untuk konsultasi dengan AI
+        function askAI() {
+            const prompt = aiPrompt.value.trim();
+            
+            if (!prompt) {
+                alert('Silakan masukkan pertanyaan Anda terlebih dahulu!');
+                return;
+            }
+            
+            loadingIndicator.classList.remove('hidden');
+            aiResponse.classList.add('hidden');
+            
+            // Simulasi AI processing
+            setTimeout(() => {
+                // Ekstrak lokasi dari prompt
+                const locations = extractLocations(prompt);
+                
+                if (locations.length < 2) {
+                    aiResponseContent.innerHTML = `<p class="error-message"><i class="fas fa-exclamation-circle"></i> Saya tidak dapat menemukan dua lokasi yang jelas dalam pertanyaan Anda. Gunakan contoh format yang disediakan.</p>`;
+                    useDistanceBtn.disabled = true;
+                } else {
+                    const fromLocation = locations[0].toLowerCase();
+                    const toLocation = locations[1].toLowerCase();
+                    
+                    // Cari jarak dalam database pengetahuan
+                    const distance = findDistance(fromLocation, toLocation);
+                    
+                    if (distance) {
+                        aiResponseContent.innerHTML = `
+                            <p><strong>Perkiraan Jarak:</strong></p>
+                            <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
+                            <p style="font-size: 1.2rem; margin: 10px 0;"><strong>${distance} km</strong></p>
+                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak garis lurus. Jarak sebenarnya mungkin berbeda tergantung rute.</p>
+                        `;
+                        useDistanceBtn.disabled = false;
+                        useDistanceBtn.dataset.distance = distance;
+                    } else {
+                        aiResponseContent.innerHTML = `
+                            <p class="warning-message"><i class="fas fa-exclamation-triangle"></i> Saya tidak memiliki data jarak untuk rute ini.</p>
+                            <p>Berikut perkiraan umum:</p>
+                            <ul style="margin-top: 10px;">
+                                <li>Dalam kota Situbondo: 2-10 km</li>
+                                <li>Antar kecamatan terdekat: 10-20 km</li>
+                                <li>Jarak lebih jauh: 20-50 km</li>
+                            </ul>
+                        `;
+                        useDistanceBtn.disabled = true;
+                    }
+                }
+                
+                loadingIndicator.classList.add('hidden');
+                aiResponse.classList.remove('hidden');
+            }, 1500);
+        }
+        
+        // Fungsi untuk menggunakan jarak yang disarankan AI
+        function useSuggestedDistance() {
+            const distance = parseFloat(useDistanceBtn.dataset.distance);
+            if (distance && !isNaN(distance)) {
+                document.getElementById('jarak').value = distance;
+                document.querySelector('.tab[data-tab="order"]').click();
+                document.getElementById('jarak').focus();
+                
+                // Tampilkan notifikasi sukses
+                const notification = document.createElement('div');
+                notification.className = 'success-message';
+                notification.innerHTML = `<i class="fas fa-check-circle"></i> Jarak ${distance} km telah dimasukkan otomatis`;
+                document.getElementById('jarak').parentNode.appendChild(notification);
+                
+                // Hilangkan notifikasi setelah 3 detik
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+        
+        // Fungsi untuk ekstrak lokasi dari prompt
+        function extractLocations(prompt) {
+            // Kata kunci yang mengindikasikan pertanyaan jarak
+            const distanceKeywords = ['jarak', 'berapa km', 'berapa kilometer', 'perkiraan jarak', 'jarak antara'];
+            
+            // Cek apakah ini pertanyaan tentang jarak
+            const isDistanceQuestion = distanceKeywords.some(keyword => 
+                prompt.toLowerCase().includes(keyword)
+            );
+            
+            if (!isDistanceQuestion) {
+                return [];
+            }
+            
+            // Ekstrak lokasi dengan mencari kata kunci "dari" dan "ke"
+            const fromIndex = prompt.toLowerCase().indexOf('dari');
+            const toIndex = prompt.toLowerCase().indexOf('ke');
+            
+            if (fromIndex === -1 || toIndex === -1 || toIndex <= fromIndex) {
+                return [];
+            }
+            
+            const fromText = prompt.substring(fromIndex + 4, toIndex).trim();
+            const toText = prompt.substring(toIndex + 2).trim();
+            
+            // Bersihkan teks lokasi
+            const fromLocation = fromText.replace(/[.?]/g, '').trim();
+            const toLocation = toText.replace(/[.?]/g, '').trim();
+            
+            return [fromLocation, toLocation];
+        }
+        
+        // Fungsi untuk mencari jarak dalam database pengetahuan
+        function findDistance(from, to) {
+            // Cari kombinasi yang cocok
+            for (const [key, values] of Object.entries(LOCATION_KNOWLEDGE)) {
+                if (from.includes(key) || key.includes(from)) {
+                    for (const [dest, distance] of Object.entries(values)) {
+                        if (to.includes(dest) || dest.includes(to)) {
+                            return distance;
+                        }
+                    }
+                }
+            }
+            
+            return null;
+        }
+        
+        // Fungsi untuk kapitalisasi huruf pertama
+        function capitalizeFirstLetter(string) {
+            return string.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+        
         // Fungsi untuk konfirmasi pesanan
         function confirmOrder() {
             loadingIndicator.classList.remove('hidden');
@@ -517,6 +873,8 @@
             orderForm.classList.remove('hidden');
             successMessage.classList.add('hidden');
             priceResult.classList.add('hidden');
+            aiPrompt.value = '';
+            aiResponse.classList.add('hidden');
             
             // Hapus catatan tambahan jika ada
             const existingNotes = document.querySelector('.price-breakdown .info-message');
