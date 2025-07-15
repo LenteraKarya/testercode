@@ -489,7 +489,7 @@
                     
                     <div id="aiResponse" class="ai-response hidden">
                         <div id="aiResponseContent"></div>
-                        <button id="useDistanceBtn" class="btn btn-outline" style="margin-top: 10px; width: 100%;" disabled>
+                        <button id="useDistanceBtn" class="btn btn-outline" style="margin-top: 10px; width: 100%;">
                             <i class="fas fa-check-circle"></i> Gunakan Jarak Ini
                         </button>
                     </div>
@@ -524,55 +524,121 @@
         const RAIN_FARE_MULTIPLIER = 1.15; // Tambahan 15% saat hujan
         const TWO_PASSENGER_MULTIPLIER = 1.3; // Tambahan 30% untuk 2 penumpang
         
-        // Database pengetahuan lokal tentang jarak di Situbondo
+        // Database pengetahuan lokal tentang jarak di Situbondo (diperluas)
         const LOCATION_KNOWLEDGE = {
             "terminal situbondo": {
                 "pantai pasir putih": 12,
                 "pasar situbondo": 3,
                 "rsud situbondo": 5,
                 "kantor bupati situbondo": 4,
-                "stasiun situbondo": 2
+                "stasiun situbondo": 2,
+                "pasar panarukan": 18,
+                "pelabuhan panarukan": 20,
+                "kawasan industri panarukan": 22,
+                "pantai mbo": 15,
+                "pantai pecel": 17
             },
             "pasar situbondo": {
                 "terminal situbondo": 3,
                 "pantai pasir putih": 15,
                 "rsud situbondo": 6,
                 "kantor bupati situbondo": 5,
-                "stasiun situbondo": 4
+                "stasiun situbondo": 4,
+                "pasar panarukan": 20,
+                "pelabuhan panarukan": 22,
+                "kawasan industri panarukan": 24,
+                "pantai mbo": 18,
+                "pantai pecel": 20
             },
             "pantai pasir putih": {
                 "terminal situbondo": 12,
                 "pasar situbondo": 15,
                 "rsud situbondo": 14,
                 "kantor bupati situbondo": 13,
-                "stasiun situbondo": 11
+                "stasiun situbondo": 11,
+                "pasar panarukan": 25,
+                "pelabuhan panarukan": 27,
+                "kawasan industri panarukan": 29,
+                "pantai mbo": 10,
+                "pantai pecel": 12
             },
             "rsud situbondo": {
                 "terminal situbondo": 5,
                 "pasar situbondo": 6,
                 "pantai pasir putih": 14,
                 "kantor bupati situbondo": 2,
-                "stasiun situbondo": 4
+                "stasiun situbondo": 4,
+                "pasar panarukan": 20,
+                "pelabuhan panarukan": 22,
+                "kawasan industri panarukan": 24,
+                "pantai mbo": 16,
+                "pantai pecel": 18
             },
             "kantor bupati situbondo": {
                 "terminal situbondo": 4,
                 "pasar situbondo": 5,
                 "pantai pasir putih": 13,
                 "rsud situbondo": 2,
-                "stasiun situbondo": 3
+                "stasiun situbondo": 3,
+                "pasar panarukan": 19,
+                "pelabuhan panarukan": 21,
+                "kawasan industri panarukan": 23,
+                "pantai mbo": 15,
+                "pantai pecel": 17
             },
             "stasiun situbondo": {
                 "terminal situbondo": 2,
                 "pasar situbondo": 4,
                 "pantai pasir putih": 11,
                 "rsud situbondo": 4,
-                "kantor bupati situbondo": 3
+                "kantor bupati situbondo": 3,
+                "pasar panarukan": 17,
+                "pelabuhan panarukan": 19,
+                "kawasan industri panarukan": 21,
+                "pantai mbo": 13,
+                "pantai pecel": 15
             },
             "pasar panarukan": {
                 "terminal situbondo": 18,
                 "pasar situbondo": 20,
                 "kantor bupati situbondo": 19,
-                "stasiun situbondo": 17
+                "stasiun situbondo": 17,
+                "pantai pasir putih": 25,
+                "rsud situbondo": 20,
+                "pelabuhan panarukan": 3,
+                "kawasan industri panarukan": 5,
+                "pantai mbo": 30,
+                "pantai pecel": 32
+            },
+            "pelabuhan panarukan": {
+                "pasar panarukan": 3,
+                "kawasan industri panarukan": 2,
+                "terminal situbondo": 20,
+                "pasar situbondo": 22,
+                "kantor bupati situbondo": 21,
+                "stasiun situbondo": 19
+            },
+            "kawasan industri panarukan": {
+                "pasar panarukan": 5,
+                "pelabuhan panarukan": 2,
+                "terminal situbondo": 22,
+                "pasar situbondo": 24,
+                "kantor bupati situbondo": 23,
+                "stasiun situbondo": 21
+            },
+            "pantai mbo": {
+                "pantai pasir putih": 10,
+                "terminal situbondo": 15,
+                "pasar situbondo": 18,
+                "kantor bupati situbondo": 15,
+                "stasiun situbondo": 13
+            },
+            "pantai pecel": {
+                "pantai pasir putih": 12,
+                "terminal situbondo": 17,
+                "pasar situbondo": 20,
+                "kantor bupati situbondo": 17,
+                "stasiun situbondo": 15
             }
         };
         
@@ -700,7 +766,7 @@
             }, 800);
         }
         
-        // Fungsi untuk konsultasi dengan AI
+        // Fungsi untuk konsultasi dengan AI (diperbaiki dan disempurnakan)
         function askAI() {
             const prompt = aiPrompt.value.trim();
             
@@ -711,15 +777,22 @@
             
             loadingIndicator.classList.remove('hidden');
             aiResponse.classList.add('hidden');
+            useDistanceBtn.disabled = true;
             
             // Simulasi AI processing
             setTimeout(() => {
-                // Ekstrak lokasi dari prompt
-                const locations = extractLocations(prompt);
+                // Ekstrak lokasi dari prompt dengan metode yang lebih baik
+                const locations = extractLocationsImproved(prompt);
                 
                 if (locations.length < 2) {
-                    aiResponseContent.innerHTML = `<p class="error-message"><i class="fas fa-exclamation-circle"></i> Saya tidak dapat menemukan dua lokasi yang jelas dalam pertanyaan Anda. Gunakan contoh format yang disediakan.</p>`;
-                    useDistanceBtn.disabled = true;
+                    aiResponseContent.innerHTML = `
+                        <p class="error-message"><i class="fas fa-exclamation-circle"></i> Saya tidak dapat menemukan dua lokasi yang jelas dalam pertanyaan Anda.</p>
+                        <p>Gunakan format seperti contoh berikut:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>"Berapa jarak dari Terminal Situbondo ke Pantai Pasir Putih?"</li>
+                            <li>"Perkiraan jarak antara Pasar Panarukan dan Kantor Bupati Situbondo?"</li>
+                        </ul>
+                    `;
                 } else {
                     const fromLocation = locations[0].toLowerCase();
                     const toLocation = locations[1].toLowerCase();
@@ -731,28 +804,123 @@
                         aiResponseContent.innerHTML = `
                             <p><strong>Perkiraan Jarak:</strong></p>
                             <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
-                            <p style="font-size: 1.2rem; margin: 10px 0;"><strong>${distance} km</strong></p>
-                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak garis lurus. Jarak sebenarnya mungkin berbeda tergantung rute.</p>
+                            <p style="font-size: 1.5rem; margin: 10px 0; color: var(--primary); font-weight: 600;">${distance} km</p>
+                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak berdasarkan data lokal. Jarak sebenarnya mungkin berbeda tergantung rute yang dipilih.</p>
                         `;
                         useDistanceBtn.disabled = false;
                         useDistanceBtn.dataset.distance = distance;
                     } else {
+                        // Jika tidak ada data pasti, berikan perkiraan berdasarkan tipe lokasi
+                        const estimatedDistance = estimateDistance(fromLocation, toLocation);
+                        
                         aiResponseContent.innerHTML = `
-                            <p class="warning-message"><i class="fas fa-exclamation-triangle"></i> Saya tidak memiliki data jarak untuk rute ini.</p>
-                            <p>Berikut perkiraan umum:</p>
-                            <ul style="margin-top: 10px;">
-                                <li>Dalam kota Situbondo: 2-10 km</li>
-                                <li>Antar kecamatan terdekat: 10-20 km</li>
-                                <li>Jarak lebih jauh: 20-50 km</li>
-                            </ul>
+                            <p class="warning-message"><i class="fas fa-exclamation-triangle"></i> Saya tidak memiliki data pasti untuk rute ini.</p>
+                            <p>Berikut perkiraan jarak:</p>
+                            <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
+                            <p style="font-size: 1.2rem; margin: 10px 0;"><strong>${estimatedDistance} km</strong></p>
+                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan umum. Untuk hasil lebih akurat, sebutkan nama lokasi yang lebih spesifik.</p>
                         `;
-                        useDistanceBtn.disabled = true;
+                        useDistanceBtn.disabled = false;
+                        useDistanceBtn.dataset.distance = estimatedDistance;
                     }
                 }
                 
                 loadingIndicator.classList.add('hidden');
                 aiResponse.classList.remove('hidden');
+                
+                // Scroll ke response
+                aiResponse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 1500);
+        }
+        
+        // Fungsi ekstrak lokasi yang lebih baik
+        function extractLocationsImproved(prompt) {
+            // Normalisasi teks
+            const text = prompt.toLowerCase().replace(/[.,?]/g, '');
+            
+            // Pola regex untuk menemukan lokasi
+            const fromPattern = /(?:dari|antara|from)\s+(.+?)\s+(?:ke|ke|to|and)/;
+            const toPattern = /(?:ke|ke|to|and)\s+(.+)/;
+            
+            const fromMatch = text.match(fromPattern);
+            const toMatch = text.match(toPattern);
+            
+            if (fromMatch && toMatch) {
+                return [fromMatch[1].trim(), toMatch[1].trim()];
+            }
+            
+            // Alternatif pola lain
+            const distancePattern = /(?:jarak|berapa\s+km|berapa\s+kilometer)\s+(.+?)\s+(?:ke|ke|to|and)\s+(.+)/;
+            const distanceMatch = text.match(distancePattern);
+            
+            if (distanceMatch) {
+                return [distanceMatch[1].trim(), distanceMatch[2].trim()];
+            }
+            
+            // Jika semua gagal, coba split dengan ' dan '
+            if (text.includes(' dan ')) {
+                const parts = text.split(' dan ');
+                if (parts.length >= 2) {
+                    return [parts[0].trim(), parts[1].trim()];
+                }
+            }
+            
+            return [];
+        }
+        
+        // Fungsi untuk memberikan perkiraan jarak berdasarkan tipe lokasi
+        function estimateDistance(from, to) {
+            // Klasifikasi lokasi
+            const isInTown = (loc) => loc.includes('terminal') || loc.includes('pasar') || loc.includes('kantor') || loc.includes('stasiun') || loc.includes('rsud');
+            const isBeach = (loc) => loc.includes('pantai') || loc.includes('beach');
+            const isIndustrial = (loc) => loc.includes('industri') || loc.includes('pelabuhan') || loc.includes('harbor');
+            
+            const fromType = isInTown(from) ? 'town' : isBeach(from) ? 'beach' : isIndustrial(from) ? 'industrial' : 'other';
+            const toType = isInTown(to) ? 'town' : isBeach(to) ? 'beach' : isIndustrial(to) ? 'industrial' : 'other';
+            
+            // Berikan perkiraan berdasarkan kombinasi tipe lokasi
+            if (fromType === 'town' && toType === 'town') {
+                return Math.floor(Math.random() * 5) + 2; // 2-6 km
+            } else if ((fromType === 'town' && toType === 'beach') || (fromType === 'beach' && toType === 'town')) {
+                return Math.floor(Math.random() * 10) + 10; // 10-20 km
+            } else if ((fromType === 'town' && toType === 'industrial') || (fromType === 'industrial' && toType === 'town')) {
+                return Math.floor(Math.random() * 15) + 15; // 15-30 km
+            } else if (fromType === 'beach' && toType === 'beach') {
+                return Math.floor(Math.random() * 5) + 5; // 5-10 km
+            } else {
+                return Math.floor(Math.random() * 15) + 5; // 5-20 km
+            }
+        }
+        
+        // Fungsi untuk mencari jarak dalam database pengetahuan
+        function findDistance(from, to) {
+            // Cari kombinasi yang cocok dengan toleransi
+            for (const [key, values] of Object.entries(LOCATION_KNOWLEDGE)) {
+                if (from.includes(key) || key.includes(from)) {
+                    for (const [dest, distance] of Object.entries(values)) {
+                        if (to.includes(dest) || dest.includes(to)) {
+                            return distance;
+                        }
+                    }
+                }
+                
+                // Coba juga dengan partial match
+                const fromWords = from.split(' ');
+                const keyWords = key.split(' ');
+                
+                if (fromWords.some(word => keyWords.includes(word))) {
+                    for (const [dest, distance] of Object.entries(values)) {
+                        const toWords = to.split(' ');
+                        const destWords = dest.split(' ');
+                        
+                        if (toWords.some(word => destWords.includes(word))) {
+                            return distance;
+                        }
+                    }
+                }
+            }
+            
+            return null;
         }
         
         // Fungsi untuk menggunakan jarak yang disarankan AI
@@ -761,7 +929,6 @@
             if (distance && !isNaN(distance)) {
                 document.getElementById('jarak').value = distance;
                 document.querySelector('.tab[data-tab="order"]').click();
-                document.getElementById('jarak').focus();
                 
                 // Tampilkan notifikasi sukses
                 const notification = document.createElement('div');
@@ -773,55 +940,12 @@
                 setTimeout(() => {
                     notification.remove();
                 }, 3000);
+                
+                // Fokus ke field jarak
+                setTimeout(() => {
+                    document.getElementById('jarak').focus();
+                }, 100);
             }
-        }
-        
-        // Fungsi untuk ekstrak lokasi dari prompt
-        function extractLocations(prompt) {
-            // Kata kunci yang mengindikasikan pertanyaan jarak
-            const distanceKeywords = ['jarak', 'berapa km', 'berapa kilometer', 'perkiraan jarak', 'jarak antara'];
-            
-            // Cek apakah ini pertanyaan tentang jarak
-            const isDistanceQuestion = distanceKeywords.some(keyword => 
-                prompt.toLowerCase().includes(keyword)
-            );
-            
-            if (!isDistanceQuestion) {
-                return [];
-            }
-            
-            // Ekstrak lokasi dengan mencari kata kunci "dari" dan "ke"
-            const fromIndex = prompt.toLowerCase().indexOf('dari');
-            const toIndex = prompt.toLowerCase().indexOf('ke');
-            
-            if (fromIndex === -1 || toIndex === -1 || toIndex <= fromIndex) {
-                return [];
-            }
-            
-            const fromText = prompt.substring(fromIndex + 4, toIndex).trim();
-            const toText = prompt.substring(toIndex + 2).trim();
-            
-            // Bersihkan teks lokasi
-            const fromLocation = fromText.replace(/[.?]/g, '').trim();
-            const toLocation = toText.replace(/[.?]/g, '').trim();
-            
-            return [fromLocation, toLocation];
-        }
-        
-        // Fungsi untuk mencari jarak dalam database pengetahuan
-        function findDistance(from, to) {
-            // Cari kombinasi yang cocok
-            for (const [key, values] of Object.entries(LOCATION_KNOWLEDGE)) {
-                if (from.includes(key) || key.includes(from)) {
-                    for (const [dest, distance] of Object.entries(values)) {
-                        if (to.includes(dest) || dest.includes(to)) {
-                            return distance;
-                        }
-                    }
-                }
-            }
-            
-            return null;
         }
         
         // Fungsi untuk kapitalisasi huruf pertama
