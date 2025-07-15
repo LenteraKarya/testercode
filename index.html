@@ -205,13 +205,34 @@
             font-size: 0.9rem;
         }
         
-        .coordinate-input {
+        .zone-option {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        .coordinate-input input {
-            flex: 1;
+        .zone-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+        
+        .zone-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(255, 107, 0, 0.1);
+        }
+        
+        .zone-name {
+            font-weight: 500;
+        }
+        
+        .zone-price {
+            color: var(--primary);
+            font-weight: 600;
         }
         
         @media (max-width: 768px) {
@@ -225,11 +246,6 @@
             
             .logo-text h1 {
                 font-size: 1.5rem;
-            }
-            
-            .coordinate-input {
-                flex-direction: column;
-                gap: 10px;
             }
         }
     </style>
@@ -265,10 +281,7 @@
                     <div id="locationStatus" class="location-info hidden">
                         <i class="fas fa-info-circle"></i> <span id="locationText">Mendeteksi lokasi...</span>
                     </div>
-                    <div class="coordinate-input">
-                        <input type="text" id="pickupLat" name="pickupLat" placeholder="Latitude" readonly>
-                        <input type="text" id="pickupLng" name="pickupLng" placeholder="Longitude" readonly>
-                    </div>
+                    <input type="text" id="alamatPenjemputan" name="alamatPenjemputan" placeholder="Alamat lengkap penjemputan" required>
                     <div id="locationError" class="error-message hidden"></div>
                 </div>
                 
@@ -282,16 +295,15 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="tujuan">Alamat Tujuan</label>
-                    <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat tujuan" required>
-                    <div class="coordinate-input" style="margin-top: 10px;">
-                        <input type="text" id="destinationLat" name="destinationLat" placeholder="Latitude Tujuan">
-                        <input type="text" id="destinationLng" name="destinationLng" placeholder="Longitude Tujuan">
+                    <label>Zona Tujuan</label>
+                    <div id="zoneOptions">
+                        <!-- Opsi zona akan diisi oleh JavaScript -->
                     </div>
-                    <div id="destinationError" class="error-message hidden"></div>
-                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">
-                        <i class="fas fa-info-circle"></i> Anda bisa mendapatkan koordinat tujuan dari Google Maps
-                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tujuan">Alamat Lengkap Tujuan</label>
+                    <input type="text" id="tujuan" name="tujuan" placeholder="Masukkan alamat lengkap tujuan" required>
                 </div>
                 
                 <button type="submit" id="submitBtn" class="btn btn-block">
@@ -302,7 +314,7 @@
             <div id="priceResult" class="price-display hidden">
                 <h3>Total Biaya Perjalanan</h3>
                 <div class="price-value" id="totalPrice">Rp 0</div>
-                <p id="distanceInfo">Jarak: 0 km</p>
+                <p id="distanceInfo">Zona: Belum dipilih</p>
                 <button id="confirmOrderBtn" class="btn" style="margin-top: 15px;">
                     <i class="fas fa-check"></i> Konfirmasi Pesanan
                 </button>
@@ -322,20 +334,6 @@
                 <i class="fas fa-plus"></i> Pesan Lagi
             </button>
         </div>
-        
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-question-circle"></i> Cara Mendapatkan Koordinat</h2>
-            <ol style="padding-left: 20px; margin-bottom: 15px;">
-                <li style="margin-bottom: 10px;">Buka <a href="https://maps.google.com" target="_blank">Google Maps</a></li>
-                <li style="margin-bottom: 10px;">Klik kanan pada lokasi tujuan</li>
-                <li style="margin-bottom: 10px;">Pilih "Apa yang ada di sini?"</li>
-                <li style="margin-bottom: 10px;">Koordinat akan muncul di bagian bawah layar</li>
-                <li>Salin angka tersebut ke form di atas</li>
-            </ol>
-            <p style="font-size: 0.9rem; color: #666;">
-                <i class="fas fa-lightbulb"></i> Contoh: -7.70623, 114.00950 (Latitude, Longitude)
-            </p>
-        </div>
     </div>
     
     <footer>
@@ -343,8 +341,15 @@
     </footer>
 
     <script>
-        // Inisialisasi variabel
-        let isFakeGPS = false;
+        // Data zona dan tarif
+        const ZONE_DATA = [
+            { id: 1, name: "Zona Kota Situbondo", basePrice: 15000, distance: 3 },
+            { id: 2, name: "Zona Panarukan", basePrice: 25000, distance: 7 },
+            { id: 3, name: "Zona Besuki", basePrice: 30000, distance: 10 },
+            { id: 4, name: "Zona Suboh", basePrice: 40000, distance: 15 },
+            { id: 5, name: "Zona Mangaran", basePrice: 35000, distance: 12 },
+            { id: 6, name: "Zona Banyuputih", basePrice: 45000, distance: 18 }
+        ];
         
         // Tarif per km (Rp 12.000)
         const TARIF_PER_KM = 12000;
@@ -355,6 +360,7 @@
         const locationStatus = document.getElementById('locationStatus');
         const locationText = document.getElementById('locationText');
         const locationError = document.getElementById('locationError');
+        const zoneOptions = document.getElementById('zoneOptions');
         const priceResult = document.getElementById('priceResult');
         const totalPriceElement = document.getElementById('totalPrice');
         const distanceInfoElement = document.getElementById('distanceInfo');
@@ -364,13 +370,48 @@
         const confirmOrderBtn = document.getElementById('confirmOrderBtn');
         const newOrderBtn = document.getElementById('newOrderBtn');
         
-        // Event Listeners
+        // Variabel state
+        let selectedZone = null;
+        let isFakeGPS = false;
+        
+        // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
+            // Render zona options
+            renderZoneOptions();
+            
+            // Event listeners
             getLocationBtn.addEventListener('click', getCurrentLocation);
             orderForm.addEventListener('submit', calculatePrice);
             confirmOrderBtn.addEventListener('click', confirmOrder);
             newOrderBtn.addEventListener('click', resetForm);
         });
+        
+        // Fungsi untuk render opsi zona
+        function renderZoneOptions() {
+            zoneOptions.innerHTML = '';
+            
+            ZONE_DATA.forEach(zone => {
+                const zoneElement = document.createElement('div');
+                zoneElement.className = 'zone-option';
+                zoneElement.innerHTML = `
+                    <div class="zone-name">${zone.name}</div>
+                    <div class="zone-price">Rp ${zone.basePrice.toLocaleString('id-ID')}</div>
+                `;
+                
+                zoneElement.addEventListener('click', () => {
+                    // Hapus selected dari semua zona
+                    document.querySelectorAll('.zone-option').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    
+                    // Tambahkan selected ke zona yang dipilih
+                    zoneElement.classList.add('selected');
+                    selectedZone = zone;
+                });
+                
+                zoneOptions.appendChild(zoneElement);
+            });
+        }
         
         // Fungsi untuk mendapatkan lokasi saat ini
         function getCurrentLocation() {
@@ -392,11 +433,10 @@
                             }
                             
                             isFakeGPS = false;
-                            const { latitude, longitude } = position.coords;
-                            document.getElementById('pickupLat').value = latitude;
-                            document.getElementById('pickupLng').value = longitude;
-                            
                             locationText.textContent = 'Lokasi Anda telah ditemukan';
+                            
+                            // Isi otomatis alamat penjemputan
+                            document.getElementById('alamatPenjemputan').value = 'Lokasi Anda saat ini';
                         }, 
                         error => {
                             handleLocationError(error);
@@ -490,19 +530,17 @@
             
             // Validasi form
             const nama = document.getElementById('nama').value;
-            const pickupLat = document.getElementById('pickupLat').value;
-            const pickupLng = document.getElementById('pickupLng').value;
+            const alamatPenjemputan = document.getElementById('alamatPenjemputan').value;
             const penumpang = document.getElementById('penumpang').value;
-            const destinationLat = document.getElementById('destinationLat').value;
-            const destinationLng = document.getElementById('destinationLng').value;
+            const tujuan = document.getElementById('tujuan').value;
             
-            if (!nama || !pickupLat || !pickupLng || !penumpang || !destinationLat || !destinationLng) {
+            if (!nama || !alamatPenjemputan || !penumpang || !tujuan) {
                 alert('Harap lengkapi semua data pemesanan!');
                 return;
             }
             
-            if (isNaN(pickupLat) || isNaN(pickupLng) || isNaN(destinationLat) || isNaN(destinationLng)) {
-                alert('Koordinat harus berupa angka!');
+            if (!selectedZone) {
+                alert('Harap pilih zona tujuan terlebih dahulu!');
                 return;
             }
             
@@ -513,25 +551,19 @@
             
             loadingIndicator.classList.remove('hidden');
             
-            // Hitung jarak dan harga
+            // Hitung harga
             setTimeout(() => {
-                const distance = calculateDistance(
-                    parseFloat(pickupLat),
-                    parseFloat(pickupLng),
-                    parseFloat(destinationLat),
-                    parseFloat(destinationLng)
-                );
+                // Gunakan harga dasar zona atau hitung berdasarkan jarak
+                let price = selectedZone.basePrice;
                 
-                // Jarak dalam km dengan 1 desimal
-                const distanceKm = Math.round(distance / 100) / 10;
-                
-                // Hitung harga (minimum Rp 15.000)
-                let price = distanceKm * TARIF_PER_KM;
-                price = price < 15000 ? 15000 : Math.round(price / 1000) * 1000;
+                // Jika penumpang 2 orang, tambah 30%
+                if (penumpang === "2") {
+                    price = Math.round(price * 1.3);
+                }
                 
                 // Tampilkan hasil
                 totalPriceElement.textContent = 'Rp ' + price.toLocaleString('id-ID');
-                distanceInfoElement.textContent = `Jarak: ${distanceKm} km`;
+                distanceInfoElement.textContent = `Zona: ${selectedZone.name} (${selectedZone.distance} km)`;
                 
                 loadingIndicator.classList.add('hidden');
                 priceResult.classList.remove('hidden');
@@ -539,22 +571,6 @@
                 // Scroll ke hasil
                 priceResult.scrollIntoView({ behavior: 'smooth' });
             }, 1000);
-        }
-        
-        // Fungsi untuk menghitung jarak antara dua titik (dalam meter)
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Radius bumi dalam meter
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lon2-lon1) * Math.PI/180;
-            
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            
-            return R * c;
         }
         
         // Fungsi untuk konfirmasi pesanan
@@ -566,14 +582,16 @@
                 const nama = document.getElementById('nama').value;
                 const penumpang = document.getElementById('penumpang').value;
                 const price = totalPriceElement.textContent;
-                const distance = distanceInfoElement.textContent;
+                const zoneInfo = distanceInfoElement.textContent;
                 const tujuan = document.getElementById('tujuan').value;
+                const alamatPenjemputan = document.getElementById('alamatPenjemputan').value;
                 
                 orderDetails.innerHTML = `
                     <p><strong>Nama:</strong> ${nama}</p>
+                    <p><strong>Penjemputan:</strong> ${alamatPenjemputan}</p>
                     <p><strong>Tujuan:</strong> ${tujuan}</p>
                     <p><strong>Jumlah Penumpang:</strong> ${penumpang} orang</p>
-                    <p><strong>${distance}</strong></p>
+                    <p><strong>${zoneInfo}</strong></p>
                     <p><strong>Total Biaya:</strong> ${price}</p>
                     <p style="margin-top: 20px;">Driver terdekat akan segera menghubungi Anda.</p>
                 `;
@@ -596,14 +614,30 @@
             priceResult.classList.add('hidden');
             locationStatus.classList.add('hidden');
             
-            // Reset nilai hidden
-            document.getElementById('pickupLat').value = '';
-            document.getElementById('pickupLng').value = '';
-            document.getElementById('destinationLat').value = '';
-            document.getElementById('destinationLng').value = '';
+            // Reset zona terpilih
+            selectedZone = null;
+            document.querySelectorAll('.zone-option').forEach(el => {
+                el.classList.remove('selected');
+            });
             
             // Scroll ke atas
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Fungsi untuk menghitung jarak (tidak digunakan, hanya untuk deteksi fake GPS)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Radius bumi dalam meter
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+            
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            return R * c;
         }
     </script>
 </body>
