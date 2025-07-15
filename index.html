@@ -678,6 +678,10 @@
             // Event listener untuk AI helper
             askAiBtn.addEventListener('click', askAI);
             useDistanceBtn.addEventListener('click', useSuggestedDistance);
+            
+            // Pastikan tab pertama aktif saat pertama kali load
+            document.getElementById('orderTab').classList.add('active');
+            document.querySelector('.tab[data-tab="order"]').classList.add('active');
         });
         
         // Fungsi untuk menghitung harga
