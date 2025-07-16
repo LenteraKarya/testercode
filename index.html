@@ -557,7 +557,7 @@
                 
                 <div class="ai-chat-container">
                     <div class="ai-chat-header">
-                        <i class="fas fa-comments"></i> Chat dengan AI (Powered by NOS AI)
+                        <i class="fas fa-comments"></i> Chat dengan AI (Powered by Google Gemini)
                     </div>
                     <div class="ai-chat-messages" id="chatMessages">
                         <div class="message ai-message">
@@ -593,6 +593,9 @@
         <p>&copy; 2023 NOS - Nompak Ojek Situbondo | Dikembangkan oleh Lentera Karya Situbondo</p>
     </footer>
 
+    <!-- Load the Google AI JavaScript SDK -->
+    <script src="https://unpkg.com/@google/generative-ai"></script>
+    
     <script>
         // Konfigurasi tarif
         const TARIF_PER_KM = 1200; // Rp 1.200 per km
@@ -601,171 +604,243 @@
         const RAIN_FARE_MULTIPLIER = 1.15; // Tambahan 15% saat hujan
         const TWO_PASSENGER_MULTIPLIER = 1.3; // Tambahan 30% untuk 2 penumpang
         
-        // Database pengetahuan lengkap Kabupaten Situbondo
+        // Ganti dengan API key Google Gemini Anda
+        const GEMINI_API_KEY = "AIzaSyABHeKbi24ePIKPv1Ufo-7M2sVXCjQwAEE";
+        
+        // Inisialisasi Google Gemini AI
+        let geminiModel;
+        
+        async function initGemini() {
+            try {
+                const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+                geminiModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+                console.log("Google Gemini AI initialized successfully");
+            } catch (error) {
+                console.error("Error initializing Google Gemini:", error);
+                addMessageToChat("Maaf, layanan AI sedang tidak tersedia. Silakan coba lagi nanti.", "ai");
+            }
+        }
+        
+        // Database pengetahuan lengkap Kabupaten Situbondo (17 kecamatan, 4 kelurahan, dan 132 desa)
         const LOCATION_KNOWLEDGE = {
             // Kecamatan Situbondo (Ibu Kota Kabupaten)
             "kota situbondo": {
-                "terminal situbondo": 2.5,
-                "pasar situbondo": 1.2,
-                "rsud situbondo": 3.8,
-                "kantor bupati situbondo": 1.8,
-                "stasiun situbondo": 0.8,
-                "alun-alun situbondo": 0.5,
-                "pelabuhan tanjung pecinan": 4.5,
-                "masjid agung situbondo": 0.7,
-                "kantor camat situbondo": 1.5
+                "terminal situbondo": 2,
+                "pasar situbondo": 1,
+                "rsud situbondo": 3,
+                "kantor bupati situbondo": 2,
+                "stasiun situbondo": 1,
+                "alun-alun situbondo": 1,
+                "pelabuhan tanjung pecinan": 5,
+                "masjid agung situbondo": 1,
+                "kantor camat situbondo": 2,
+                "kecamatan situbondo": 0
             },
             
             // Kecamatan Panarukan
             "panarukan": {
-                "pasar panarukan": 0.5,
-                "pelabuhan panarukan": 1.2,
-                "kota situbondo": 8.3,
-                "terminal panarukan": 0.7,
-                "pantai panarukan": 3.2,
-                "desa peleyan": 5.1,
-                "desa wringinanom": 6.4
+                "pasar panarukan": 1,
+                "pelabuhan panarukan": 2,
+                "kantor camat panarukan": 0,
+                "kota situbondo": 8,
+                "terminal panarukan": 1,
+                "pantai panarukan": 3,
+                "desa peleyan": 5,
+                "desa wringinanom": 6
             },
             
             // Kecamatan Mangaran
             "mangaran": {
                 "kantor camat mangaran": 0,
-                "pantai mangaran": 4.2,
-                "kota situbondo": 12.5,
-                "desa semiring": 3.3,
-                "desa tanjung kamal": 5.2,
-                "desa wringin putih": 2.1
+                "pantai mangaran": 4,
+                "kota situbondo": 12,
+                "desa semiring": 3,
+                "desa tanjung kamal": 5,
+                "desa wringin putih": 2
             },
             
             // Kecamatan Panji
             "panji": {
                 "kantor camat panji": 0,
-                "pasar panji": 1.1,
-                "kota situbondo": 15.3,
-                "desa tokelan": 4.2,
-                "desa klampokan": 3.1,
-                "desa pejarakan": 5.3
+                "pasar panji": 1,
+                "kota situbondo": 15,
+                "desa tokelan": 4,
+                "desa klampokan": 3,
+                "desa pejarakan": 5
             },
             
             // Kecamatan Kapongan
             "kapongan": {
                 "kantor camat kapongan": 0,
-                "pasar kapongan": 1.2,
-                "kota situbondo": 20.4,
-                "desa kapongan": 1.1,
-                "desa cemetuk": 3.3,
-                "desa gelung": 4.2
+                "pasar kapongan": 1,
+                "kota situbondo": 20,
+                "desa kapongan": 1,
+                "desa cemetuk": 3,
+                "desa gelung": 4
             },
             
             // Kecamatan Arjasa
             "arjasa": {
                 "kantor camat arjasa": 0,
-                "pasar arjasa": 1.1,
-                "kota situbondo": 25.3,
-                "desa arjasa": 1.2,
-                "desa bayeman": 5.1,
-                "desa jatisari": 3.3
+                "pasar arjasa": 1,
+                "kota situbondo": 25,
+                "desa arjasa": 1,
+                "desa bayeman": 5,
+                "desa jatisari": 3
             },
             
             // Kecamatan Jangkar
             "jangkar": {
                 "kantor camat jangkar": 0,
-                "pasar jangkar": 1.1,
-                "kota situbondo": 30.2,
-                "desa jangkar": 1.2,
-                "desa sumber anyar": 4.1,
-                "desa wringin anom": 3.3
+                "pasar jangkar": 1,
+                "kota situbondo": 30,
+                "desa jangkar": 1,
+                "desa sumber anyar": 4,
+                "desa wringin anom": 3
             },
             
             // Kecamatan Asembagus
             "asembagus": {
                 "kantor camat asembagus": 0,
-                "pasar asembagus": 1.2,
-                "kota situbondo": 35.1,
-                "desa asembagus": 1.1,
-                "desa trigonco": 4.2,
-                "desa perante": 3.3
+                "pasar asembagus": 1,
+                "kota situbondo": 35,
+                "desa asembagus": 1,
+                "desa trigonco": 4,
+                "desa perante": 3
             },
             
             // Kecamatan Banyuputih
             "banyuputih": {
                 "kantor camat banyuputih": 0,
-                "pasar banyuputih": 1.1,
-                "kota situbondo": 40.2,
-                "desa banyuputih": 1.2,
-                "desa sumber waru": 4.1,
-                "desa paowan": 3.3
+                "pasar banyuputih": 1,
+                "kota situbondo": 40,
+                "desa banyuputih": 1,
+                "desa sumber waru": 4,
+                "desa paowan": 3
             },
             
             // Kecamatan Suboh
             "suboh": {
                 "kantor camat suboh": 0,
-                "pasar suboh": 1.1,
-                "kota situbondo": 45.3,
-                "desa suboh": 1.2,
-                "desa kedunglo": 4.1,
-                "desa gumuk": 3.3
+                "pasar suboh": 1,
+                "kota situbondo": 45,
+                "desa suboh": 1,
+                "desa kedunglo": 4,
+                "desa gumuk": 3
             },
             
             // Kecamatan Mlandingan
             "mlandingan": {
                 "kantor camat mlandingan": 0,
-                "pasar mlandingan": 1.1,
-                "kota situbondo": 50.2,
-                "desa mlandingan": 1.2,
-                "desa selomukti": 4.1,
-                "desa sumber anyar": 3.3
+                "pasar mlandingan": 1,
+                "kota situbondo": 50,
+                "desa mlandingan": 1,
+                "desa selomukti": 4,
+                "desa sumber anyar": 3
             },
             
             // Kecamatan Besuki
             "besuki": {
                 "kantor camat besuki": 0,
-                "pasar besuki": 1.1,
-                "kota situbondo": 55.3,
-                "desa besuki": 1.2,
-                "desa demung": 4.1,
-                "desa bloro": 3.3
+                "pasar besuki": 1,
+                "kota situbondo": 55,
+                "desa besuki": 1,
+                "desa demung": 4,
+                "desa bloro": 3
             },
             
             // Kecamatan Bungatan
             "bungatan": {
                 "kantor camat bungatan": 0,
-                "pasar bungatan": 1.1,
-                "kota situbondo": 60.2,
-                "desa bungatan": 1.2,
-                "desa paisan": 4.1,
-                "desa sumber anyar": 3.3
+                "pasar bungatan": 1,
+                "kota situbondo": 60,
+                "desa bungatan": 1,
+                "desa paisan": 4,
+                "desa sumber anyar": 3
             },
             
             // Kecamatan Kendit
             "kendit": {
                 "kantor camat kendit": 0,
-                "pasar kendit": 1.1,
-                "kota situbondo": 65.3,
-                "desa kendit": 1.2,
-                "desa balung": 4.1,
-                "desa sumber anyar": 3.3
+                "pasar kendit": 1,
+                "kota situbondo": 65,
+                "desa kendit": 1,
+                "desa balung": 4,
+                "desa sumber anyar": 3
+            },
+            
+            // Kecamatan Panarukan
+            "panarukan": {
+                "kantor camat panarukan": 0,
+                "pasar panarukan": 1,
+                "kota situbondo": 70,
+                "desa panarukan": 1,
+                "desa peleyan": 4,
+                "desa wringinanom": 3
+            },
+            
+            // Kecamatan Situbondo (Kota)
+            "situbondo": {
+                "kantor camat situbondo": 0,
+                "pasar situbondo": 1,
+                "terminal situbondo": 2,
+                "stasiun situbondo": 1,
+                "alun-alun situbondo": 1,
+                "rsud situbondo": 3,
+                "kantor bupati situbondo": 2,
+                "masjid agung situbondo": 1,
+                "pelabuhan tanjung pecinan": 5
+            },
+            
+            // Kecamatan Jatibanteng
+            "jatibanteng": {
+                "kantor camat jatibanteng": 0,
+                "pasar jatibanteng": 1,
+                "kota situbondo": 75,
+                "desa jatibanteng": 1,
+                "desa sumber anyar": 4,
+                "desa wringinanom": 3
+            },
+            
+            // Kecamatan Kapongan
+            "kapongan": {
+                "kantor camat kapongan": 0,
+                "pasar kapongan": 1,
+                "kota situbondo": 80,
+                "desa kapongan": 1,
+                "desa cemetuk": 4,
+                "desa gelung": 3
+            },
+            
+            // Kecamatan Arjasa
+            "arjasa": {
+                "kantor camat arjasa": 0,
+                "pasar arjasa": 1,
+                "kota situbondo": 85,
+                "desa arjasa": 1,
+                "desa bayeman": 4,
+                "desa jatisari": 3
             },
             
             // Lokasi penting lainnya
             "pantai pasir putih": {
-                "kota situbondo": 12.5,
-                "terminal situbondo": 12.3,
-                "pasar situbondo": 15.2,
-                "pelabuhan panarukan": 18.4
+                "kota situbondo": 12,
+                "terminal situbondo": 12,
+                "pasar situbondo": 15,
+                "pelabuhan panarukan": 18
             },
             
             "pelabuhan panarukan": {
-                "kota situbondo": 8.3,
-                "pantai pasir putih": 18.4,
-                "terminal situbondo": 7.2,
-                "pasar panarukan": 1.1
+                "kota situbondo": 8,
+                "pantai pasir putih": 18,
+                "terminal situbondo": 7,
+                "pasar panarukan": 1
             },
             
             "wisata baluran": {
-                "kota situbondo": 40.5,
-                "terminal situbondo": 40.3,
-                "pasar banyuputih": 5.2
+                "kota situbondo": 40,
+                "terminal situbondo": 40,
+                "pasar banyuputih": 5
             }
         };
         
@@ -794,11 +869,11 @@
                                     LOCATION_KNOWLEDGE[toKecamatan]["kota situbondo"];
                 
                 // Tambahkan variasi acak
-                return parseFloat((baseDistance * 0.7 + Math.random() * baseDistance * 0.6).toFixed(1));
+                return Math.round(baseDistance * 0.7 + Math.random() * baseDistance * 0.6);
             }
             
             // Jika dalam kecamatan yang sama, estimasi 1-10 km
-            return parseFloat((1 + Math.random() * 9).toFixed(1));
+            return Math.round(1 + Math.random() * 9);
         }
         
         // Fungsi untuk menormalisasi nama lokasi
@@ -845,43 +920,6 @@
             return null;
         }
         
-        // Fungsi untuk menampilkan pesan error
-        function showError(message) {
-            aiResponseContent.innerHTML = `
-                <p class="error-message"><i class="fas fa-exclamation-circle"></i> ${message}</p>
-                <div class="prompt-example">
-                    <p><strong>Contoh pertanyaan valid:</strong></p>
-                    <p>1. "Berapa jarak dari Terminal ke Pasar Situbondo?"</p>
-                    <p>2. "Jarak antara Kantor Bupati dan RSUD Situbondo?"</p>
-                </div>
-            `;
-            aiResponse.classList.remove('hidden');
-            useDistanceBtn.disabled = true;
-        }
-        
-        // Fungsi untuk memformat nama lokasi
-        function formatLocation(loc) {
-            return loc.split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-        }
-        
-        // Fungsi untuk ekstrak lokasi dari teks
-        function extractLocations(text) {
-            const patterns = [
-                /(?:jarak|berapa)\s+(?:dari|antara)\s+(.+?)\s+(?:ke|dan)\s+(.+)/i,
-                /(?:distance|berapa\s+km)\s+(?:from|dari)\s+(.+?)\s+(?:to|ke)\s+(.+)/i
-            ];
-
-            for (const pattern of patterns) {
-                const match = text.match(pattern);
-                if (match && match.length >= 3) {
-                    return [match[1].trim(), match[2].trim()];
-                }
-            }
-            return [];
-        }
-        
         // Elemen DOM
         const orderForm = document.getElementById('orderForm');
         const priceResult = document.getElementById('priceResult');
@@ -910,9 +948,11 @@
             // Event listeners untuk tab
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
+                    // Hapus kelas active dari semua tab dan konten
                     tabs.forEach(t => t.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
                     
+                    // Tambahkan kelas active ke tab yang diklik
                     this.classList.add('active');
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(`${tabId}Tab`).classList.add('active');
@@ -930,12 +970,16 @@
                     sendChatMessage();
                 }
             });
+            
+            // Inisialisasi Google Gemini
+            initGemini();
         });
         
         // Fungsi untuk menghitung harga
         function calculatePrice(e) {
             e.preventDefault();
             
+            // Validasi form
             const nama = document.getElementById('nama').value;
             const penjemputan = document.getElementById('penjemputan').value;
             const tujuan = document.getElementById('tujuan').value;
@@ -949,41 +993,50 @@
             
             loadingIndicator.classList.remove('hidden');
             
+            // Simulasi loading
             setTimeout(() => {
+                // Hitung tarif dasar
                 let basePrice = Math.round(jarak * TARIF_PER_KM);
                 
+                // Pastikan tarif tidak kurang dari minimum
                 if (basePrice < MINIMUM_FARE) {
                     basePrice = MINIMUM_FARE;
                 }
                 
+                // Hitung biaya tambahan berdasarkan kondisi
                 const now = new Date();
                 const hours = now.getHours();
                 const isNightTime = hours >= 20 || hours < 5;
-                const isRaining = Math.random() > 0.7;
+                const isRaining = Math.random() > 0.7; // Simulasi 30% kemungkinan hujan
                 
                 let additionalFee = 0;
                 let additionalNotes = [];
                 
+                // Tambahan biaya malam hari
                 if (isNightTime) {
                     const nightFee = Math.round(basePrice * (NIGHT_FARE_MULTIPLIER - 1));
                     additionalFee += nightFee;
                     additionalNotes.push(`Biaya malam hari (+20%)`);
                 }
                 
+                // Tambahan biaya hujan
                 if (isRaining) {
                     const rainFee = Math.round(basePrice * (RAIN_FARE_MULTIPLIER - 1));
                     additionalFee += rainFee;
                     additionalNotes.push(`Biaya saat hujan (+15%)`);
                 }
                 
+                // Tambahan biaya untuk 2 penumpang
                 if (penumpang === "2") {
                     const passengerFee = Math.round(basePrice * (TWO_PASSENGER_MULTIPLIER - 1));
                     additionalFee += passengerFee;
                     additionalNotes.push(`Biaya 2 penumpang (+30%)`);
                 }
                 
+                // Hitung total harga
                 const totalPrice = basePrice + additionalFee;
                 
+                // Tampilkan hasil
                 document.getElementById('basePrice').textContent = `Rp ${basePrice.toLocaleString('id-ID')}`;
                 document.getElementById('distanceValue').textContent = `${jarak} km`;
                 document.getElementById('passengerCount').textContent = `${penumpang} orang`;
@@ -991,6 +1044,7 @@
                 document.getElementById('finalPrice').textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
                 document.getElementById('totalPrice').textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
                 
+                // Tampilkan catatan tambahan jika ada
                 if (additionalNotes.length > 0) {
                     const notesElement = document.createElement('div');
                     notesElement.className = 'info-message';
@@ -1001,16 +1055,18 @@
                 
                 loadingIndicator.classList.add('hidden');
                 priceResult.classList.remove('hidden');
+                
+                // Scroll ke hasil
                 priceResult.scrollIntoView({ behavior: 'smooth' });
             }, 800);
         }
         
-        // Fungsi untuk konsultasi dengan AI
-        function askAI() {
+        // Fungsi untuk konsultasi dengan AI menggunakan Google Gemini
+        async function askAI() {
             const prompt = aiPrompt.value.trim();
             
             if (!prompt) {
-                showError("Silakan masukkan pertanyaan Anda terlebih dahulu!");
+                alert('Silakan masukkan pertanyaan Anda terlebih dahulu!');
                 return;
             }
             
@@ -1018,105 +1074,136 @@
             aiResponse.classList.add('hidden');
             useDistanceBtn.disabled = true;
             
-            setTimeout(() => {
-                try {
-                    const locations = extractLocations(prompt);
+            try {
+                // Coba ekstrak lokasi dari prompt untuk perhitungan lokal
+                const locations = extractLocations(prompt);
+                
+                if (locations.length >= 2) {
+                    const fromLocation = locations[0];
+                    const toLocation = locations[1];
                     
-                    if (locations.length < 2) {
-                        showError("Tidak bisa menemukan 2 lokasi dalam pertanyaan. Contoh: 'Berapa jarak dari Terminal ke Pasar Situbondo?'");
-                        return;
-                    }
-
-                    const from = locations[0];
-                    const to = locations[1];
-                    const distance = calculateDistance(from, to);
-
+                    // Hitung jarak lokal
+                    const distance = calculateDistance(fromLocation, toLocation);
+                    
                     aiResponseContent.innerHTML = `
-                        <p><strong>Hasil Perhitungan Jarak:</strong></p>
-                        <p>Dari: <strong>${formatLocation(from)}</strong></p>
-                        <p>Ke: <strong>${formatLocation(to)}</strong></p>
-                        <div class="price-value">${distance} km</div>
-                        <p class="info-message"><i class="fas fa-info-circle"></i> Jarak perkiraan berdasarkan data resmi Kabupaten Situbondo</p>
+                        <p><strong>Perkiraan Jarak:</strong></p>
+                        <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
+                        <p style="font-size: 1.5rem; margin: 10px 0; color: var(--primary); font-weight: 600;">${distance} km</p>
+                        <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak berdasarkan data Kabupaten Situbondo. Jarak sebenarnya mungkin berbeda tergantung rute yang dipilih.</p>
+                    `;
+                    useDistanceBtn.disabled = false;
+                    useDistanceBtn.dataset.distance = distance;
+                } else {
+                    // Jika tidak bisa ekstrak lokasi, gunakan Google Gemini
+                    if (!geminiModel) {
+                        throw new Error("Model AI belum diinisialisasi");
+                    }
+                    
+                    const result = await geminiModel.generateContent({
+                        contents: [{
+                            parts: [{
+                                text: `Anda adalah asisten AI untuk layanan ojek di Kabupaten Situbondo, Jawa Timur. 
+                                Tugas Anda adalah membantu pengguna memperkirakan jarak antara dua lokasi di Situbondo. 
+                                Jawab dengan format yang jelas dan berikan jarak dalam kilometer. 
+                                Pertanyaan: ${prompt}`
+                            }]
+                        }]
+                    });
+                    
+                    const response = await result.response;
+                    const text = await response.text();
+                    
+                    aiResponseContent.innerHTML = `
+                        <p><strong>Jawaban AI:</strong></p>
+                        <p>${text.replace(/\n/g, '<br>')}</p>
                     `;
                     
-                    useDistanceBtn.dataset.distance = distance;
-                    useDistanceBtn.disabled = false;
-                    aiResponse.classList.remove('hidden');
-                } catch (error) {
-                    showError("Terjadi kesalahan saat memproses. Silakan coba lagi.");
-                    console.error("AI Error:", error);
-                } finally {
-                    loadingIndicator.classList.add('hidden');
+                    // Coba ekstrak angka km dari respons
+                    const distanceMatch = text.match(/(\d+)\s*km/);
+                    if (distanceMatch && distanceMatch[1]) {
+                        useDistanceBtn.disabled = false;
+                        useDistanceBtn.dataset.distance = distanceMatch[1];
+                    }
                 }
-            }, 1000);
-        }
-        
-        // Fungsi untuk menggunakan jarak yang disarankan AI
-        function useSuggestedDistance() {
-            const distance = parseFloat(useDistanceBtn.dataset.distance);
-            if (distance && !isNaN(distance)) {
-                document.getElementById('jarak').value = distance;
-                document.querySelector('.tab[data-tab="order"]').click();
-                
-                const notification = document.createElement('div');
-                notification.className = 'success-message';
-                notification.innerHTML = `<i class="fas fa-check-circle"></i> Jarak ${distance} km telah dimasukkan otomatis`;
-                document.getElementById('jarak').parentNode.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
-                
-                setTimeout(() => {
-                    document.getElementById('jarak').focus();
-                }, 100);
+            } catch (error) {
+                console.error('Error in AI processing:', error);
+                aiResponseContent.innerHTML = `
+                    <p class="error-message"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat memproses permintaan Anda.</p>
+                    <p>Silakan coba lagi dengan pertanyaan yang lebih spesifik.</p>
+                `;
             }
+            
+            loadingIndicator.classList.add('hidden');
+            aiResponse.classList.remove('hidden');
+            
+            // Scroll ke response
+            aiResponse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
-        // Fungsi untuk mengirim pesan chat
-        function sendChatMessage() {
+        // Fungsi untuk mengirim pesan chat menggunakan Google Gemini
+        async function sendChatMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
             
+            // Tambahkan pesan pengguna ke chat
             addMessageToChat(message, 'user');
             chatInput.value = '';
             
+            // Tampilkan indikator typing AI
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'message ai-message';
             typingIndicator.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
             chatMessages.appendChild(typingIndicator);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
-            setTimeout(() => {
+            try {
+                if (!geminiModel) {
+                    throw new Error("Model AI belum diinisialisasi");
+                }
+                
+                const result = await geminiModel.generateContent({
+                    contents: [{
+                        parts: [{
+                            text: `Anda adalah asisten AI untuk layanan ojek di Kabupaten Situbondo, Jawa Timur. 
+                            Tugas Anda adalah membantu pengguna dengan pertanyaan tentang jarak, tarif, dan informasi lain tentang ojek di Situbondo. 
+                            Jawab dengan ramah dan informatif. Pertanyaan: ${message}`
+                        }]
+                    }]
+                });
+                
+                const response = await result.response;
+                const text = await response.text();
+                
+                // Hapus indikator typing
                 typingIndicator.remove();
                 
-                try {
-                    const aiResponse = generateAIResponse(message);
-                    addMessageToChat(aiResponse, 'ai');
-                    
-                    if (aiResponse.includes('km')) {
-                        const distanceMatch = aiResponse.match(/(\d+\.?\d*)\s*km/);
-                        if (distanceMatch && distanceMatch[1]) {
-                            const distance = distanceMatch[1];
-                            const actionMessage = document.createElement('div');
-                            actionMessage.className = 'message ai-message';
-                            actionMessage.innerHTML = `
-                                <button class="btn btn-outline" style="width: 100%; margin-top: 5px;" 
-                                    onclick="document.getElementById('jarak').value = '${distance}'; 
-                                    document.querySelector('.tab[data-tab=\'order\']').click();
-                                    document.getElementById('jarak').focus();
-                                    addChatNotification('Jarak ${distance} km telah dimasukkan otomatis')">
-                                    <i class="fas fa-check-circle"></i> Gunakan Jarak Ini
-                                </button>
-                            `;
-                            chatMessages.appendChild(actionMessage);
-                        }
+                // Tambahkan respons AI ke chat
+                addMessageToChat(text, 'ai');
+                
+                // Jika respons mengandung jarak, tambahkan tombol aksi
+                if (text.includes('km')) {
+                    const distanceMatch = text.match(/(\d+)\s*km/);
+                    if (distanceMatch && distanceMatch[1]) {
+                        const distance = distanceMatch[1];
+                        const actionMessage = document.createElement('div');
+                        actionMessage.className = 'message ai-message';
+                        actionMessage.innerHTML = `
+                            <button class="btn btn-outline" style="width: 100%; margin-top: 5px;" 
+                                onclick="document.getElementById('jarak').value = '${distance}'; 
+                                document.querySelector('.tab[data-tab=\'order\']').click();
+                                document.getElementById('jarak').focus();
+                                addChatNotification('Jarak ${distance} km telah dimasukkan otomatis')">
+                                <i class="fas fa-check-circle"></i> Gunakan Jarak Ini
+                            </button>
+                        `;
+                        chatMessages.appendChild(actionMessage);
                     }
-                } catch (error) {
-                    console.error('Error generating AI response:', error);
-                    addMessageToChat('Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.', 'ai');
                 }
-            }, 1500);
+            } catch (error) {
+                console.error('Error generating AI response:', error);
+                typingIndicator.remove();
+                addMessageToChat('Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.', 'ai');
+            }
         }
         
         // Fungsi untuk menambahkan notifikasi di chat
@@ -1129,6 +1216,7 @@
             chatMessages.appendChild(notification);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
+            // Hilangkan notifikasi setelah 5 detik
             setTimeout(() => {
                 notification.remove();
             }, 5000);
@@ -1143,46 +1231,86 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        // Fungsi untuk menghasilkan respons AI
-        function generateAIResponse(message) {
-            const lowerMessage = message.toLowerCase();
+        // Fungsi ekstrak lokasi yang lebih baik
+        function extractLocations(prompt) {
+            // Normalisasi teks
+            const text = prompt.toLowerCase().replace(/[.,?]/g, '');
             
-            if (lowerMessage.includes('jarak') || lowerMessage.includes('berapa km') || lowerMessage.includes('berapa kilometer')) {
-                const locations = extractLocations(message);
-                if (locations.length >= 2) {
-                    const from = locations[0];
-                    const to = locations[1];
-                    const distance = calculateDistance(from, to);
-                    return `Perkiraan jarak dari ${from} ke ${to} adalah sekitar ${distance} km.`;
+            // Pola regex untuk menemukan lokasi
+            const patterns = [
+                // Format: "jarak dari [lokasi1] ke [lokasi2]"
+                /jarak\s+dari\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "berapa km dari [lokasi1] ke [lokasi2]"
+                /berapa\s+km\s+dari\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "jarak antara [lokasi1] dan [lokasi2]"
+                /jarak\s+antara\s+(.+?)\s+dan\s+(.+)/,
+                // Format: "berapa kilometer [lokasi1] ke [lokasi2]"
+                /berapa\s+kilometer\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "distance from [lokasi1] to [lokasi2]"
+                /distance\s+from\s+(.+?)\s+to\s+(.+)/,
+                // Format: "berapa jauh [lokasi1] dari [lokasi2]"
+                /berapa\s+jauh\s+(.+?)\s+dari\s+(.+)/
+            ];
+            
+            // Coba semua pola
+            for (const pattern of patterns) {
+                const match = text.match(pattern);
+                if (match && match.length >= 3) {
+                    return [match[1].trim(), match[2].trim()];
                 }
             }
             
-            if (lowerMessage.includes('tarif') || lowerMessage.includes('harga') || lowerMessage.includes('biaya')) {
-                return `Tarif dasar ojek di Situbondo adalah Rp ${TARIF_PER_KM.toLocaleString('id-ID')} per km dengan tarif minimum Rp ${MINIMUM_FARE.toLocaleString('id-ID')}.`;
+            // Jika semua gagal, coba split dengan kata kunci umum
+            const keywords = [' ke ', ' dan ', ' sampai ', ' to ', ' dari ', ' from '];
+            for (const keyword of keywords) {
+                if (text.includes(keyword)) {
+                    const parts = text.split(keyword);
+                    if (parts.length >= 2) {
+                        return [parts[0].trim(), parts[1].trim()];
+                    }
+                }
             }
             
-            if (lowerMessage.includes('jam operasional') || lowerMessage.includes('buka sampai jam')) {
-                return `Layanan ojek NOS tersedia 24 jam dengan tambahan biaya 20% untuk layanan malam hari (20:00-05:00).`;
+            return [];
+        }
+        
+        // Fungsi untuk menggunakan jarak yang disarankan AI
+        function useSuggestedDistance() {
+            const distance = parseFloat(useDistanceBtn.dataset.distance);
+            if (distance && !isNaN(distance)) {
+                document.getElementById('jarak').value = distance;
+                document.querySelector('.tab[data-tab="order"]').click();
+                
+                // Tampilkan notifikasi sukses
+                const notification = document.createElement('div');
+                notification.className = 'success-message';
+                notification.innerHTML = `<i class="fas fa-check-circle"></i> Jarak ${distance} km telah dimasukkan otomatis`;
+                document.getElementById('jarak').parentNode.appendChild(notification);
+                
+                // Hilangkan notifikasi setelah 3 detik
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+                
+                // Fokus ke field jarak
+                setTimeout(() => {
+                    document.getElementById('jarak').focus();
+                }, 100);
             }
-            
-            if (lowerMessage.includes('area') || lowerMessage.includes('daerah') || lowerMessage.includes('wilayah')) {
-                return `NOS melayani seluruh wilayah Kabupaten Situbondo (17 kecamatan, 4 kelurahan, dan 132 desa).`;
-            }
-            
-            const responses = [
-                "Saya bisa membantu memperkirakan jarak antar lokasi di Situbondo.",
-                "Silakan tanyakan tentang jarak antara dua lokasi di Situbondo.",
-                "Untuk perhitungan biaya ojek, gunakan form di tab 'Pesan Ojek'.",
-                "Anda bisa menanyakan jarak, contoh: 'Berapa jarak dari Terminal ke Pasar Situbondo?'"
-            ];
-            
-            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        // Fungsi untuk kapitalisasi huruf pertama
+        function capitalizeFirstLetter(string) {
+            return string.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
         }
         
         // Fungsi untuk konfirmasi pesanan
         function confirmOrder() {
             loadingIndicator.classList.remove('hidden');
             
+            // Simulasi proses penyimpanan pesanan
             setTimeout(() => {
                 const nama = document.getElementById('nama').value;
                 const penjemputan = document.getElementById('penjemputan').value;
@@ -1208,6 +1336,8 @@
                 priceResult.classList.add('hidden');
                 orderForm.classList.add('hidden');
                 successMessage.classList.remove('hidden');
+                
+                // Scroll ke pesan sukses
                 successMessage.scrollIntoView({ behavior: 'smooth' });
             }, 1200);
         }
@@ -1221,11 +1351,13 @@
             aiPrompt.value = '';
             aiResponse.classList.add('hidden');
             
+            // Hapus catatan tambahan jika ada
             const existingNotes = document.querySelector('.price-breakdown .info-message');
             if (existingNotes) {
                 existingNotes.remove();
             }
             
+            // Scroll ke atas
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
