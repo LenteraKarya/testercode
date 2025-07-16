@@ -342,19 +342,60 @@
             display: block;
         }
         
-        .ai-frame-container {
-            width: 100%;
-            height: 500px;
+        .ai-chat-container {
+            margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
-            margin-top: 20px;
         }
         
-        .ai-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .ai-chat-header {
+            background-color: var(--info);
+            color: white;
+            padding: 10px 15px;
+            font-weight: 500;
+        }
+        
+        .ai-chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: white;
+        }
+        
+        .ai-chat-input {
+            display: flex;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+        
+        .ai-chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .ai-message {
+            background-color: #e9e9e9;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
         }
         
         @media (max-width: 768px) {
@@ -378,8 +419,8 @@
                 flex-direction: column;
             }
             
-            .ai-frame-container {
-                height: 400px;
+            .ai-chat-messages {
+                height: 250px;
             }
         }
     </style>
@@ -488,7 +529,7 @@
                     <div class="ai-helper-title">
                         <i class="fas fa-lightbulb"></i> Konsultasi Jarak dengan AI
                     </div>
-                    <p>Gunakan AI gratis ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda di Situbondo.</p>
+                    <p>Gunakan fitur ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda di Situbondo.</p>
                     
                     <div class="form-group" style="margin-top: 15px;">
                         <label for="aiPrompt">Pertanyaan Anda:</label>
@@ -514,19 +555,20 @@
                     </div>
                 </div>
                 
-                <div class="ai-helper" style="margin-top: 30px;">
-                    <div class="ai-helper-title">
-                        <i class="fas fa-robot"></i> Chat AI Gratis (Powered by External Service)
+                <div class="ai-chat-container">
+                    <div class="ai-chat-header">
+                        <i class="fas fa-comments"></i> Chat dengan AI (Powered by Free AI Service)
                     </div>
-                    <p>Gunakan AI chatbot gratis di bawah ini untuk pertanyaan lebih lanjut tentang perjalanan di Situbondo:</p>
-                    
-                    <div class="ai-frame-container">
-                        <!-- Menggunakan iframe untuk mengintegrasikan AI gratis tanpa login -->
-                        <iframe class="ai-frame" src="https://www.easemate.ai/id/chatgpt-free" allow="microphone"></iframe>
+                    <div class="ai-chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            Halo! Saya AI asisten NOS. Silakan tanyakan apa saja tentang perjalanan di Situbondo.
+                        </div>
                     </div>
-                    
-                    <div class="info-message" style="margin-top: 10px;">
-                        <i class="fas fa-info-circle"></i> AI ini disediakan oleh layanan eksternal dan tidak terkait langsung dengan NOS.
+                    <div class="ai-chat-input">
+                        <input type="text" id="chatInput" placeholder="Ketik pertanyaan Anda...">
+                        <button id="sendChatBtn" class="btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -619,6 +661,9 @@
         const aiResponse = document.getElementById('aiResponse');
         const aiResponseContent = document.getElementById('aiResponseContent');
         const useDistanceBtn = document.getElementById('useDistanceBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendChatBtn = document.getElementById('sendChatBtn');
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
@@ -644,6 +689,14 @@
             // Event listener untuk AI helper
             askAiBtn.addEventListener('click', askAI);
             useDistanceBtn.addEventListener('click', useSuggestedDistance);
+            
+            // Event listener untuk chat AI
+            sendChatBtn.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
         });
         
         // Fungsi untuk menghitung harga
@@ -797,6 +850,56 @@
                 // Scroll ke response
                 aiResponse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 1500);
+        }
+        
+        // Fungsi untuk mengirim pesan chat
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            // Tambahkan pesan pengguna ke chat
+            addMessageToChat(message, 'user');
+            chatInput.value = '';
+            
+            // Simulasi respons AI
+            setTimeout(() => {
+                const aiResponse = generateAIResponse(message);
+                addMessageToChat(aiResponse, 'ai');
+            }, 1000);
+        }
+        
+        // Fungsi untuk menambahkan pesan ke chat
+        function addMessageToChat(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${sender}-message`;
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Fungsi untuk menghasilkan respons AI sederhana
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('jarak') || lowerMessage.includes('berapa km')) {
+                const locations = extractLocations(message);
+                if (locations.length >= 2) {
+                    const from = locations[0];
+                    const to = locations[1];
+                    const distance = findDistance(from.toLowerCase(), to.toLowerCase()) || estimateDistance(from.toLowerCase(), to.toLowerCase());
+                    return `Perkiraan jarak dari ${from} ke ${to} adalah sekitar ${distance} km.`;
+                }
+            }
+            
+            // Respons default
+            const responses = [
+                "Saya bisa membantu Anda memperkirakan jarak antar lokasi di Situbondo.",
+                "Silakan tanyakan tentang jarak antara dua lokasi di Situbondo.",
+                "Untuk pertanyaan tentang tarif ojek, gunakan form pemesanan di tab Pesan Ojek.",
+                "Saya fokus membantu dengan informasi perjalanan di Situbondo."
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
         }
         
         // Fungsi ekstrak lokasi yang lebih baik
