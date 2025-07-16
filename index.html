@@ -469,7 +469,7 @@
                     <div class="ai-helper-title">
                         <i class="fas fa-lightbulb"></i> Konsultasi Jarak dengan AI
                     </div>
-                    <p>Gunakan AI gratis ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda.</p>
+                    <p>Gunakan AI gratis ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda di Situbondo.</p>
                     
                     <div class="form-group" style="margin-top: 15px;">
                         <label for="aiPrompt">Pertanyaan Anda:</label>
@@ -659,10 +659,6 @@
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
-            // Pastikan tab pertama aktif saat load
-            document.querySelector('.tab[data-tab="order"]').classList.add('active');
-            document.getElementById('orderTab').classList.add('active');
-            
             // Event listeners untuk form pemesanan
             orderForm.addEventListener('submit', calculatePrice);
             confirmOrderBtn.addEventListener('click', confirmOrder);
@@ -789,7 +785,7 @@
             // Simulasi AI processing
             setTimeout(() => {
                 // Ekstrak lokasi dari prompt
-                const locations = extractLocationsImproved(prompt);
+                const locations = extractLocations(prompt);
                 
                 if (locations.length < 2) {
                     aiResponseContent.innerHTML = `
@@ -841,7 +837,7 @@
         }
         
         // Fungsi ekstrak lokasi yang lebih baik
-        function extractLocationsImproved(prompt) {
+        function extractLocations(prompt) {
             // Normalisasi teks
             const text = prompt.toLowerCase().replace(/[.,?]/g, '');
             
