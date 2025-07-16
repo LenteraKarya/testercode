@@ -342,6 +342,21 @@
             display: block;
         }
         
+        .ai-frame-container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .ai-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -361,6 +376,10 @@
             
             .btn-group {
                 flex-direction: column;
+            }
+            
+            .ai-frame-container {
+                height: 400px;
             }
         }
     </style>
@@ -494,6 +513,22 @@
                         </button>
                     </div>
                 </div>
+                
+                <div class="ai-helper" style="margin-top: 30px;">
+                    <div class="ai-helper-title">
+                        <i class="fas fa-robot"></i> Chat AI Gratis (Powered by External Service)
+                    </div>
+                    <p>Gunakan AI chatbot gratis di bawah ini untuk pertanyaan lebih lanjut tentang perjalanan di Situbondo:</p>
+                    
+                    <div class="ai-frame-container">
+                        <!-- Menggunakan iframe untuk mengintegrasikan AI gratis tanpa login -->
+                        <iframe class="ai-frame" src="https://www.easemate.ai/id/chatgpt-free" allow="microphone"></iframe>
+                    </div>
+                    
+                    <div class="info-message" style="margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> AI ini disediakan oleh layanan eksternal dan tidak terkait langsung dengan NOS.
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -524,121 +559,49 @@
         const RAIN_FARE_MULTIPLIER = 1.15; // Tambahan 15% saat hujan
         const TWO_PASSENGER_MULTIPLIER = 1.3; // Tambahan 30% untuk 2 penumpang
         
-        // Database pengetahuan lokal tentang jarak di Situbondo (diperluas)
+        // Database pengetahuan lokal tentang jarak di Situbondo
         const LOCATION_KNOWLEDGE = {
             "terminal situbondo": {
                 "pantai pasir putih": 12,
                 "pasar situbondo": 3,
                 "rsud situbondo": 5,
                 "kantor bupati situbondo": 4,
-                "stasiun situbondo": 2,
-                "pasar panarukan": 18,
-                "pelabuhan panarukan": 20,
-                "kawasan industri panarukan": 22,
-                "pantai mbo": 15,
-                "pantai pecel": 17
+                "stasiun situbondo": 2
             },
             "pasar situbondo": {
                 "terminal situbondo": 3,
                 "pantai pasir putih": 15,
                 "rsud situbondo": 6,
                 "kantor bupati situbondo": 5,
-                "stasiun situbondo": 4,
-                "pasar panarukan": 20,
-                "pelabuhan panarukan": 22,
-                "kawasan industri panarukan": 24,
-                "pantai mbo": 18,
-                "pantai pecel": 20
+                "stasiun situbondo": 4
             },
             "pantai pasir putih": {
                 "terminal situbondo": 12,
                 "pasar situbondo": 15,
                 "rsud situbondo": 14,
                 "kantor bupati situbondo": 13,
-                "stasiun situbondo": 11,
-                "pasar panarukan": 25,
-                "pelabuhan panarukan": 27,
-                "kawasan industri panarukan": 29,
-                "pantai mbo": 10,
-                "pantai pecel": 12
+                "stasiun situbondo": 11
             },
             "rsud situbondo": {
                 "terminal situbondo": 5,
                 "pasar situbondo": 6,
                 "pantai pasir putih": 14,
                 "kantor bupati situbondo": 2,
-                "stasiun situbondo": 4,
-                "pasar panarukan": 20,
-                "pelabuhan panarukan": 22,
-                "kawasan industri panarukan": 24,
-                "pantai mbo": 16,
-                "pantai pecel": 18
+                "stasiun situbondo": 4
             },
             "kantor bupati situbondo": {
                 "terminal situbondo": 4,
                 "pasar situbondo": 5,
                 "pantai pasir putih": 13,
                 "rsud situbondo": 2,
-                "stasiun situbondo": 3,
-                "pasar panarukan": 19,
-                "pelabuhan panarukan": 21,
-                "kawasan industri panarukan": 23,
-                "pantai mbo": 15,
-                "pantai pecel": 17
+                "stasiun situbondo": 3
             },
             "stasiun situbondo": {
                 "terminal situbondo": 2,
                 "pasar situbondo": 4,
                 "pantai pasir putih": 11,
                 "rsud situbondo": 4,
-                "kantor bupati situbondo": 3,
-                "pasar panarukan": 17,
-                "pelabuhan panarukan": 19,
-                "kawasan industri panarukan": 21,
-                "pantai mbo": 13,
-                "pantai pecel": 15
-            },
-            "pasar panarukan": {
-                "terminal situbondo": 18,
-                "pasar situbondo": 20,
-                "kantor bupati situbondo": 19,
-                "stasiun situbondo": 17,
-                "pantai pasir putih": 25,
-                "rsud situbondo": 20,
-                "pelabuhan panarukan": 3,
-                "kawasan industri panarukan": 5,
-                "pantai mbo": 30,
-                "pantai pecel": 32
-            },
-            "pelabuhan panarukan": {
-                "pasar panarukan": 3,
-                "kawasan industri panarukan": 2,
-                "terminal situbondo": 20,
-                "pasar situbondo": 22,
-                "kantor bupati situbondo": 21,
-                "stasiun situbondo": 19
-            },
-            "kawasan industri panarukan": {
-                "pasar panarukan": 5,
-                "pelabuhan panarukan": 2,
-                "terminal situbondo": 22,
-                "pasar situbondo": 24,
-                "kantor bupati situbondo": 23,
-                "stasiun situbondo": 21
-            },
-            "pantai mbo": {
-                "pantai pasir putih": 10,
-                "terminal situbondo": 15,
-                "pasar situbondo": 18,
-                "kantor bupati situbondo": 15,
-                "stasiun situbondo": 13
-            },
-            "pantai pecel": {
-                "pantai pasir putih": 12,
-                "terminal situbondo": 17,
-                "pasar situbondo": 20,
-                "kantor bupati situbondo": 17,
-                "stasiun situbondo": 15
+                "kantor bupati situbondo": 3
             }
         };
         
@@ -876,18 +839,15 @@
             // Klasifikasi lokasi
             const isInTown = (loc) => loc.includes('terminal') || loc.includes('pasar') || loc.includes('kantor') || loc.includes('stasiun') || loc.includes('rsud');
             const isBeach = (loc) => loc.includes('pantai') || loc.includes('beach');
-            const isIndustrial = (loc) => loc.includes('industri') || loc.includes('pelabuhan') || loc.includes('harbor');
             
-            const fromType = isInTown(from) ? 'town' : isBeach(from) ? 'beach' : isIndustrial(from) ? 'industrial' : 'other';
-            const toType = isInTown(to) ? 'town' : isBeach(to) ? 'beach' : isIndustrial(to) ? 'industrial' : 'other';
+            const fromType = isInTown(from) ? 'town' : isBeach(from) ? 'beach' : 'other';
+            const toType = isInTown(to) ? 'town' : isBeach(to) ? 'beach' : 'other';
             
             // Berikan perkiraan berdasarkan kombinasi tipe lokasi
             if (fromType === 'town' && toType === 'town') {
                 return Math.floor(Math.random() * 5) + 2; // 2-6 km
             } else if ((fromType === 'town' && toType === 'beach') || (fromType === 'beach' && toType === 'town')) {
                 return Math.floor(Math.random() * 10) + 10; // 10-20 km
-            } else if ((fromType === 'town' && toType === 'industrial') || (fromType === 'industrial' && toType === 'town')) {
-                return Math.floor(Math.random() * 15) + 15; // 15-30 km
             } else if (fromType === 'beach' && toType === 'beach') {
                 return Math.floor(Math.random() * 5) + 5; // 5-10 km
             } else {
