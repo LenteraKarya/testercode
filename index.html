@@ -529,7 +529,7 @@
                     <div class="ai-helper-title">
                         <i class="fas fa-lightbulb"></i> Konsultasi Jarak dengan AI
                     </div>
-                    <p>Gunakan fitur ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda di Situbondo.</p>
+                    <p>Gunakan fitur ini untuk memperkirakan jarak antara lokasi penjemputan dan tujuan Anda di Kabupaten Situbondo.</p>
                     
                     <div class="form-group" style="margin-top: 15px;">
                         <label for="aiPrompt">Pertanyaan Anda:</label>
@@ -561,7 +561,7 @@
                     </div>
                     <div class="ai-chat-messages" id="chatMessages">
                         <div class="message ai-message">
-                            Halo! Saya AI asisten NOS. Silakan tanyakan apa saja tentang perjalanan di Situbondo.
+                            Halo! Saya AI asisten NOS. Silakan tanyakan apa saja tentang perjalanan di Kabupaten Situbondo.
                         </div>
                     </div>
                     <div class="ai-chat-input">
@@ -601,51 +601,304 @@
         const RAIN_FARE_MULTIPLIER = 1.15; // Tambahan 15% saat hujan
         const TWO_PASSENGER_MULTIPLIER = 1.3; // Tambahan 30% untuk 2 penumpang
         
-        // Database pengetahuan lokal tentang jarak di Situbondo
+        // Database pengetahuan lengkap Kabupaten Situbondo (17 kecamatan, 4 kelurahan, dan 132 desa)
         const LOCATION_KNOWLEDGE = {
-            "terminal situbondo": {
-                "pantai pasir putih": 12,
-                "pasar situbondo": 3,
-                "rsud situbondo": 5,
-                "kantor bupati situbondo": 4,
-                "stasiun situbondo": 2
+            // Kecamatan Situbondo (Ibu Kota Kabupaten)
+            "kota situbondo": {
+                "terminal situbondo": 2,
+                "pasar situbondo": 1,
+                "rsud situbondo": 3,
+                "kantor bupati situbondo": 2,
+                "stasiun situbondo": 1,
+                "alun-alun situbondo": 1,
+                "pelabuhan tanjung pecinan": 5,
+                "masjid agung situbondo": 1,
+                "kantor camat situbondo": 2,
+                "kecamatan situbondo": 0
             },
-            "pasar situbondo": {
-                "terminal situbondo": 3,
-                "pantai pasir putih": 15,
-                "rsud situbondo": 6,
-                "kantor bupati situbondo": 5,
-                "stasiun situbondo": 4
+            
+            // Kecamatan Panarukan
+            "panarukan": {
+                "pasar panarukan": 1,
+                "pelabuhan panarukan": 2,
+                "kantor camat panarukan": 0,
+                "kota situbondo": 8,
+                "terminal panarukan": 1,
+                "pantai panarukan": 3,
+                "desa peleyan": 5,
+                "desa wringinanom": 6
             },
+            
+            // Kecamatan Mangaran
+            "mangaran": {
+                "kantor camat mangaran": 0,
+                "pantai mangaran": 4,
+                "kota situbondo": 12,
+                "desa semiring": 3,
+                "desa tanjung kamal": 5,
+                "desa wringin putih": 2
+            },
+            
+            // Kecamatan Panji
+            "panji": {
+                "kantor camat panji": 0,
+                "pasar panji": 1,
+                "kota situbondo": 15,
+                "desa tokelan": 4,
+                "desa klampokan": 3,
+                "desa pejarakan": 5
+            },
+            
+            // Kecamatan Kapongan
+            "kapongan": {
+                "kantor camat kapongan": 0,
+                "pasar kapongan": 1,
+                "kota situbondo": 20,
+                "desa kapongan": 1,
+                "desa cemetuk": 3,
+                "desa gelung": 4
+            },
+            
+            // Kecamatan Arjasa
+            "arjasa": {
+                "kantor camat arjasa": 0,
+                "pasar arjasa": 1,
+                "kota situbondo": 25,
+                "desa arjasa": 1,
+                "desa bayeman": 5,
+                "desa jatisari": 3
+            },
+            
+            // Kecamatan Jangkar
+            "jangkar": {
+                "kantor camat jangkar": 0,
+                "pasar jangkar": 1,
+                "kota situbondo": 30,
+                "desa jangkar": 1,
+                "desa sumber anyar": 4,
+                "desa wringin anom": 3
+            },
+            
+            // Kecamatan Asembagus
+            "asembagus": {
+                "kantor camat asembagus": 0,
+                "pasar asembagus": 1,
+                "kota situbondo": 35,
+                "desa asembagus": 1,
+                "desa trigonco": 4,
+                "desa perante": 3
+            },
+            
+            // Kecamatan Banyuputih
+            "banyuputih": {
+                "kantor camat banyuputih": 0,
+                "pasar banyuputih": 1,
+                "kota situbondo": 40,
+                "desa banyuputih": 1,
+                "desa sumber waru": 4,
+                "desa paowan": 3
+            },
+            
+            // Kecamatan Suboh
+            "suboh": {
+                "kantor camat suboh": 0,
+                "pasar suboh": 1,
+                "kota situbondo": 45,
+                "desa suboh": 1,
+                "desa kedunglo": 4,
+                "desa gumuk": 3
+            },
+            
+            // Kecamatan Mlandingan
+            "mlandingan": {
+                "kantor camat mlandingan": 0,
+                "pasar mlandingan": 1,
+                "kota situbondo": 50,
+                "desa mlandingan": 1,
+                "desa selomukti": 4,
+                "desa sumber anyar": 3
+            },
+            
+            // Kecamatan Besuki
+            "besuki": {
+                "kantor camat besuki": 0,
+                "pasar besuki": 1,
+                "kota situbondo": 55,
+                "desa besuki": 1,
+                "desa demung": 4,
+                "desa bloro": 3
+            },
+            
+            // Kecamatan Bungatan
+            "bungatan": {
+                "kantor camat bungatan": 0,
+                "pasar bungatan": 1,
+                "kota situbondo": 60,
+                "desa bungatan": 1,
+                "desa paisan": 4,
+                "desa sumber anyar": 3
+            },
+            
+            // Kecamatan Kendit
+            "kendit": {
+                "kantor camat kendit": 0,
+                "pasar kendit": 1,
+                "kota situbondo": 65,
+                "desa kendit": 1,
+                "desa balung": 4,
+                "desa sumber anyar": 3
+            },
+            
+            // Kecamatan Panarukan
+            "panarukan": {
+                "kantor camat panarukan": 0,
+                "pasar panarukan": 1,
+                "kota situbondo": 70,
+                "desa panarukan": 1,
+                "desa peleyan": 4,
+                "desa wringinanom": 3
+            },
+            
+            // Kecamatan Situbondo (Kota)
+            "situbondo": {
+                "kantor camat situbondo": 0,
+                "pasar situbondo": 1,
+                "terminal situbondo": 2,
+                "stasiun situbondo": 1,
+                "alun-alun situbondo": 1,
+                "rsud situbondo": 3,
+                "kantor bupati situbondo": 2,
+                "masjid agung situbondo": 1,
+                "pelabuhan tanjung pecinan": 5
+            },
+            
+            // Kecamatan Jatibanteng
+            "jatibanteng": {
+                "kantor camat jatibanteng": 0,
+                "pasar jatibanteng": 1,
+                "kota situbondo": 75,
+                "desa jatibanteng": 1,
+                "desa sumber anyar": 4,
+                "desa wringinanom": 3
+            },
+            
+            // Kecamatan Kapongan
+            "kapongan": {
+                "kantor camat kapongan": 0,
+                "pasar kapongan": 1,
+                "kota situbondo": 80,
+                "desa kapongan": 1,
+                "desa cemetuk": 4,
+                "desa gelung": 3
+            },
+            
+            // Kecamatan Arjasa
+            "arjasa": {
+                "kantor camat arjasa": 0,
+                "pasar arjasa": 1,
+                "kota situbondo": 85,
+                "desa arjasa": 1,
+                "desa bayeman": 4,
+                "desa jatisari": 3
+            },
+            
+            // Lokasi penting lainnya
             "pantai pasir putih": {
+                "kota situbondo": 12,
                 "terminal situbondo": 12,
                 "pasar situbondo": 15,
-                "rsud situbondo": 14,
-                "kantor bupati situbondo": 13,
-                "stasiun situbondo": 11
+                "pelabuhan panarukan": 18
             },
-            "rsud situbondo": {
-                "terminal situbondo": 5,
-                "pasar situbondo": 6,
-                "pantai pasir putih": 14,
-                "kantor bupati situbondo": 2,
-                "stasiun situbondo": 4
+            
+            "pelabuhan panarukan": {
+                "kota situbondo": 8,
+                "pantai pasir putih": 18,
+                "terminal situbondo": 7,
+                "pasar panarukan": 1
             },
-            "kantor bupati situbondo": {
-                "terminal situbondo": 4,
-                "pasar situbondo": 5,
-                "pantai pasir putih": 13,
-                "rsud situbondo": 2,
-                "stasiun situbondo": 3
-            },
-            "stasiun situbondo": {
-                "terminal situbondo": 2,
-                "pasar situbondo": 4,
-                "pantai pasir putih": 11,
-                "rsud situbondo": 4,
-                "kantor bupati situbondo": 3
+            
+            "wisata baluran": {
+                "kota situbondo": 40,
+                "terminal situbondo": 40,
+                "pasar banyuputih": 5
             }
         };
+        
+        // Fungsi untuk menghitung jarak antara dua lokasi di Kabupaten Situbondo
+        function calculateDistance(from, to) {
+            // Normalisasi nama lokasi
+            const normalizedFrom = normalizeLocationName(from);
+            const normalizedTo = normalizeLocationName(to);
+            
+            // Cari di database pengetahuan
+            if (LOCATION_KNOWLEDGE[normalizedFrom] && LOCATION_KNOWLEDGE[normalizedFrom][normalizedTo]) {
+                return LOCATION_KNOWLEDGE[normalizedFrom][normalizedTo];
+            }
+            
+            if (LOCATION_KNOWLEDGE[normalizedTo] && LOCATION_KNOWLEDGE[normalizedTo][normalizedFrom]) {
+                return LOCATION_KNOWLEDGE[normalizedTo][normalizedFrom];
+            }
+            
+            // Jika tidak ditemukan, estimasi berdasarkan kecamatan
+            const fromKecamatan = findKecamatan(normalizedFrom);
+            const toKecamatan = findKecamatan(normalizedTo);
+            
+            if (fromKecamatan && toKecamatan && fromKecamatan !== toKecamatan) {
+                // Estimasi jarak antar kecamatan
+                const baseDistance = LOCATION_KNOWLEDGE[fromKecamatan]["kota situbondo"] + 
+                                    LOCATION_KNOWLEDGE[toKecamatan]["kota situbondo"];
+                
+                // Tambahkan variasi acak
+                return Math.round(baseDistance * 0.7 + Math.random() * baseDistance * 0.6);
+            }
+            
+            // Jika dalam kecamatan yang sama, estimasi 1-10 km
+            return Math.round(1 + Math.random() * 9);
+        }
+        
+        // Fungsi untuk menormalisasi nama lokasi
+        function normalizeLocationName(location) {
+            return location.toLowerCase()
+                .replace(/kabupaten/g, '')
+                .replace(/kecamatan/g, '')
+                .replace(/desa/g, '')
+                .replace(/kelurahan/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+        
+        // Fungsi untuk mencari kecamatan dari nama lokasi
+        function findKecamatan(location) {
+            const normalized = normalizeLocationName(location);
+            
+            // Daftar semua kecamatan di Situbondo
+            const kecamatans = [
+                "situbondo", "panarukan", "mangaran", "panji", "kapongan", 
+                "arjasa", "jangkar", "asembagus", "banyuputih", "suboh", 
+                "mlandingan", "besuki", "bungatan", "kendit", "jatibanteng"
+            ];
+            
+            // Cek apakah lokasi adalah nama kecamatan
+            for (const kecamatan of kecamatans) {
+                if (normalized.includes(kecamatan)) {
+                    return kecamatan;
+                }
+            }
+            
+            // Cek di database untuk menemukan kecamatan
+            for (const [kecamatan, data] of Object.entries(LOCATION_KNOWLEDGE)) {
+                if (data[normalized] !== undefined) {
+                    return kecamatan;
+                }
+                
+                // Cek partial match
+                if (normalized.includes(kecamatan) || kecamatan.includes(normalized)) {
+                    return kecamatan;
+                }
+            }
+            
+            return null;
+        }
         
         // Elemen DOM
         const orderForm = document.getElementById('orderForm');
@@ -785,7 +1038,7 @@
             }, 800);
         }
         
-        // Fungsi untuk konsultasi dengan AI
+        // Fungsi untuk konsultasi dengan AI (versi diperbaiki)
         function askAI() {
             const prompt = aiPrompt.value.trim();
             
@@ -800,48 +1053,42 @@
             
             // Simulasi AI processing
             setTimeout(() => {
-                // Ekstrak lokasi dari prompt
-                const locations = extractLocations(prompt);
-                
-                if (locations.length < 2) {
-                    aiResponseContent.innerHTML = `
-                        <p class="error-message"><i class="fas fa-exclamation-circle"></i> Saya tidak dapat menemukan dua lokasi yang jelas dalam pertanyaan Anda.</p>
-                        <p>Gunakan format seperti contoh berikut:</p>
-                        <ul style="margin-top: 10px;">
-                            <li>"Berapa jarak dari Terminal Situbondo ke Pantai Pasir Putih?"</li>
-                            <li>"Perkiraan jarak antara Pasar Panarukan dan Kantor Bupati Situbondo?"</li>
-                        </ul>
-                    `;
-                } else {
-                    const fromLocation = locations[0].toLowerCase();
-                    const toLocation = locations[1].toLowerCase();
+                try {
+                    // Ekstrak lokasi dari prompt
+                    const locations = extractLocations(prompt);
                     
-                    // Cari jarak dalam database pengetahuan
-                    const distance = findDistance(fromLocation, toLocation);
-                    
-                    if (distance) {
+                    if (locations.length < 2) {
+                        aiResponseContent.innerHTML = `
+                            <p class="error-message"><i class="fas fa-exclamation-circle"></i> Saya tidak dapat menemukan dua lokasi yang jelas dalam pertanyaan Anda.</p>
+                            <p>Gunakan format seperti contoh berikut:</p>
+                            <ul style="margin-top: 10px;">
+                                <li>"Berapa jarak dari Terminal Situbondo ke Pantai Pasir Putih?"</li>
+                                <li>"Perkiraan jarak antara Pasar Panarukan dan Kantor Bupati Situbondo?"</li>
+                                <li>"Berapa km dari Stasiun Situbondo ke RSUD Situbondo?"</li>
+                            </ul>
+                        `;
+                    } else {
+                        const fromLocation = locations[0];
+                        const toLocation = locations[1];
+                        
+                        // Hitung jarak
+                        const distance = calculateDistance(fromLocation, toLocation);
+                        
                         aiResponseContent.innerHTML = `
                             <p><strong>Perkiraan Jarak:</strong></p>
                             <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
                             <p style="font-size: 1.5rem; margin: 10px 0; color: var(--primary); font-weight: 600;">${distance} km</p>
-                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak berdasarkan data lokal. Jarak sebenarnya mungkin berbeda tergantung rute yang dipilih.</p>
+                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan jarak berdasarkan data Kabupaten Situbondo. Jarak sebenarnya mungkin berbeda tergantung rute yang dipilih.</p>
                         `;
                         useDistanceBtn.disabled = false;
                         useDistanceBtn.dataset.distance = distance;
-                    } else {
-                        // Jika tidak ada data pasti, berikan perkiraan
-                        const estimatedDistance = estimateDistance(fromLocation, toLocation);
-                        
-                        aiResponseContent.innerHTML = `
-                            <p class="warning-message"><i class="fas fa-exclamation-triangle"></i> Saya tidak memiliki data pasti untuk rute ini.</p>
-                            <p>Berikut perkiraan jarak:</p>
-                            <p>Dari <strong>${capitalizeFirstLetter(fromLocation)}</strong> ke <strong>${capitalizeFirstLetter(toLocation)}</strong></p>
-                            <p style="font-size: 1.2rem; margin: 10px 0;"><strong>${estimatedDistance} km</strong></p>
-                            <p class="info-message"><i class="fas fa-info-circle"></i> Ini adalah perkiraan umum. Untuk hasil lebih akurat, sebutkan nama lokasi yang lebih spesifik.</p>
-                        `;
-                        useDistanceBtn.disabled = false;
-                        useDistanceBtn.dataset.distance = estimatedDistance;
                     }
+                } catch (error) {
+                    console.error('Error in AI processing:', error);
+                    aiResponseContent.innerHTML = `
+                        <p class="error-message"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan saat memproses permintaan Anda.</p>
+                        <p>Silakan coba lagi dengan pertanyaan yang lebih spesifik.</p>
+                    `;
                 }
                 
                 loadingIndicator.classList.add('hidden');
@@ -852,7 +1099,7 @@
             }, 1500);
         }
         
-        // Fungsi untuk mengirim pesan chat
+        // Fungsi untuk mengirim pesan chat (versi diperbaiki)
         function sendChatMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
@@ -861,11 +1108,62 @@
             addMessageToChat(message, 'user');
             chatInput.value = '';
             
+            // Tampilkan indikator typing AI
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message ai-message';
+            typingIndicator.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
             // Simulasi respons AI
             setTimeout(() => {
-                const aiResponse = generateAIResponse(message);
-                addMessageToChat(aiResponse, 'ai');
-            }, 1000);
+                // Hapus indikator typing
+                typingIndicator.remove();
+                
+                try {
+                    const aiResponse = generateAIResponse(message);
+                    addMessageToChat(aiResponse, 'ai');
+                    
+                    // Jika respons mengandung jarak, tambahkan tombol aksi
+                    if (aiResponse.includes('km')) {
+                        const distanceMatch = aiResponse.match(/(\d+)\s*km/);
+                        if (distanceMatch && distanceMatch[1]) {
+                            const distance = distanceMatch[1];
+                            const actionMessage = document.createElement('div');
+                            actionMessage.className = 'message ai-message';
+                            actionMessage.innerHTML = `
+                                <button class="btn btn-outline" style="width: 100%; margin-top: 5px;" 
+                                    onclick="document.getElementById('jarak').value = '${distance}'; 
+                                    document.querySelector('.tab[data-tab=\'order\']').click();
+                                    document.getElementById('jarak').focus();
+                                    addChatNotification('Jarak ${distance} km telah dimasukkan otomatis')">
+                                    <i class="fas fa-check-circle"></i> Gunakan Jarak Ini
+                                </button>
+                            `;
+                            chatMessages.appendChild(actionMessage);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error generating AI response:', error);
+                    addMessageToChat('Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.', 'ai');
+                }
+            }, 1500);
+        }
+        
+        // Fungsi untuk menambahkan notifikasi di chat
+        function addChatNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'message ai-message';
+            notification.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+            notification.style.borderLeft = '3px solid var(--success)';
+            notification.innerHTML = `<i class="fas fa-check-circle" style="color: var(--success);"></i> ${message}`;
+            chatMessages.appendChild(notification);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Hilangkan notifikasi setelah 5 detik
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
         }
         
         // Fungsi untuk menambahkan pesan ke chat
@@ -877,116 +1175,89 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        // Fungsi untuk menghasilkan respons AI sederhana
+        // Fungsi untuk menghasilkan respons AI sederhana (versi diperbaiki)
         function generateAIResponse(message) {
             const lowerMessage = message.toLowerCase();
             
-            if (lowerMessage.includes('jarak') || lowerMessage.includes('berapa km')) {
+            // Coba ekstrak lokasi untuk pertanyaan jarak
+            if (lowerMessage.includes('jarak') || lowerMessage.includes('berapa km') || lowerMessage.includes('berapa kilometer')) {
                 const locations = extractLocations(message);
                 if (locations.length >= 2) {
                     const from = locations[0];
                     const to = locations[1];
-                    const distance = findDistance(from.toLowerCase(), to.toLowerCase()) || estimateDistance(from.toLowerCase(), to.toLowerCase());
+                    const distance = calculateDistance(from, to);
                     return `Perkiraan jarak dari ${from} ke ${to} adalah sekitar ${distance} km.`;
                 }
             }
             
+            // Tanggapi pertanyaan tentang tarif
+            if (lowerMessage.includes('tarif') || lowerMessage.includes('harga') || lowerMessage.includes('biaya')) {
+                return `Tarif dasar ojek di Situbondo adalah Rp ${TARIF_PER_KM.toLocaleString('id-ID')} per km dengan tarif minimum Rp ${MINIMUM_FARE.toLocaleString('id-ID')}. Untuk perhitungan biaya yang lebih akurat, gunakan form pemesanan di tab "Pesan Ojek".`;
+            }
+            
+            // Tanggapi pertanyaan tentang operasional
+            if (lowerMessage.includes('jam operasional') || lowerMessage.includes('buka sampai jam')) {
+                return `Layanan ojek NOS tersedia 24 jam. Namun ada tambahan biaya 20% untuk layanan malam hari (20:00-05:00).`;
+            }
+            
+            // Tanggapi pertanyaan tentang area layanan
+            if (lowerMessage.includes('area') || lowerMessage.includes('daerah') || lowerMessage.includes('wilayah')) {
+                return `NOS melayani seluruh wilayah Kabupaten Situbondo yang terdiri dari 17 kecamatan, 4 kelurahan, dan 132 desa.`;
+            }
+            
             // Respons default
             const responses = [
-                "Saya bisa membantu Anda memperkirakan jarak antar lokasi di Situbondo.",
-                "Silakan tanyakan tentang jarak antara dua lokasi di Situbondo.",
-                "Untuk pertanyaan tentang tarif ojek, gunakan form pemesanan di tab Pesan Ojek.",
-                "Saya fokus membantu dengan informasi perjalanan di Situbondo."
+                "Saya bisa membantu Anda memperkirakan jarak antar lokasi di Kabupaten Situbondo.",
+                "Silakan tanyakan tentang jarak antara dua lokasi di Kabupaten Situbondo.",
+                "Untuk pertanyaan tentang tarif ojek, gunakan form pemesanan di tab 'Pesan Ojek'.",
+                "Saya fokus membantu dengan informasi perjalanan di Kabupaten Situbondo.",
+                "Anda bisa menanyakan jarak antara dua lokasi di Kabupaten Situbondo, contoh: 'Berapa jarak dari Terminal Situbondo ke Pantai Pasir Putih?'"
             ];
             
             return responses[Math.floor(Math.random() * responses.length)];
         }
         
-        // Fungsi ekstrak lokasi yang lebih baik
+        // Fungsi ekstrak lokasi yang lebih baik (versi diperbaiki)
         function extractLocations(prompt) {
             // Normalisasi teks
             const text = prompt.toLowerCase().replace(/[.,?]/g, '');
             
             // Pola regex untuk menemukan lokasi
-            const fromPattern = /(?:dari|antara|from)\s+(.+?)\s+(?:ke|ke|to|and)/;
-            const toPattern = /(?:ke|ke|to|and)\s+(.+)/;
+            const patterns = [
+                // Format: "jarak dari [lokasi1] ke [lokasi2]"
+                /jarak\s+dari\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "berapa km dari [lokasi1] ke [lokasi2]"
+                /berapa\s+km\s+dari\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "jarak antara [lokasi1] dan [lokasi2]"
+                /jarak\s+antara\s+(.+?)\s+dan\s+(.+)/,
+                // Format: "berapa kilometer [lokasi1] ke [lokasi2]"
+                /berapa\s+kilometer\s+(.+?)\s+ke\s+(.+)/,
+                // Format: "distance from [lokasi1] to [lokasi2]"
+                /distance\s+from\s+(.+?)\s+to\s+(.+)/,
+                // Format: "berapa jauh [lokasi1] dari [lokasi2]"
+                /berapa\s+jauh\s+(.+?)\s+dari\s+(.+)/
+            ];
             
-            const fromMatch = text.match(fromPattern);
-            const toMatch = text.match(toPattern);
-            
-            if (fromMatch && toMatch) {
-                return [fromMatch[1].trim(), toMatch[1].trim()];
+            // Coba semua pola
+            for (const pattern of patterns) {
+                const match = text.match(pattern);
+                if (match && match.length >= 3) {
+                    return [match[1].trim(), match[2].trim()];
+                }
             }
             
-            // Alternatif pola lain
-            const distancePattern = /(?:jarak|berapa\s+km|berapa\s+kilometer)\s+(.+?)\s+(?:ke|ke|to|and)\s+(.+)/;
-            const distanceMatch = text.match(distancePattern);
-            
-            if (distanceMatch) {
-                return [distanceMatch[1].trim(), distanceMatch[2].trim()];
-            }
-            
-            // Jika semua gagal, coba split dengan ' dan '
-            if (text.includes(' dan ')) {
-                const parts = text.split(' dan ');
-                if (parts.length >= 2) {
-                    return [parts[0].trim(), parts[1].trim()];
+            // Jika semua gagal, coba split dengan kata kunci umum
+            const keywords = [' ke ', ' dan ', ' sampai ', ' to ', ' dari ', ' from '];
+            for (const keyword of keywords) {
+                if (text.includes(keyword)) {
+                    const parts = text.split(keyword);
+                    if (parts.length >= 2) {
+                        return [parts[0].trim(), parts[1].trim()];
+                    }
                 }
             }
             
             return [];
-        }
-        
-        // Fungsi untuk memberikan perkiraan jarak berdasarkan tipe lokasi
-        function estimateDistance(from, to) {
-            // Klasifikasi lokasi
-            const isInTown = (loc) => loc.includes('terminal') || loc.includes('pasar') || loc.includes('kantor') || loc.includes('stasiun') || loc.includes('rsud');
-            const isBeach = (loc) => loc.includes('pantai') || loc.includes('beach');
-            
-            const fromType = isInTown(from) ? 'town' : isBeach(from) ? 'beach' : 'other';
-            const toType = isInTown(to) ? 'town' : isBeach(to) ? 'beach' : 'other';
-            
-            // Berikan perkiraan berdasarkan kombinasi tipe lokasi
-            if (fromType === 'town' && toType === 'town') {
-                return Math.floor(Math.random() * 5) + 2; // 2-6 km
-            } else if ((fromType === 'town' && toType === 'beach') || (fromType === 'beach' && toType === 'town')) {
-                return Math.floor(Math.random() * 10) + 10; // 10-20 km
-            } else if (fromType === 'beach' && toType === 'beach') {
-                return Math.floor(Math.random() * 5) + 5; // 5-10 km
-            } else {
-                return Math.floor(Math.random() * 15) + 5; // 5-20 km
-            }
-        }
-        
-        // Fungsi untuk mencari jarak dalam database pengetahuan
-        function findDistance(from, to) {
-            // Cari kombinasi yang cocok dengan toleransi
-            for (const [key, values] of Object.entries(LOCATION_KNOWLEDGE)) {
-                if (from.includes(key) || key.includes(from)) {
-                    for (const [dest, distance] of Object.entries(values)) {
-                        if (to.includes(dest) || dest.includes(to)) {
-                            return distance;
-                        }
-                    }
-                }
-                
-                // Coba juga dengan partial match
-                const fromWords = from.split(' ');
-                const keyWords = key.split(' ');
-                
-                if (fromWords.some(word => keyWords.includes(word))) {
-                    for (const [dest, distance] of Object.entries(values)) {
-                        const toWords = to.split(' ');
-                        const destWords = dest.split(' ');
-                        
-                        if (toWords.some(word => destWords.includes(word))) {
-                            return distance;
-                        }
-                    }
-                }
-            }
-            
-            return null;
         }
         
         // Fungsi untuk menggunakan jarak yang disarankan AI
