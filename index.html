@@ -659,6 +659,10 @@
         
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
+            // Pastikan tab pertama aktif saat load
+            document.querySelector('.tab[data-tab="order"]').classList.add('active');
+            document.getElementById('orderTab').classList.add('active');
+            
             // Event listeners untuk form pemesanan
             orderForm.addEventListener('submit', calculatePrice);
             confirmOrderBtn.addEventListener('click', confirmOrder);
@@ -666,22 +670,21 @@
             
             // Event listeners untuk tab
             tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
+                tab.addEventListener('click', function() {
+                    // Hapus kelas active dari semua tab dan konten
                     tabs.forEach(t => t.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
                     
-                    tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                    // Tambahkan kelas active ke tab yang diklik
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
                 });
             });
             
             // Event listener untuk AI helper
             askAiBtn.addEventListener('click', askAI);
             useDistanceBtn.addEventListener('click', useSuggestedDistance);
-            
-            // Pastikan tab pertama aktif saat pertama kali load
-            document.getElementById('orderTab').classList.add('active');
-            document.querySelector('.tab[data-tab="order"]').classList.add('active');
         });
         
         // Fungsi untuk menghitung harga
@@ -770,7 +773,7 @@
             }, 800);
         }
         
-        // Fungsi untuk konsultasi dengan AI (diperbaiki dan disempurnakan)
+        // Fungsi untuk konsultasi dengan AI
         function askAI() {
             const prompt = aiPrompt.value.trim();
             
@@ -785,7 +788,7 @@
             
             // Simulasi AI processing
             setTimeout(() => {
-                // Ekstrak lokasi dari prompt dengan metode yang lebih baik
+                // Ekstrak lokasi dari prompt
                 const locations = extractLocationsImproved(prompt);
                 
                 if (locations.length < 2) {
@@ -814,7 +817,7 @@
                         useDistanceBtn.disabled = false;
                         useDistanceBtn.dataset.distance = distance;
                     } else {
-                        // Jika tidak ada data pasti, berikan perkiraan berdasarkan tipe lokasi
+                        // Jika tidak ada data pasti, berikan perkiraan
                         const estimatedDistance = estimateDistance(fromLocation, toLocation);
                         
                         aiResponseContent.innerHTML = `
