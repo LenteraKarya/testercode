@@ -557,7 +557,7 @@
                 
                 <div class="ai-chat-container">
                     <div class="ai-chat-header">
-                        <i class="fas fa-comments"></i> Chat dengan AI (Powered by Free AI Service)
+                        <i class="fas fa-comments"></i> Chat dengan AI (Powered by NOS AI)
                     </div>
                     <div class="ai-chat-messages" id="chatMessages">
                         <div class="message ai-message">
@@ -1038,7 +1038,7 @@
             }, 800);
         }
         
-        // Fungsi untuk konsultasi dengan AI (versi diperbaiki)
+        // Fungsi untuk konsultasi dengan AI
         function askAI() {
             const prompt = aiPrompt.value.trim();
             
@@ -1099,7 +1099,7 @@
             }, 1500);
         }
         
-        // Fungsi untuk mengirim pesan chat (versi diperbaiki)
+        // Fungsi untuk mengirim pesan chat
         function sendChatMessage() {
             const message = chatInput.value.trim();
             if (!message) return;
@@ -1175,7 +1175,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        // Fungsi untuk menghasilkan respons AI sederhana (versi diperbaiki)
+        // Fungsi untuk menghasilkan respons AI sederhana
         function generateAIResponse(message) {
             const lowerMessage = message.toLowerCase();
             
@@ -1217,7 +1217,7 @@
             return responses[Math.floor(Math.random() * responses.length)];
         }
         
-        // Fungsi ekstrak lokasi yang lebih baik (versi diperbaiki)
+        // Fungsi ekstrak lokasi yang lebih baik
         function extractLocations(prompt) {
             // Normalisasi teks
             const text = prompt.toLowerCase().replace(/[.,?]/g, '');
