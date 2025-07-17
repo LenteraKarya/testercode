@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Nompak Ojek Situbondo (Final)</title>
+  <title>NOS – Nompak Ojek Situbondo (Ultra-Final)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <!-- Leaflet & FontAwesome CDN -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
@@ -21,38 +20,27 @@
     body{background:var(--bg);color:var(--primary)}
     .container{max-width:900px;margin:0 auto;padding:1rem}
     .hide{display:none}
-    /* Header */
     header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:2rem 1rem;text-align:center}
     header h1{font-size:2rem}
     header p{opacity:.8;margin-top:.25rem}
-    /* Progress bar */
     .progress{display:flex;justify-content:center;margin:1rem 0;gap:.5rem}
     .progress span{
-      width:40px;height:40px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;
+      width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
       background:#cbd5e1;color:var(--primary);font-weight:600;transition:.3s
     }
     .progress span.active{background:var(--accent);color:#fff}
-    /* Steps */
     .step{display:none}
     .step.active{display:block;animation:fadeIn .4s}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    /* Card */
     .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:1rem;margin-bottom:1rem}
     label{display:block;margin:.5rem 0 .25rem;font-weight:600;font-size:.9rem}
     input,select,textarea{width:100%;padding:.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:1rem}
     input[readonly]{background:#f1f5f9}
-    .btn{
-      display:inline-block;padding:.75rem 1.5rem;
-      background:var(--accent);color:#fff;border:none;border-radius:9999px;
-      font-weight:600;cursor:pointer;transition:.3s;margin:.25rem
-    }
+    .btn{display:inline-block;padding:.75rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:9999px;font-weight:600;cursor:pointer;transition:.3s;margin:.25rem}
     .btn:hover{transform:translateY(-2px)}
     .btn-success{background:var(--success)}
     .btn-danger{background:var(--danger)}
-    /* Map */
     #map{height:60vh;border-radius:12px}
-    /* Driver list */
     .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
     .driver{
       background:#fff;border:1px solid #e2e8f0;border-radius:12px;
@@ -61,15 +49,12 @@
     .driver:hover{transform:scale(1.02)}
     .driver img{width:100%;height:120px;object-fit:cover}
     .driver .name{font-weight:600;padding:.5rem}
-    /* Loading */
     .loader{
       position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;
-      flex-direction:column;gap:.5rem
+      background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:.5rem
     }
     .loader .spinner{
-      width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:var(--accent);
-      border-radius:50%;animation:spin 1s linear infinite
+      width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite
     }
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
@@ -78,13 +63,12 @@
 <!-- Loading -->
 <div class="loader" id="loader">
   <div class="spinner"></div>
-  <p style="color:var(--accent)">Memuat peta...</p>
+  <p style="color:var(--accent)">Memuat peta & rute...</p>
 </div>
 
-<!-- Header -->
 <header>
   <h1>NOS – Nompak Ojek Situbondo</h1>
-  <p>Pilih titik → pilih driver → langsung order!</p>
+  <p>Klik dua titik di peta → otomatis hitung rute via jalan raya</p>
 </header>
 
 <div class="container">
@@ -96,26 +80,26 @@
     <span id="p4">4</span>
   </div>
 
-  <!-- STEP 1 -->
+  <!-- Step 1 -->
   <div class="step active" id="step1">
     <div class="card">
       <h2><i class="fa-solid fa-location-dot"></i> 1. Pilih Lokasi</h2>
       <div id="map"></div>
-      <label>Pickup (Titik A)</label>
+      <label>Penjemputan</label>
       <input id="pickup" readonly/>
-      <label>Destination (Titik B)</label>
+      <label>Tujuan</label>
       <input id="destination" readonly/>
-      <label>Jarak</label>
+      <label>Jarak via jalan raya</label>
       <input id="distance" readonly/>
       <label>Tarif (Rp 1.200/km)</label>
       <input id="fare" readonly/>
       <br>
       <button class="btn" onclick="next(2)">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
-      <button class="btn-danger" onclick="resetMap()">Reset Titik</button>
+      <button class="btn-danger" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Lokasi</button>
     </div>
   </div>
 
-  <!-- STEP 2 -->
+  <!-- Step 2 -->
   <div class="step" id="step2">
     <div class="card">
       <h2><i class="fa-solid fa-motorcycle"></i> 2. Pilih Kendaraan</h2>
@@ -127,7 +111,7 @@
     </div>
   </div>
 
-  <!-- STEP 3 -->
+  <!-- Step 3 -->
   <div class="step" id="step3">
     <div class="card">
       <h2><i class="fa-solid fa-user"></i> 3. Data Penumpang</h2>
@@ -143,7 +127,7 @@
     </div>
   </div>
 
-  <!-- STEP 4 -->
+  <!-- Step 4 -->
   <div class="step" id="step4">
     <div class="card">
       <h2><i class="fa-solid fa-id-card"></i> 4. Pilih Driver</h2>
@@ -151,15 +135,14 @@
       <button class="btn-danger" onclick="next(3)">Kembali</button>
     </div>
   </div>
-
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   /* === CONFIG === */
-  const TARIF_MOTOR = 1200; // per km
-  const TARIF_MOBIL = 2000; // per km
-  const bounds = [[-7.74, 113.98],[-7.68, 114.04]]; // Situbondo
+  const TARIF_MOTOR = 1200;
+  const TARIF_MOBIL = 2000;
+  const bounds = [[-7.74, 113.98],[-7.68, 114.04]];
   const drivers = [
     {name:'Budi Santoso',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver1.jpeg?raw=true'},
     {name:'Ani Wijaya',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver2.jpeg?raw=true'},
@@ -171,24 +154,45 @@
   /* === MAP === */
   const map = L.map('map',{center:[-7.7058,114.0094],zoom:14,minZoom:13,maxZoom:18,maxBounds:bounds});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-  let A,B,line,distanceKm=0;
 
-  /* Click titik A & B */
-  map.on('click',e=>{
+  let A,B,routeLine,routeControl,distanceKm=0;
+
+  /* Click Penjemputan & Tujuan */
+  map.on('click',async e=>{
     const {lat,lng}=e.latlng;
     if(!A){
-      A=L.marker([lat,lng]).addTo(map).bindPopup('Pickup').openPopup();
+      A=L.marker([lat,lng]).addTo(map).bindPopup('Penjemputan').openPopup();
       document.getElementById('pickup').value=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     }else if(!B){
-      B=L.marker([lat,lng]).addTo(map).bindPopup('Destination').openPopup();
+      B=L.marker([lat,lng]).addTo(map).bindPopup('Tujuan').openPopup();
       document.getElementById('destination').value=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-      line=L.polyline([A.getLatLng(),B.getLatLng()],{color:'red'}).addTo(map);
-      distanceKm=(map.distance(A.getLatLng(),B.getLatLng())/1000).toFixed(2);
-      updateFare();
+      await hitungRute();
     }
   });
 
-  /* === FUNGSI === */
+  /* === Hitung rute via jalan raya (OSRM) === */
+  async function hitungRute(){
+    if(!A || !B) return;
+    const [lat1,lng1]=[A.getLatLng().lat,A.getLatLng().lng];
+    const [lat2,lng2]=[B.getLatLng().lat,B.getLatLng().lng];
+    const url=`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+
+    try{
+      const res=await fetch(url);
+      const data=await res.json();
+      if(data.routes && data.routes[0]){
+        const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
+        distanceKm=(data.routes[0].distance/1000).toFixed(2);
+        if(routeLine) map.removeLayer(routeLine);
+        routeLine=L.polyline(coords,{color:'#f97316',weight:5}).addTo(map);
+        map.fitBounds(routeLine.getBounds());
+        updateFare();
+      }
+    }catch(err){
+      alert('Gagal menghitung rute. Coba lagi.');
+    }
+  }
+
   function updateFare(){
     const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
     const tarifPerKm=vehicle==='motor'?TARIF_MOTOR:TARIF_MOBIL;
@@ -197,15 +201,15 @@
     document.getElementById('fare').value=`Rp ${total.toLocaleString('id-ID')}`;
   }
 
-  function resetMap(){
-    [A,B,line].forEach(m=>m&&map.removeLayer(m));
-    A=B=line=null;
+  function resetAll(){
+    [A,B,routeLine].forEach(l=>l&&map.removeLayer(l));
+    A=B=routeLine=null;
     ['pickup','destination','distance','fare'].forEach(id=>document.getElementById(id).value='');
   }
 
-  /* Navigasi step */
+  /* === NAVIGASI STEP === */
   function next(n){
-    if(n===2 && (!A || !B)){alert('Silakan pilih pickup & destination terlebih dahulu');return;}
+    if(n===2 && (!A || !B)){alert('Pilih Penjemputan & Tujuan terlebih dahulu');return;}
     if(n===4 && !document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
     if(n===4 && !document.getElementById('wa').value.trim()){alert('Isi nomor WhatsApp');return;}
 
@@ -216,7 +220,7 @@
     if(n===4) renderDrivers();
   }
 
-  /* Render driver */
+  /* === RENDER DRIVER === */
   function renderDrivers(){
     const nama=document.getElementById('nama').value;
     const wa=document.getElementById('wa').value;
@@ -234,14 +238,13 @@
         <img src="${d.img}" alt="${d.name}">
         <div class="name">${d.name}</div>
         <button class="btn" onclick="window.open('https://wa.me/${d.phone}?text=${encodeURIComponent(txt)}')">
-          <i class="fa-brands fa-whatsapp"></i> Pilih
+          <i class="fa-brands fa-whatsapp"></i> Pilih Driver
         </button>
       `;
       box.appendChild(div);
     });
   }
 
-  /* On load */
   window.onload=()=>document.getElementById('loader').style.display='none';
 </script>
 </body>
