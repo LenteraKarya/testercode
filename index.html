@@ -2,65 +2,84 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Nompak Ojek Situbondo (Super-Final)</title>
+  <title>NOS – Nompak Ojek Situbondo (Ultra-Premium)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root{
-      --primary:#0f172a;
-      --accent:#f97316;
-      --success:#10b981;
-      --danger:#ef4444;
-      --light:#f8fafc;
-      --gray:#64748b;
-      --bg:#e2e8f0;
-      --shadow:0 4px 12px rgba(0,0,0,.15);
+      --primary:#111827;
+      --accent:#00f5ff;
+      --danger:#ff0055;
+      --glass:rgba(255,255,255,.15);
+      --text:#ffffff;
     }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-    body{background:var(--bg);color:var(--primary)}
-    .container{max-width:960px;margin:0 auto;padding:1rem}
-    header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:2rem 1rem;text-align:center}
-    header h1{font-size:2.2rem;font-weight:700;letter-spacing:.5px}
-    header p{opacity:.8;margin-top:.25rem}
-    .progress{display:flex;justify-content:center;margin:1.5rem 0;gap:.5rem}
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+    html,body{height:100%}
+    body{
+      background:linear-gradient(-45deg,#0f172a,#1e293b,#334155,#475569);
+      background-size:400% 400%;
+      animation:gradientBG 12s ease infinite;
+      color:var(--text);
+    }
+    @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .container{max-width:1000px;margin:0 auto;padding:1rem}
+    header{text-align:center;padding:2.5rem 1rem}
+    header h1{font-size:2.6rem;font-weight:800;background:linear-gradient(90deg,var(--accent),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    header p{opacity:.9;font-size:1.1rem;margin-top:.25rem}
+
+    .progress{display:flex;justify-content:center;margin:1.5rem 0;gap:.8rem}
     .progress span{
-      width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:#cbd5e1;color:var(--primary);font-weight:700;font-size:1.1rem;transition:.3s
+      width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:var(--glass);color:var(--accent);font-weight:700;font-size:1.2rem;backdrop-filter:blur(8px);transition:.4s;
+      border:1px solid rgba(255,255,255,.2);
     }
-    .progress span.active{background:var(--accent);color:#fff}
-    .step{display:none;animation:fadeIn .4s}
+    .progress span.active{background:var(--accent);color:#0f172a;box-shadow:0 0 12px var(--accent)}
+
+    .step{display:none;animation:fadeIn .6s}
     .step.active{display:block}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    .card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:1.5rem}
-    label{display:block;margin:.75rem 0 .25rem;font-weight:600;font-size:.9rem}
-    input,select,textarea{width:100%;padding:.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:1rem}
-    input[readonly]{background:#f1f5f9}
-    .btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+
+    .card{
+      background:var(--glass);border:1px solid rgba(255,255,255,.2);
+      border-radius:24px;backdrop-filter:blur(12px);padding:2rem;
+      box-shadow:0 8px 32px rgba(0,0,0,.35);margin-bottom:2rem
+    }
+    label{display:block;margin:.75rem 0 .3rem;font-weight:600;font-size:.95rem}
+    input,textarea{
+      width:100%;padding:.9rem 1rem;background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.2);border-radius:12px;color:#fff;font-size:1rem;
+    }
+    input[readonly]{background:rgba(255,255,255,.05)}
+    .btn-group{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
     .btn{
-      display:inline-flex;align-items:center;gap:.4rem;
-      padding:.8rem 1.8rem;background:var(--accent);color:#fff;border:none;border-radius:50px;
-      font-weight:600;cursor:pointer;transition:.3s;box-shadow:var(--shadow)
+      flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:.5rem;
+      padding:1rem 1.8rem;font-size:1rem;font-weight:700;border:none;border-radius:50px;
+      transition:.3s;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.25)
     }
-    .btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
-    .btn-success{background:var(--success)}
-    .btn-danger{background:var(--danger)}
-    #map{height:65vh;border-radius:16px}
-    .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#00d1ff);color:#0f172a}
+    .btn-primary:hover{box-shadow:0 0 20px var(--accent)}
+    .btn-danger{background:linear-gradient(135deg,var(--danger),#ff3377);color:#fff}
+    .btn-danger:hover{box-shadow:0 0 20px var(--danger)}
+
+    #map{height:70vh;border-radius:24px;border:1px solid rgba(255,255,255,.2)}
+    .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
     .driver{
-      background:#fff;border-radius:14px;overflow:hidden;text-align:center;
-      box-shadow:var(--shadow);transition:.3s
+      background:var(--glass);border:1px solid rgba(255,255,255,.2);border-radius:20px;
+      overflow:hidden;backdrop-filter:blur(8px);transition:.4s
     }
-    .driver:hover{transform:translateY(-4px)}
-    .driver img{width:100%;height:130px;object-fit:cover}
-    .driver .name{font-weight:700;padding:.7rem;font-size:1rem}
-    .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:.5rem}
-    .loader .spinner{width:50px;height:50px;border:5px solid #e2e8f0;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+    .driver:hover{transform:translateY(-6px)}
+    .driver img{width:100%;height:150px;object-fit:cover}
+    .driver .name{font-weight:700;padding:1rem;font-size:1.1rem}
+    .driver .btn{margin:0 1rem 1rem}
+
+    .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:.5rem}
+    .loader .spinner{width:60px;height:60px;border:6px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
-<!-- Loading -->
 <div class="loader" id="loader">
   <div class="spinner"></div>
   <p style="color:var(--accent)">Memuat peta...</p>
@@ -72,7 +91,6 @@
 </header>
 
 <div class="container">
-  <!-- Progress -->
   <div class="progress">
     <span class="active" id="p1">1</span>
     <span id="p2">2</span>
@@ -94,8 +112,8 @@
       <label>Perkiraan tarif</label>
       <input id="fare" readonly/>
       <div class="btn-group">
-        <button class="btn" onclick="next(2)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
-        <button class="btn-danger" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Lokasi</button>
+        <button class="btn btn-primary" onclick="next(2)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
+        <button class="btn btn-danger" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Lokasi</button>
       </div>
     </div>
   </div>
@@ -107,8 +125,8 @@
       <label><input type="radio" name="vehicle" value="motor" checked/> Motor – Rp 1.200/km</label>
       <label><input type="radio" name="vehicle" value="mobil"/> Mobil – Rp 3.000/km</label>
       <div class="btn-group">
-        <button class="btn" onclick="next(3)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
-        <button class="btn-danger" onclick="next(1)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+        <button class="btn btn-primary" onclick="next(3)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
+        <button class="btn btn-danger" onclick="next(1)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
       </div>
     </div>
   </div>
@@ -124,8 +142,8 @@
       <label>Catatan (opsional)</label>
       <textarea id="catatan" rows="2" placeholder="Contoh: pakai helm double"></textarea>
       <div class="btn-group">
-        <button class="btn" onclick="next(4)"><i class="fa-solid fa-arrow-right"></i> Lihat Driver</button>
-        <button class="btn-danger" onclick="next(2)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+        <button class="btn btn-primary" onclick="next(4)"><i class="fa-solid fa-arrow-right"></i> Lihat Driver</button>
+        <button class="btn btn-danger" onclick="next(2)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
       </div>
     </div>
   </div>
@@ -135,7 +153,7 @@
     <div class="card">
       <h2><i class="fa-solid fa-id-card"></i> 4. Pilih Driver</h2>
       <div class="drivers" id="drivers"></div>
-      <button class="btn-danger" onclick="next(3)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+      <button class="btn btn-danger" onclick="next(3)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
     </div>
   </div>
 </div>
@@ -145,8 +163,8 @@
   /* === CONFIG === */
   const TARIF_MOTOR = 1200;
   const TARIF_MOBIL = 3000;
-  // Batas wilayah Situbondo diperluas agar bisa di-zoom lebih jauh
-  const bounds = [[-7.80,113.90],[-7.60,114.10]];
+  // Wilayah Situbondo diperluas ±30 km dari pusat kota
+  const bounds = [[-7.95,113.7],[-7.45,114.3]];
   const drivers = [
     {name:'Budi Santoso',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver1.jpeg?raw=true'},
     {name:'Ani Wijaya',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver2.jpeg?raw=true'},
@@ -156,10 +174,10 @@
   ];
 
   /* === MAP === */
-  const map = L.map('map',{center:[-7.7058,114.0094],zoom:13,minZoom:12,maxZoom:18,maxBounds:bounds});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  const map = L.map('map',{center:[-7.7058,114.0094],zoom:12,minZoom:11,maxZoom:18,maxBounds:bounds});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
 
-  let A,B,routeLine,routeControl,distanceKm=0;
+  let A,B,routeLine,distanceKm=0;
 
   /* Click Penjemputan & Tujuan */
   map.on('click',async e=>{
@@ -188,7 +206,7 @@
         const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
         distanceKm=(data.routes[0].distance/1000).toFixed(2);
         if(routeLine) map.removeLayer(routeLine);
-        routeLine=L.polyline(coords,{color:'#f97316',weight:5}).addTo(map);
+        routeLine=L.polyline(coords,{color:'#00f5ff',weight:6}).addTo(map);
         map.fitBounds(routeLine.getBounds());
         updateFare();
       }
@@ -241,7 +259,7 @@
       div.innerHTML=`
         <img src="${d.img}" alt="${d.name}">
         <div class="name">${d.name}</div>
-        <button class="btn" onclick="window.open('https://wa.me/${d.phone}?text=${encodeURIComponent(txt)}')">
+        <button class="btn btn-primary" onclick="window.open('https://wa.me/${d.phone}?text=${encodeURIComponent(txt)}')">
           <i class="fa-brands fa-whatsapp"></i> Pilih Driver
         </button>
       `;
