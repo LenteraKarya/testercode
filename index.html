@@ -2,92 +2,114 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>NOS Situbondo – Hitung Jarak (Final)</title>
+  <title>NOS Situbondo – Hitung Jarak & Pilih Driver</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
+    :root{
+      --primary:#1a365d;
+      --accent:#e67e22;
+      --danger:#e53e3e;
+      --light:#f8f9fa;
+      --text:#4a5568;
+    }
     *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
-    body{background:#f8f9fa;color:#333}
+    body{background:var(--light);color:var(--text);line-height:1.6}
     .container{max-width:900px;margin:0 auto;padding:1rem}
     header{text-align:center;margin-bottom:1rem}
-    header h2{color:#1a365d}
-    .form{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    header h2{color:var(--primary)}
+    .form{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);margin-bottom:1rem}
     label{display:block;margin:.5rem 0 .2rem;font-weight:600}
     input{width:100%;padding:.7rem;border:1px solid #ccc;border-radius:6px;font-size:1rem}
-    .btn-row{display:flex;gap:.5rem;margin-top:.5rem}
-    .btn-merah{background:#e53e3e;color:#fff;border:none;padding:.6rem 1rem;border-radius:6px;cursor:pointer}
+    .btn-merah{background:var(--danger);color:#fff;border:none;padding:.6rem 1rem;border-radius:6px;cursor:pointer;margin:.5rem .5rem 0 0}
     .btn-merah:hover{transform:translateY(-2px)}
-    #distance{font-weight:700;font-size:1.2rem;color:#1a365d;margin:.5rem 0}
     #map{height:70vh;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .driver-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:1rem}
+    .driver-card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-align:center}
+    .driver-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:.5rem}
+    .driver-name{font-weight:600}
+    .driver-wa{font-size:.85rem;color:var(--primary);cursor:pointer}
   </style>
 </head>
 
 <body>
   <div class="container">
     <header>
-      <h2>Pilih Titik & Hitung Jarak – Kota Situbondo</h2>
+      <h2>Pilih Titik & Pilih Driver – Kota Situbondo</h2>
     </header>
 
     <div class="form">
       <label>Pickup (Titik A)</label>
-      <input id="pickup" readonly placeholder="Klik di peta untuk memilih titik A">
-
+      <input id="pickup" readonly>
       <label>Destination (Titik B)</label>
-      <input id="destination" readonly placeholder="Klik lagi untuk memilih titik B">
-
-      <div id="distance">Jarak: – km</div>
-
-      <div class="btn-row">
-        <button class="btn-merah" onclick="resetTitik()">Reset Titik</button>
-        <button class="btn-merah" onclick="kirimPesanan()">Kirim via WhatsApp</button>
-      </div>
+      <input id="destination" readonly>
+      <p id="distance">Jarak: – km</p>
+      <p id="fare">Tarif: Rp –</p>
+      <button class="btn-merah" onclick="resetTitik()">Reset Titik</button>
     </div>
 
     <div id="map"></div>
+
+    <h3 style="margin:2rem 0 1rem;">Driver yang Tersedia</h3>
+    <div class="driver-list" id="driverList"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     /* 1. Peta hanya wilayah Situbondo */
     const bounds = [[-7.74, 113.98], [-7.68, 114.04]];
-    const map = L.map('map', { center: [-7.7058, 114.0094], zoom: 14, maxBounds: bounds, minZoom: 13, maxZoom: 18 })
+    const map = L.map('map', {center:[-7.7058,114.0094], zoom:14, maxBounds:bounds, minZoom:13, maxZoom:18})
                  .addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
 
-    let markerA, markerB, line;
+    let markerA, markerB, line, distanceKm = 0;
+    const TARIF_PER_KM = 12000;
 
     /* 2. Klik untuk memilih titik */
     map.on('click', function (e) {
       const {lat, lng} = e.latlng;
       if (!markerA) {
-        markerA = L.marker([lat, lng]).addTo(map).bindPopup('Titik A – Pickup').openPopup();
+        markerA = L.marker([lat, lng]).addTo(map).bindPopup('Titik A').openPopup();
         document.getElementById('pickup').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
       } else if (!markerB) {
-        markerB = L.marker([lat, lng]).addTo(map).bindPopup('Titik B – Destination').openPopup();
+        markerB = L.marker([lat, lng]).addTo(map).bindPopup('Titik B').openPopup();
         document.getElementById('destination').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        line = L.polyline([markerA.getLatLng(), markerB.getLatLng()], { color: 'red', weight: 4 }).addTo(map);
-        const km = map.distance(markerA.getLatLng(), markerB.getLatLng()) / 1000;
-        document.getElementById('distance').textContent = `Jarak: ${km.toFixed(2)} km`;
+        line = L.polyline([markerA.getLatLng(), markerB.getLatLng()], {color:'red', weight:4}).addTo(map);
+        distanceKm = map.distance(markerA.getLatLng(), markerB.getLatLng()) / 1000;
+        const fare = (distanceKm * TARIF_PER_KM).toLocaleString('id-ID');
+        document.getElementById('distance').textContent = `Jarak: ${distanceKm.toFixed(2)} km`;
+        document.getElementById('fare').textContent = `Tarif: Rp ${fare}`;
       }
     });
 
-    /* 3. Reset & kirim WhatsApp */
+    /* 3. Reset titik */
     function resetTitik() {
-      if (markerA) { map.removeLayer(markerA); markerA = null; }
-      if (markerB) { map.removeLayer(markerB); markerB = null; }
-      if (line)    { map.removeLayer(line);    line = null; }
+      [markerA, markerB, line].forEach(m => m && map.removeLayer(m));
+      markerA = markerB = line = null;
       document.getElementById('pickup').value = '';
       document.getElementById('destination').value = '';
       document.getElementById('distance').textContent = 'Jarak: – km';
+      document.getElementById('fare').textContent = 'Tarif: Rp –';
     }
 
-    function kirimPesanan() {
-      const pickup = document.getElementById('pickup').value.trim();
-      const dest   = document.getElementById('destination').value.trim();
-      if (!pickup || !dest) { alert('Harap pilih kedua titik terlebih dahulu.'); return; }
-      const jarak = document.getElementById('distance').textContent;
-      const msg = `PESANAN OJEK NOS\n\nPickup: ${pickup}\nDestination: ${dest}\n${jarak}`;
-      window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+    /* 4. Daftar driver + WhatsApp */
+    const drivers = [
+      {name:"Budi Santoso", phone:"6285647709114", img:"https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver1.jpeg?raw=true"},
+      {name:"Ani Wijaya", phone:"6285647709114", img:"https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver2.jpeg?raw=true"},
+      {name:"Ahmad Firdaus", phone:"6285647709114", img:"https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver4.jpeg?raw=true"}
+    ];
+    const driverList = document.getElementById('driverList');
+    drivers.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'driver-card';
+      card.innerHTML = `
+        <img src="${d.img}" alt="${d.name}" class="driver-avatar">
+        <div class="driver-name">${d.name}</div>
+        <div class="driver-wa" onclick="window.open('https://wa.me/${d.phone}?text=Pesan%20ojek%20NOS%20sekarang.%20Jarak%20${distanceKm.toFixed(2)}%20km%20-%20Rp%20${(distanceKm*TARIF_PER_KM).toLocaleString('id-ID')}')">
+          Chat WhatsApp
+        </div>
+      `;
+      driverList.appendChild(card);
+    });
   </script>
 </body>
 </html>
