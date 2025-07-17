@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Nompak Ojek Situbondo (Ultra-Final)</title>
+  <title>NOS – Nompak Ojek Situbondo (Super-Final)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -15,47 +15,47 @@
       --light:#f8fafc;
       --gray:#64748b;
       --bg:#e2e8f0;
+      --shadow:0 4px 12px rgba(0,0,0,.15);
     }
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
     body{background:var(--bg);color:var(--primary)}
-    .container{max-width:900px;margin:0 auto;padding:1rem}
-    .hide{display:none}
-    header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:2rem 1rem;text-align:center}
-    header h1{font-size:2rem}
+    .container{max-width:960px;margin:0 auto;padding:1rem}
+    header{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;padding:2rem 1rem;text-align:center}
+    header h1{font-size:2.2rem;font-weight:700;letter-spacing:.5px}
     header p{opacity:.8;margin-top:.25rem}
-    .progress{display:flex;justify-content:center;margin:1rem 0;gap:.5rem}
+    .progress{display:flex;justify-content:center;margin:1.5rem 0;gap:.5rem}
     .progress span{
-      width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-      background:#cbd5e1;color:var(--primary);font-weight:600;transition:.3s
+      width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:#cbd5e1;color:var(--primary);font-weight:700;font-size:1.1rem;transition:.3s
     }
     .progress span.active{background:var(--accent);color:#fff}
-    .step{display:none}
-    .step.active{display:block;animation:fadeIn .4s}
+    .step{display:none;animation:fadeIn .4s}
+    .step.active{display:block}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:1rem;margin-bottom:1rem}
-    label{display:block;margin:.5rem 0 .25rem;font-weight:600;font-size:.9rem}
-    input,select,textarea{width:100%;padding:.6rem;border:1px solid #cbd5e1;border-radius:6px;font-size:1rem}
+    .card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:1.5rem}
+    label{display:block;margin:.75rem 0 .25rem;font-weight:600;font-size:.9rem}
+    input,select,textarea{width:100%;padding:.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:1rem}
     input[readonly]{background:#f1f5f9}
-    .btn{display:inline-block;padding:.75rem 1.5rem;background:var(--accent);color:#fff;border:none;border-radius:9999px;font-weight:600;cursor:pointer;transition:.3s;margin:.25rem}
-    .btn:hover{transform:translateY(-2px)}
+    .btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+    .btn{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.8rem 1.8rem;background:var(--accent);color:#fff;border:none;border-radius:50px;
+      font-weight:600;cursor:pointer;transition:.3s;box-shadow:var(--shadow)
+    }
+    .btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
     .btn-success{background:var(--success)}
     .btn-danger{background:var(--danger)}
-    #map{height:60vh;border-radius:12px}
-    .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+    #map{height:65vh;border-radius:16px}
+    .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem}
     .driver{
-      background:#fff;border:1px solid #e2e8f0;border-radius:12px;
-      overflow:hidden;text-align:center;transition:.3s;cursor:pointer
+      background:#fff;border-radius:14px;overflow:hidden;text-align:center;
+      box-shadow:var(--shadow);transition:.3s
     }
-    .driver:hover{transform:scale(1.02)}
-    .driver img{width:100%;height:120px;object-fit:cover}
-    .driver .name{font-weight:600;padding:.5rem}
-    .loader{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:.5rem
-    }
-    .loader .spinner{
-      width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite
-    }
+    .driver:hover{transform:translateY(-4px)}
+    .driver img{width:100%;height:130px;object-fit:cover}
+    .driver .name{font-weight:700;padding:.7rem;font-size:1rem}
+    .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:.5rem}
+    .loader .spinner{width:50px;height:50px;border:5px solid #e2e8f0;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
@@ -63,7 +63,7 @@
 <!-- Loading -->
 <div class="loader" id="loader">
   <div class="spinner"></div>
-  <p style="color:var(--accent)">Memuat peta & rute...</p>
+  <p style="color:var(--accent)">Memuat peta...</p>
 </div>
 
 <header>
@@ -91,11 +91,12 @@
       <input id="destination" readonly/>
       <label>Jarak via jalan raya</label>
       <input id="distance" readonly/>
-      <label>Tarif (Rp 1.200/km)</label>
+      <label>Perkiraan tarif</label>
       <input id="fare" readonly/>
-      <br>
-      <button class="btn" onclick="next(2)">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
-      <button class="btn-danger" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Lokasi</button>
+      <div class="btn-group">
+        <button class="btn" onclick="next(2)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
+        <button class="btn-danger" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Lokasi</button>
+      </div>
     </div>
   </div>
 
@@ -103,11 +104,12 @@
   <div class="step" id="step2">
     <div class="card">
       <h2><i class="fa-solid fa-motorcycle"></i> 2. Pilih Kendaraan</h2>
-      <label><input type="radio" name="vehicle" value="motor" checked/> Motor (Rp 1.200/km)</label>
-      <label><input type="radio" name="vehicle" value="mobil"/> Mobil (Rp 2.000/km)</label>
-      <br>
-      <button class="btn" onclick="next(3)">Lanjut</button>
-      <button class="btn-danger" onclick="next(1)">Kembali</button>
+      <label><input type="radio" name="vehicle" value="motor" checked/> Motor – Rp 1.200/km</label>
+      <label><input type="radio" name="vehicle" value="mobil"/> Mobil – Rp 3.000/km</label>
+      <div class="btn-group">
+        <button class="btn" onclick="next(3)"><i class="fa-solid fa-arrow-right"></i> Lanjut</button>
+        <button class="btn-danger" onclick="next(1)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+      </div>
     </div>
   </div>
 
@@ -121,9 +123,10 @@
       <input id="wa" placeholder="0812xxxx" type="tel"/>
       <label>Catatan (opsional)</label>
       <textarea id="catatan" rows="2" placeholder="Contoh: pakai helm double"></textarea>
-      <br>
-      <button class="btn" onclick="next(4)">Lanjut</button>
-      <button class="btn-danger" onclick="next(2)">Kembali</button>
+      <div class="btn-group">
+        <button class="btn" onclick="next(4)"><i class="fa-solid fa-arrow-right"></i> Lihat Driver</button>
+        <button class="btn-danger" onclick="next(2)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+      </div>
     </div>
   </div>
 
@@ -132,7 +135,7 @@
     <div class="card">
       <h2><i class="fa-solid fa-id-card"></i> 4. Pilih Driver</h2>
       <div class="drivers" id="drivers"></div>
-      <button class="btn-danger" onclick="next(3)">Kembali</button>
+      <button class="btn-danger" onclick="next(3)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
     </div>
   </div>
 </div>
@@ -141,8 +144,9 @@
 <script>
   /* === CONFIG === */
   const TARIF_MOTOR = 1200;
-  const TARIF_MOBIL = 2000;
-  const bounds = [[-7.74, 113.98],[-7.68, 114.04]];
+  const TARIF_MOBIL = 3000;
+  // Batas wilayah Situbondo diperluas agar bisa di-zoom lebih jauh
+  const bounds = [[-7.80,113.90],[-7.60,114.10]];
   const drivers = [
     {name:'Budi Santoso',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver1.jpeg?raw=true'},
     {name:'Ani Wijaya',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver2.jpeg?raw=true'},
@@ -152,7 +156,7 @@
   ];
 
   /* === MAP === */
-  const map = L.map('map',{center:[-7.7058,114.0094],zoom:14,minZoom:13,maxZoom:18,maxBounds:bounds});
+  const map = L.map('map',{center:[-7.7058,114.0094],zoom:13,minZoom:12,maxZoom:18,maxBounds:bounds});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
   let A,B,routeLine,routeControl,distanceKm=0;
