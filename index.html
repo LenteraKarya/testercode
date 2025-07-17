@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Ojek Online Jatim (Premium)</title>
+  <title>NOS – Ojek Online Jatim (FIXED)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <!-- CDN -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -18,9 +18,8 @@
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
     body{background:var(--sand);color:#222;transition:background .3s}
     body.dark{background:var(--dark);color:#eee}
-    header{background:var(--sea);color:#fff;padding:1.5rem;text-align:center;position:relative}
+    header{background:var(--sea);color:#fff;padding:1.5rem;text-align:center}
     header h1{font-size:2.2rem}
-    .theme-toggle{position:absolute;top:1.2rem;right:1.2rem;font-size:1.5rem;cursor:pointer}
     .container{max-width:1100px;margin:0 auto;padding:1rem}
     .card{background:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,.15)}
     body.dark .card{background:var(--darkCard)}
@@ -37,16 +36,16 @@
     .loader .spinner{width:60px;height:60px;border:6px solid #eee;border-top-color:var(--sea);border-radius:50%;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* Pilihan kendaraan premium */
-    .vehicle-options{display:flex;gap:1rem;flex-wrap:wrap}
-    .vehicle-card{flex:1 1 150px;position:relative;border:2px solid transparent;border-radius:14px;padding:1rem;text-align:center;cursor:pointer;transition:.3s}
+    /* VEHICLE OPTIONS */
+    .vehicle-options{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.5rem}
+    .vehicle-card{flex:1 1 150px;position:relative;border:2px solid #ddd;border-radius:14px;padding:1rem;text-align:center;cursor:pointer;transition:.3s}
     .vehicle-card.selected{border-color:var(--sea);background:#e6f7ff}
     body.dark .vehicle-card.selected{background:#0c2e42}
-    .vehicle-card i{font-size:2.2rem;margin-bottom:.5rem}
+    .vehicle-card i{font-size:2.2rem;margin-bottom:.5rem;color:var(--sea)}
     .vehicle-card .label{font-weight:700}
     .vehicle-card input{display:none}
 
-    /* Driver card premium */
+    /* DRIVER CARD */
     .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
     .driver-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:.3s}
     body.dark .driver-card{background:var(--darkCard)}
@@ -62,15 +61,12 @@
 <div class="loader" id="loader"><div class="spinner"></div></div>
 
 <header>
-  <h1>NOS – Ojek Online Jawa Timur (Premium)</h1>
+  <h1>NOS – Ojek Online Jawa Timur (FIXED)</h1>
   <p>Klik dua titik di peta → pilih driver → order via WhatsApp</p>
-  <div class="theme-toggle" onclick="toggleTheme()" title="Mode Gelap/Terang">
-    <i id="theme-icon" class="fa-solid fa-moon"></i>
-  </div>
 </header>
 
 <div class="container">
-  <!-- === CARD 1: MAP & DATA === -->
+  <!-- CARD 1 -->
   <div class="card">
     <h2><i class="fa-solid fa-map-pin"></i> 1. Pilih Lokasi</h2>
     <div id="map"></div>
@@ -86,12 +82,12 @@
     <h3><i class="fa-solid fa-motorcycle"></i> Kendaraan</h3>
     <div class="vehicle-options">
       <label class="vehicle-card">
-        <input type="radio" name="vehicle" value="motor" checked/>
+        <input type="radio" name="vehicle" value="motor" checked onchange="updateFare()"/>
         <i class="fa-solid fa-motorcycle"></i>
         <div class="label">Motor</div>
       </label>
       <label class="vehicle-card">
-        <input type="radio" name="vehicle" value="mobil"/>
+        <input type="radio" name="vehicle" value="mobil" onchange="updateFare()"/>
         <i class="fa-solid fa-car-side"></i>
         <div class="label">Mobil</div>
       </label>
@@ -115,13 +111,13 @@
     </div>
   </div>
 
-  <!-- === CARD 2: DAFTAR DRIVER === -->
+  <!-- CARD 2 -->
   <div id="driversCard" class="card" style="display:none">
     <h3><i class="fa-solid fa-id-card"></i> Pilih Driver</h3>
     <div class="driver-grid" id="drivers"></div>
   </div>
 
-  <!-- === CARD 3: RINGKASAN ORDER === -->
+  <!-- CARD 3 -->
   <div id="summaryCard" class="card" style="display:none">
     <h3><i class="fa-solid fa-clipboard-check"></i> Ringkasan Pesanan</h3>
     <p><strong>Nama:</strong> <span id="sumNama"></span></p>
@@ -133,7 +129,6 @@
   </div>
 </div>
 
-<!-- === SCRIPT === -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   /* === CONFIG === */
@@ -144,20 +139,13 @@
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
 
   let A, B, routeLine, distanceKm = 0;
+  let selectedDriver = null;
 
-  /* === DRIVER DATA (dummy) === */
   const driverList = [
     {name:"Budi Santoso", wa:"6285647709114", img:"1", plat:"S 1234 JI", rating:4.9},
     {name:"Ani Wijaya", wa:"6285647709115", img:"2", plat:"N 5678 AT", rating:4.8},
     {name:"Rizky Pratama", wa:"6285647709116", img:"3", plat:"L 9012 TM", rating:4.7}
   ];
-
-  /* === THEME === */
-  function toggleTheme(){
-    document.body.classList.toggle('dark');
-    const icon = document.getElementById('theme-icon');
-    icon.className = document.body.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
 
   /* === MAP CLICK === */
   map.on('click',async e=>{
@@ -211,16 +199,14 @@
     });
   }
 
-  /* === RESET === */
   function resetMap(){
     [A,B,routeLine].forEach(l=>l&&map.removeLayer(l));
     A=B=routeLine=null;
-    ['pickup','destination','distance','fare'].forEach(id=>document.getElementById(id).value='');
+    ['pickup','destination','distance','fare','nama','wa','catatan'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('driversCard').style.display='none';
     document.getElementById('summaryCard').style.display='none';
   }
 
-  /* === PILIH DRIVER === */
   function nextStep(){
     if(!A || !B){alert('Pilih Penjemputan & Tujuan terlebih dahulu');return;}
     if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
@@ -239,21 +225,18 @@
         <img src="https://i.pravatar.cc/150?img=${d.img}" alt="${d.name}">
         <div class="driver-info">
           <div class="name">${d.name}</div>
-          <div class="rating">
-            <i class="fa-solid fa-star"></i> ${d.rating}
-          </div>
+          <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
           <div class="plate">${d.plat}</div>
-          <button class="btn btn-primary" onclick="summary('${d.wa}','${d.name}')">Pilih & Pesan</button>
+          <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
         </div>
       `;
       container.appendChild(div);
     });
   }
 
-  /* === RINGKASAN === */
-  function summary(no,nama){
+  function selectDriver(no,nama){
+    selectedDriver={no,nama};
     const namaPen=document.getElementById('nama').value;
-    const waPen=document.getElementById('wa').value;
     const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
     const catatan=document.getElementById('catatan').value;
     const fare=document.getElementById('fare').value;
@@ -267,11 +250,10 @@
     document.getElementById('driversCard').style.display='none';
     document.getElementById('summaryCard').style.display='block';
 
-    const text=`Halo ${nama}, saya ${namaPen} (${waPen})\n\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
+    const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
     document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
   }
 
-  /* === LOAD === */
   window.onload=()=>document.getElementById('loader').style.display='none';
 </script>
 </body>
