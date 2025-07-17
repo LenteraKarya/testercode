@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Nompak Ojek Situbondo (Peta-Full)</title>
+  <title>NOS – Nompak Ojek Jawa Timur (Full-Prov)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -41,7 +41,7 @@
     .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,153,204,.4)}
     .btn-danger{background:var(--coral);color:#fff}
     .btn-danger:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(255,107,53,.4)}
-    #map{height:70vh;border-radius:20px;box-shadow:var(--shadow)}
+    #map{height:75vh;border-radius:20px;box-shadow:var(--shadow)}
     .drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.5rem}
     .driver{background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:.4s}
     .driver:hover{transform:translateY(-5px)}
@@ -57,8 +57,8 @@
 <div class="loader" id="loader"><div class="spinner"></div></div>
 
 <header>
-  <h1>NOS – Nompak Ojek Situbondo</h1>
-  <p>Wilayah penuh 1.638 km² – klik dua titik untuk pesan ojek!</p>
+  <h1>NOS – Nompak Ojek Jawa Timur</h1>
+  <p>Wilayah penuh Provinsi Jawa Timur – klik dua titik untuk pesan ojek!</p>
 </header>
 
 <div class="container">
@@ -134,8 +134,8 @@
   /* === CONFIG === */
   const TARIF_MOTOR = 1200;
   const TARIF_MOBIL = 3000;
-  // Batas penuh Kabupaten Situbondo (± 150 km memanjang barat-timur)
-  const bounds = [[-7.85,113.35],[-7.55,114.80]];
+  // Batas Provinsi Jawa Timur (± 47.800 km²)
+  const bounds = [[-8.8,111.8],[-6.8,115.8]];
   const drivers = [
     {name:'Budi Santoso',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver1.jpeg?raw=true'},
     {name:'Ani Wijaya',phone:'6285647709114',img:'https://github.com/LenteraKarya/NOS/blob/main/assets/images/driver2.jpeg?raw=true'},
@@ -145,7 +145,7 @@
   ];
 
   /* === MAP === */
-  const map = L.map('map',{center:[-7.7058,114.05],zoom:11,minZoom:10,maxZoom:18,maxBounds:bounds});
+  const map = L.map('map',{center:[-7.5,113],zoom:8,minZoom:7,maxZoom:18,maxBounds:bounds});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
 
   let A,B,routeLine,distanceKm=0;
@@ -176,11 +176,11 @@
         const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
         distanceKm=(data.routes[0].distance/1000).toFixed(2);
         if(routeLine) map.removeLayer(routeLine);
-        routeLine=L.polyline(coords,{color:'#0099cc',weight:6}).addTo(map);
+        routeLine=L.polyline(coords,{color:var(--sea),weight:5}).addTo(map);
         map.fitBounds(routeLine.getBounds());
         updateFare();
       }
-    }catch{alert('Gagal menghitung rute. Silakan coba lagi.');}
+    }catch{alert('Gagal menghitung rute. Coba lagi.');}
   }
 
   function updateFare(){
