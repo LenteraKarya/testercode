@@ -1,127 +1,91 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <title>NOS Situbondo – Pilih Titik & Hitung Jarak</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="UTF-8">
+  <title>NOS Situbondo – Hitung Jarak (Final)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
-    /* Reset & base */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Poppins', sans-serif; background:#f8f9fa; color:#333; line-height:1.6; }
-    h1, h2, h3 { color:#1a365d; }
-
-    /* Layout */
-    .wrapper { max-width: 900px; margin: 0 auto; padding: 1rem; }
-    .header { text-align:center; margin-bottom:1rem; }
-    .header h2 { margin-bottom:.3rem; }
-    .header p { color:#666; }
-
-    /* Form */
-    .form { background:#fff; padding:1rem; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); margin-bottom:1rem; }
-    label { display:block; margin:.5rem 0 .2rem; font-weight:600; }
-    input { width:100%; padding:.7rem; border:1px solid #ccc; border-radius:6px; font-size:1rem; }
-    .btn-row { display:flex; gap:.5rem; margin-top:.5rem; }
-    .btn { background:#e67e22; color:#fff; border:none; padding:.6rem 1rem; border-radius:6px; cursor:pointer; transition:.2s; }
-    .btn:hover { transform:translateY(-2px); box-shadow:0 2px 6px rgba(0,0,0,.2); }
-
-    /* Jarak */
-    #distance { font-weight:700; font-size:1.2rem; color:#1a365d; margin:.5rem 0; }
-
-    /* Peta */
-    #map { height: 70vh; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+    body{background:#f8f9fa;color:#333}
+    .container{max-width:900px;margin:0 auto;padding:1rem}
+    header{text-align:center;margin-bottom:1rem}
+    header h2{color:#1a365d}
+    .form{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    label{display:block;margin:.5rem 0 .2rem;font-weight:600}
+    input{width:100%;padding:.7rem;border:1px solid #ccc;border-radius:6px;font-size:1rem}
+    .btn-row{display:flex;gap:.5rem;margin-top:.5rem}
+    .btn-merah{background:#e53e3e;color:#fff;border:none;padding:.6rem 1rem;border-radius:6px;cursor:pointer}
+    .btn-merah:hover{transform:translateY(-2px)}
+    #distance{font-weight:700;font-size:1.2rem;color:#1a365d;margin:.5rem 0}
+    #map{height:70vh;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
   </style>
 </head>
 
 <body>
-  <div class="wrapper">
-    <header class="header">
-      <h2>NOS Situbondo – Pilih Titik & Hitung Jarak</h2>
-      <p>Klik dua kali pada peta untuk memilih titik A (pickup) dan titik B (destination)</p>
+  <div class="container">
+    <header>
+      <h2>Pilih Titik & Hitung Jarak – Kota Situbondo</h2>
     </header>
 
     <div class="form">
       <label>Pickup (Titik A)</label>
-      <input id="pickup" readonly placeholder="Klik di peta untuk memilih titik A" />
+      <input id="pickup" readonly placeholder="Klik di peta untuk memilih titik A">
 
       <label>Destination (Titik B)</label>
-      <input id="destination" readonly placeholder="Klik lagi untuk memilih titik B" />
+      <input id="destination" readonly placeholder="Klik lagi untuk memilih titik B">
 
       <div id="distance">Jarak: – km</div>
 
       <div class="btn-row">
-        <button class="btn" onclick="resetAll()">Reset Titik</button>
-        <button class="btn" onclick="sendOrder()">Pesan via WhatsApp</button>
+        <button class="btn-merah" onclick="resetTitik()">Reset Titik</button>
+        <button class="btn-merah" onclick="kirimPesanan()">Kirim via WhatsApp</button>
       </div>
     </div>
 
     <div id="map"></div>
   </div>
 
-  <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script>
-    /* === 1. Peta: wilayah Situbondo City === */
-    const situbondoBounds = [
-      [-7.74, 113.98], // [south-west]
-      [-7.68, 114.04]  // [north-east]
-    ];
+    /* 1. Peta hanya wilayah Situbondo */
+    const bounds = [[-7.74, 113.98], [-7.68, 114.04]];
+    const map = L.map('map', { center: [-7.7058, 114.0094], zoom: 14, maxBounds: bounds, minZoom: 13, maxZoom: 18 })
+                 .addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
 
-    const map = L.map('map', {
-      center: [-7.7058, 114.0094],
-      zoom: 14,
-      maxBounds: situbondoBounds,
-      minZoom: 13,
-      maxZoom: 18
-    });
+    let markerA, markerB, line;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    /* === 2. Variabel titik & garis === */
-    let pointA = null;
-    let pointB = null;
-    let routeLine = null;
-
-    /* === 3. Klik untuk memilih titik === */
+    /* 2. Klik untuk memilih titik */
     map.on('click', function (e) {
-      const { lat, lng } = e.latlng;
-
-      if (!pointA) {
-        pointA = L.marker([lat, lng]).addTo(map).bindPopup('Titik A – Pickup').openPopup();
+      const {lat, lng} = e.latlng;
+      if (!markerA) {
+        markerA = L.marker([lat, lng]).addTo(map).bindPopup('Titik A – Pickup').openPopup();
         document.getElementById('pickup').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-      } else if (!pointB) {
-        pointB = L.marker([lat, lng]).addTo(map).bindPopup('Titik B – Destination').openPopup();
+      } else if (!markerB) {
+        markerB = L.marker([lat, lng]).addTo(map).bindPopup('Titik B – Destination').openPopup();
         document.getElementById('destination').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-
-        // Gambar garis & hitung jarak
-        routeLine = L.polyline([pointA.getLatLng(), pointB.getLatLng()], { color: 'red', weight: 4 }).addTo(map);
-        const distanceKm = map.distance(pointA.getLatLng(), pointB.getLatLng()) / 1000;
-        document.getElementById('distance').textContent = `Jarak: ${distanceKm.toFixed(2)} km`;
+        line = L.polyline([markerA.getLatLng(), markerB.getLatLng()], { color: 'red', weight: 4 }).addTo(map);
+        const km = map.distance(markerA.getLatLng(), markerB.getLatLng()) / 1000;
+        document.getElementById('distance').textContent = `Jarak: ${km.toFixed(2)} km`;
       }
     });
 
-    /* === 4. Reset semua === */
-    function resetAll() {
-      if (pointA) { map.removeLayer(pointA); pointA = null; }
-      if (pointB) { map.removeLayer(pointB); pointB = null; }
-      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+    /* 3. Reset & kirim WhatsApp */
+    function resetTitik() {
+      if (markerA) { map.removeLayer(markerA); markerA = null; }
+      if (markerB) { map.removeLayer(markerB); markerB = null; }
+      if (line)    { map.removeLayer(line);    line = null; }
       document.getElementById('pickup').value = '';
       document.getElementById('destination').value = '';
       document.getElementById('distance').textContent = 'Jarak: – km';
     }
 
-    /* === 5. Kirim pesan WhatsApp === */
-    function sendOrder() {
+    function kirimPesanan() {
       const pickup = document.getElementById('pickup').value.trim();
       const dest   = document.getElementById('destination').value.trim();
-      if (!pickup || !dest) {
-        alert('Silakan pilih kedua titik terlebih dahulu.');
-        return;
-      }
-      const msg = `PESANAN OJEK NOS\n\nPickup: ${pickup}\nDestination: ${dest}\nJarak: ${document.getElementById('distance').textContent}`;
+      if (!pickup || !dest) { alert('Harap pilih kedua titik terlebih dahulu.'); return; }
+      const jarak = document.getElementById('distance').textContent;
+      const msg = `PESANAN OJEK NOS\n\nPickup: ${pickup}\nDestination: ${dest}\n${jarak}`;
       window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(msg)}`, '_blank');
     }
   </script>
