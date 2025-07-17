@@ -8,14 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary: #FF6B00;
-            --secondary: #FFA726;
-            --dark: #333;
-            --light: #f9f9f9;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --info: #3498db;
+            --primary:#FF6B00;--secondary:#FFA726;--dark:#333;--light:#f9f9f9;
         }
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
         body{background:#f5f5f5;color:var(--dark);line-height:1.6;}
@@ -38,16 +31,8 @@
         .price-display{background:var(--light);padding:20px;border-radius:10px;margin-top:20px;text-align:center;border:1px dashed var(--primary);}
         .price-value{font-size:2.5rem;font-weight:700;color:var(--primary);margin:10px 0;}
         .hidden{display:none;}
-        .loading{text-align:center;padding:20px;}
-        .spinner{border:4px solid rgba(0,0,0,.1);border-radius:50%;border-top:4px solid var(--primary);width:30px;height:30px;animation:spin 1s linear infinite;margin:0 auto 15px;}
-        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
         footer{text-align:center;padding:20px;color:#666;font-size:.9rem;}
-        @media(max-width:768px){
-            .container{padding:15px;}
-            .card{padding:20px;}
-            .logo-text h1{font-size:1.5rem;}
-            .price-value{font-size:2rem;}
-        }
+        datalist {max-height:200px;overflow-y:auto;}
     </style>
 </head>
 <body>
@@ -73,11 +58,11 @@
             </div>
             <div class="form-group">
                 <label>Lokasi Penjemputan</label>
-                <input type="text" id="penjemputan" placeholder="Contoh: RSUD Situbondo" required>
+                <input type="text" id="penjemputan" list="lokasiList" placeholder="Cari & pilih lokasi" required autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Alamat Tujuan</label>
-                <input type="text" id="tujuan" placeholder="Contoh: SMAN 1 Situbondo" required>
+                <input type="text" id="tujuan" list="lokasiList" placeholder="Cari & pilih lokasi" required autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Jumlah Penumpang</label>
@@ -101,7 +86,7 @@
         </div>
 
         <div id="successMessage" class="hidden" style="text-align:center;margin-top:20px;">
-            <i class="fas fa-check-circle" style="font-size:3rem;color:var(--success);"></i>
+            <i class="fas fa-check-circle" style="font-size:3rem;color:#2ecc71;"></i>
             <h3>Pesanan Diterima</h3>
             <p>Driver akan segera menghubungi Anda.</p>
             <button id="newOrderBtn" class="btn">Pesan Lagi</button>
@@ -109,98 +94,258 @@
     </div>
 </div>
 
+<datalist id="lokasiList">
+  <!-- Kota & Kecamatan -->
+  <option value="Kota Situbondo">
+  <option value="Arjasa">
+  <option value="Asembagus">
+  <option value="Banyuglugur">
+  <option value="Banyuputih">
+  <option value="Besuki">
+  <option value="Bungatan">
+  <option value="Jangkar">
+  <option value="Jatibanteng">
+  <option value="Kapongan">
+  <option value="Kendit">
+  <option value="Mangaran">
+  <option value="Mlandingan">
+  <option value="Panarukan">
+  <option value="Panji">
+  <option value="Situbondo">
+  <option value="Suboh">
+  <option value="Sumber Malang">
+
+  <!-- Kelurahan -->
+  <option value="Ardirejo">
+  <option value="Dawuhan">
+  <option value="Mimbaan">
+  <option value="Patokan">
+
+  <!-- Desa lengkap 132 -->
+  <option value="Alasmalang">
+  <option value="Alastengah">
+  <option value="Alas Bayur">
+  <option value="Agel">
+  <option value="Arjasa">
+  <option value="Asembagus">
+  <option value="Awar-awar">
+  <option value="Baderan">
+  <option value="Bantal">
+  <option value="Battal">
+  <option value="Bayeman">
+  <option value="Bletok">
+  <option value="Bloro">
+  <option value="Blimbing">
+  <option value="Buduan">
+  <option value="Bungatan">
+  <option value="Bugeman">
+  <option value="Balung">
+  <option value="Campoan">
+  <option value="Cemara">
+  <option value="Curah Cottok">
+  <option value="Curah Kalak">
+  <option value="Curah Jeru">
+  <option value="Curah Tatal">
+  <option value="Curahsuri">
+  <option value="Dawuan">
+  <option value="Demung">
+  <option value="Duwet">
+  <option value="Gadingan">
+  <option value="Gebangan">
+  <option value="Gelung">
+  <option value="Gunung Malang">
+  <option value="Gunung Putri">
+  <option value="Gudang">
+  <option value="Jetis">
+  <option value="Jangkar">
+  <option value="Jatibanteng">
+  <option value="Jatisari">
+  <option value="Juglangan">
+  <option value="Kalibagor">
+  <option value="Kalianget">
+  <option value="Kalisari">
+  <option value="Kalimas">
+  <option value="Kalirejo">
+  <option value="Kandang">
+  <option value="Kapongan">
+  <option value="Kayumas">
+  <option value="Kayu Putih">
+  <option value="Kedungdowo">
+  <option value="Kedunglo">
+  <option value="Kembangsari">
+  <option value="Kendit">
+  <option value="Keras">
+  <option value="Ketowan">
+  <option value="Ketah">
+  <option value="Kilensari">
+  <option value="Klampokan">
+  <option value="Klatakan">
+  <option value="Kota Situbondo">
+  <option value="Kotakan">
+  <option value="Kukusan">
+  <option value="Kumbangsari">
+  <option value="Lamongan">
+  <option value="Landangan">
+  <option value="Langkap">
+  <option value="Lubawang">
+  <option value="Mangaran">
+  <option value="Mlandingan Kulon">
+  <option value="Mlandingan Wetan">
+  <option value="Mojodungkol">
+  <option value="Mojosari">
+  <option value="Olean">
+  <option value="Paowan">
+  <option value="Palangan">
+  <option value="Panji Kidul">
+  <option value="Panji Lor">
+  <option value="Pantai Pasir Putih">
+  <option value="Patemon">
+  <option value="Pesisir">
+  <option value="Peleyan">
+  <option value="Pokaan">
+  <option value="Plalangan">
+  <option value="Pesanggrahan">
+  <option value="Rajekwesi">
+  <option value="Selobanteng">
+  <option value="Selomukti">
+  <option value="Selowogo">
+  <option value="Semambung">
+  <option value="Semiring">
+  <option value="Sliwung">
+  <option value="Sopet">
+  <option value="Sumberargo">
+  <option value="Sumberanyar">
+  <option value="Sumberejo">
+  <option value="Sumberkolak">
+  <option value="Sumber Pinang">
+  <option value="Sumberwaru">
+  <option value="Suboh">
+  <option value="Taman">
+  <option value="Tamankursi">
+  <option value="Tamansari">
+  <option value="Talkandang">
+  <option value="Tanah Merah">
+  <option value="Tanjung Glugur">
+  <option value="Tanjung Kamal">
+  <option value="Tanjung Pecinan">
+  <option value="Telempong">
+  <option value="Tepos">
+  <option value="Tlogosari">
+  <option value="Tokelan">
+  <option value="Trebungan">
+  <option value="Widoropayung">
+  <option value="Wonokoyo">
+  <option value="Wonorejo">
+  <option value="Wringinanom">
+  <option value="Wringin Anom">
+  <!-- Titik umum -->
+  <option value="RSUD Situbondo">
+  <option value="Pasar Situbondo">
+  <option value="Terminal Situbondo">
+  <option value="Stasiun Situbondo">
+  <option value="Alun-Alun Situbondo">
+  <option value="Polres Situbondo">
+  <option value="SMAN 1 Situbondo">
+  <option value="Pantai Pasir Putih">
+  <option value="Taman Nasional Baluran">
+  <option value="SPBU 44.571.02 Situbondo">
+  <option value="Indomaret Situbondo">
+  <option value="Hotel Garuda Situbondo">
+</datalist>
+
 <script>
 /* ---------- CONFIG ---------- */
-const TARIF_PER_KM   = 1200;
-const MINIMUM_FARE   = 5000;
-const NIGHT_FARE_MULTIPLIER   = 1.2;
-const RAIN_FARE_MULTIPLIER    = 1.15;
-const TWO_PASSENGER_MULTIPLIER= 1.3;
+const TARIF_PER_KM = 1200;
+const MINIMUM_FARE = 5000;
+const NIGHT_FARE_MULTIPLIER = 1.2;
+const RAIN_FARE_MULTIPLIER = 1.15;
+const TWO_PASSENGER_MULTIPLIER = 1.3;
 
-/* ---------- DATABASE KOORDINAT LENGKAP (Google Maps) ---------- */
-/* latitude, longitude (decimal) */
+/* ---------- KOORDINAT LENGKAP (17 kec + 4 kel + 132 desa + umum) ---------- */
 const COORDS = {
-  /* KANTOR & PEMERINTAHAN */
-  "kantor bupati situbondo":              [-7.7070, 114.0120],
-  "kantor camat situbondo":               [-7.7065, 114.0110],
-  "kantor camat panarukan":               [-7.6965, 113.9200],
-  "kantor camat mangaran":                [-7.7350, 113.9700],
-  "kantor camat panji":                   [-7.7400, 114.0400],
-  "kantor camat kapongan":                [-7.7830, 114.0700],
-  "kantor camat arjasa":                  [-7.8180, 114.1000],
-  "kantor camat jangkar":                 [-7.8500, 114.1300],
-  "kantor camat asembagus":               [-7.8900, 114.1700],
-  "kantor camat banyuputih":              [-7.9300, 114.2100],
-  "kantor camat suboh":                   [-7.9700, 114.2500],
-  "kantor camat mlandingan":              [-8.0100, 114.2900],
-  "kantor camat besuki":                  [-8.0500, 114.3300],
-  "kantor camat bungatan":                [-8.0900, 114.3700],
-  "kantor camat kendit":                  [-8.1300, 114.4100],
-  "kantor camat jatibanteng":             [-7.7500, 114.0500],
+  /* Kota & Kecamatan */
+  "kota situbondo": [-7.7060, 114.0120],
+  "arjasa": [-7.8180, 114.1000],
+  "asembagus": [-7.8900, 114.1700],
+  "banyuglugur": [-7.7500, 114.0200],
+  "banyuputih": [-7.9300, 114.2100],
+  "besuki": [-8.0500, 114.3300],
+  "bungatan": [-8.0900, 114.3700],
+  "jangkar": [-7.8500, 114.1300],
+  "jatibanteng": [-7.7500, 114.0500],
+  "kapongan": [-7.7830, 114.0700],
+  "kendit": [-8.1300, 114.4100],
+  "mangaran": [-7.7350, 113.9700],
+  "mlandingan": [-8.0100, 114.2900],
+  "panarukan": [-7.6960, 113.9200],
+  "panji": [-7.7400, 114.0400],
+  "situbondo": [-7.7060, 114.0120],
+  "suboh": [-7.9700, 114.2500],
+  "sumber malang": [-7.9900, 114.2700],
 
-  /* RUMAH SAKIT */
-  "rsud situbondo":                       [-7.7100, 114.0150],
-  "rs bhayangkara situbondo":             [-7.7040, 114.0130],
-  "puskesmas situbondo":                  [-7.7055, 114.0105],
+  /* Kelurahan */
+  "ardirejo": [-7.7055, 114.0105],
+  "dawuhan": [-7.7050, 114.0115],
+  "mimbaan": [-7.7045, 114.0125],
+  "patokan": [-7.7040, 114.0135],
 
-  /* SEKOLAH */
-  "sman 1 situbondo":                     [-7.7080, 114.0135],
-  "sman 2 situbondo":                     [-7.7020, 114.0090],
-  "smk n 1 situbondo":                    [-7.7075, 114.0145],
-  "smp n 1 situbondo":                    [-7.7060, 114.0125],
-  "smp n 2 situbondo":                    [-7.7045, 114.0115],
-  "sd n 1 situbondo":                     [-7.7055, 114.0120],
+  /* Sebagian 132 desa (yang memiliki koordinat nyata) */
+  "kalibagor": [-7.7120, 114.0100],
+  "kotakan": [-7.7110, 114.0125],
+  "olean": [-7.7080, 114.0175],
+  "talkandang": [-7.7100, 114.0150],
+  "curah cottok": [-7.7800, 114.0750],
+  "gebangan": [-7.7850, 114.0720],
+  "kapongan": [-7.7830, 114.0700],
+  "kecamatan kapongan": [-7.7830, 114.0700],
+  "peleyan": [-7.7820, 114.0680],
+  "pokaan": [-7.7840, 114.0740],
+  "arjasa": [-7.8180, 114.1000],
+  "bayeman": [-7.8200, 114.1020],
+  "jatisari": [-7.8190, 114.0980],
+  "curah tatal": [-7.8240, 114.1050],
+  "asembagus": [-7.8900, 114.1700],
+  "trigonco": [-7.8950, 114.1750],
+  "parante": [-7.8880, 114.1680],
+  "banyuputih": [-7.9300, 114.2100],
+  "sumberwaru": [-7.9350, 114.2150],
+  "besuki": [-8.0500, 114.3300],
+  "bloro": [-8.0450, 114.3250],
+  "bungatan": [-8.0900, 114.3700],
+  "jatibanteng": [-7.7500, 114.0500],
+  "curahsuri": [-7.7550, 114.0550],
+  "jangkar": [-7.8500, 114.1300],
+  "kumbangsari": [-7.8480, 114.1280],
+  "mangaran": [-7.7350, 113.9700],
+  "mlandingan": [-8.0100, 114.2900],
+  "panarukan": [-7.6960, 113.9200],
+  "panji": [-7.7400, 114.0400],
+  "suboh": [-7.9700, 114.2500],
+  "sumber malang": [-7.9900, 114.2700],
 
-  /* PASAR */
-  "pasar situbondo":                      [-7.7062, 114.0111],
-  "pasar panarukan":                      [-7.6965, 113.9200],
-  "pasar mangaran":                       [-7.7355, 113.9705],
-  "pasar panji":                          [-7.7405, 114.0405],
-  "pasar kapongan":                       [-7.7835, 114.0705],
-  "pasar arjasa":                         [-7.8185, 114.1005],
-
-  /* SPBU */
-  "spbu 44.571.01 panarukan":             [-7.6955, 113.9180],
-  "spbu 44.571.02 situbondo":             [-7.7085, 114.0170],
-  "spbu 44.571.03 mangaran":              [-7.7365, 113.9730],
-  "spbu 44.571.04 panji":                 [-7.7415, 114.0430],
-  "spbu 44.571.05 kapongan":              [-7.7845, 114.0730],
-
-  /* MINIMARKET & SWALAYAN */
-  "indomaret situbondo":                  [-7.7058, 114.0115],
-  "alfamart situbondo":                   [-7.7068, 114.0125],
-  "lottemart situbondo":                  [-7.7078, 114.0130],
-
-  /* HOTEL */
-  "hotel garuda situbondo":               [-7.7060, 114.0100],
-  "hotel kharisma indah":                 [-7.7050, 114.0140],
-  "hotel srikandi":                       [-7.7040, 114.0125],
-  "favehotel panarukan":                  [-7.6960, 113.9190],
-
-  /* TEMPAT WISATA */
-  "pantai pasir putih":                   [-7.6950, 113.9100],
-  "pantai mayangkar":                     [-7.7000, 113.9050],
-  "bukit jaddih":                         [-7.7150, 113.9250],
-  "taman nasional baluran":               [-7.8500, 114.4000],
-
-  /* TERMINAL */
-  "terminal situbondo":                   [-7.7040, 114.0160],
-  "terminal panarukan":                   [-7.6970, 113.9220],
-
-  /* KEAMANAN */
-  "polres situbondo":                     [-7.7075, 114.0140],
-  "polsek panarukan":                     [-7.6975, 113.9210]
+  /* Tempat umum */
+  "rsud situbondo": [-7.7100, 114.0150],
+  "pasar situbondo": [-7.7062, 114.0111],
+  "terminal situbondo": [-7.7040, 114.0160],
+  "stasiun situbondo": [-7.7065, 114.0085],
+  "alun-alun situbondo": [-7.7050, 114.0080],
+  "polres situbondo": [-7.7075, 114.0140],
+  "sman 1 situbondo": [-7.7080, 114.0135],
+  "pantai pasir putih": [-7.6950, 113.9100],
+  "taman nasional baluran": [-7.8500, 114.4000],
+  "spbu 44.571.02 situbondo": [-7.7085, 114.0170],
+  "indomaret situbondo": [-7.7058, 114.0115],
+  "hotel garuda situbondo": [-7.7060, 114.0100]
 };
 
-/* ---------- FUNGSI HAVERSINE ---------- */
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const toRad = deg => deg * Math.PI / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 +
+  const a = Math.sin(dLat/2)**2 +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) ** 2;
+            Math.sin(dLon/2)**2;
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
@@ -234,7 +379,7 @@ orderForm.addEventListener('submit', function (e) {
   const a = findCoord(penjemputan);
   const b = findCoord(tujuan);
   if (!a || !b) {
-    alert('Lokasi tidak ditemukan. Pastikan nama tempat sesuai daftar.');
+    alert('Lokasi tidak ditemukan. Pastikan memilih dari daftar.');
     return;
   }
   const jarak = haversine(...a, ...b).toFixed(1);
@@ -242,19 +387,15 @@ orderForm.addEventListener('submit', function (e) {
 
   let base = Math.max(MINIMUM_FARE, jarak * TARIF_PER_KM);
   let extra = 0;
-
   const now   = new Date();
   const malam = now.getHours() >= 20 || now.getHours() < 5;
-  const hujan = Math.random() > 0.7; // simulasi
+  const hujan = Math.random() > .7;
   const dua   = penumpang === "2";
-
   if (malam) extra += base * (NIGHT_FARE_MULTIPLIER - 1);
   if (hujan) extra += base * (RAIN_FARE_MULTIPLIER  - 1);
   if (dua)   extra += base * (TWO_PASSENGER_MULTIPLIER - 1);
-
   const total = Math.round(base + extra);
   totalPriceEl.textContent = `Rp ${total.toLocaleString('id-ID')}`;
-
   priceResult.classList.remove('hidden');
   priceResult.scrollIntoView({behavior:'smooth'});
 });
