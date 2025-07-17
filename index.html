@@ -3,413 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOS - Nompak Ojek Situbondo</title>
+    <title>NOS | Ojek Online Situbondo - Tanpa Google API</title>
+    <meta name="description" content="Pesan ojek online di Situbondo tanpa API key. Lengkap dengan peta interaktif dan database lokasi lengkap.">
+    
+    <!-- Font & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         :root {
-            --primary:#FF6B00;--secondary:#FFA726;--dark:#333;--light:#f9f9f9;
+            --primary: #1a365d;
+            --accent: #e67e22;
+            --light: #f8f9fa;
+            --text: #4a5568;
+            --border: #e0e0e0;
         }
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{background:#f5f5f5;color:var(--dark);line-height:1.6;}
-        .container{max-width:800px;margin:0 auto;padding:20px;}
-        header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:20px 0;text-align:center;border-radius:0 0 20px 20px;box-shadow:0 4px 12px rgba(0,0,0,.1);margin-bottom:30px;}
-        .logo{display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
-        .logo i{font-size:2.5rem;margin-right:15px;}
-        .logo-text h1{font-size:2rem;font-weight:700;}
-        .logo-text p{font-size:.9rem;opacity:.9;}
-        .card{background:#fff;border-radius:15px;padding:25px;box-shadow:0 6px 18px rgba(0,0,0,.08);margin-bottom:30px;}
-        .card-title{font-size:1.5rem;margin-bottom:20px;color:var(--primary);font-weight:600;display:flex;align-items:center;}
-        .card-title i{margin-right:10px;}
-        .form-group{margin-bottom:20px;}
-        label{display:block;margin-bottom:8px;font-weight:500;}
-        input,select,textarea{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:8px;font-size:1rem;transition:all .3s;}
-        input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(255,107,0,.2);}
-        .btn{display:inline-block;background:var(--primary);color:#fff;border:none;padding:12px 25px;border-radius:8px;cursor:pointer;font-size:1rem;font-weight:500;transition:all .3s;text-transform:uppercase;letter-spacing:1px;}
-        .btn:hover{background:#e05a00;transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,.1);}
-        .btn-block{display:block;width:100%;}
-        .price-display{background:var(--light);padding:20px;border-radius:10px;margin-top:20px;text-align:center;border:1px dashed var(--primary);}
-        .price-value{font-size:2.5rem;font-weight:700;color:var(--primary);margin:10px 0;}
-        .hidden{display:none;}
-        footer{text-align:center;padding:20px;color:#666;font-size:.9rem;}
-        datalist {max-height:200px;overflow-y:auto;}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .section-title {
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        .booking-form-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .map-container { height: 400px; border-radius: 16px; overflow: hidden; margin-bottom: 1rem; }
+        .location-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .location-btn {
+            padding: 0.8rem 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .location-btn:hover { background: var(--accent); color: white; }
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .category-title {
+            font-weight: 600;
+            margin: 1rem 0 0.5rem 0;
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            .location-options { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
-<header>
+
+<!-- Order Section -->
+<section id="order" class="booking">
     <div class="container">
-        <div class="logo">
-            <i class="fas fa-motorcycle"></i>
-            <div class="logo-text">
-                <h1>NOS</h1>
-                <p>Nompak Ojek Situbondo</p>
-            </div>
+        <h2 class="section-title">Pesan Ojek Online</h2>
+        <div class="booking-form-container">
+            
+            <!-- Peta Interaktif -->
+            <div class="map-container" id="map"></div>
+            
+            <!-- Form -->
+            <form id="orderForm">
+                <div class="form-group">
+                    <label>Lokasi Penjemputan *</label>
+                    <input type="text" id="pickupLocation" class="search-input" placeholder="Ketik atau pilih lokasi..." required>
+                    <div id="pickupOptions"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tujuan *</label>
+                    <input type="text" id="destinationLocation" class="search-input" placeholder="Ketik atau pilih lokasi..." required>
+                    <div id="destinationOptions"></div>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-motorcycle"></i> Pesan Sekarang
+                </button>
+            </form>
         </div>
     </div>
-</header>
+</section>
 
-<div class="container">
-    <div class="card">
-        <h2 class="card-title"><i class="fas fa-biking"></i> Pesan Ojek Sekarang</h2>
-        <form id="orderForm">
-            <div class="form-group">
-                <label>Nama Pemesan</label>
-                <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
-            </div>
-            <div class="form-group">
-                <label>Lokasi Penjemputan</label>
-                <input type="text" id="penjemputan" list="lokasiList" placeholder="Cari & pilih lokasi" required autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Alamat Tujuan</label>
-                <input type="text" id="tujuan" list="lokasiList" placeholder="Cari & pilih lokasi" required autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Jumlah Penumpang</label>
-                <select id="penumpang" required>
-                    <option value="" disabled selected>Pilih</option>
-                    <option value="1">1 Orang</option>
-                    <option value="2">2 Orang</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Jarak (km)</label>
-                <input type="number" id="jarak" placeholder="Akan otomatis terisi" readonly>
-            </div>
-            <button type="submit" class="btn btn-block">Hitung Biaya</button>
-        </form>
-
-        <div id="priceResult" class="price-display hidden">
-            <h3>Total Biaya</h3>
-            <div class="price-value" id="totalPrice">Rp 0</div>
-            <button id="confirmBtn" class="btn btn-block">Konfirmasi Pesanan</button>
-        </div>
-
-        <div id="successMessage" class="hidden" style="text-align:center;margin-top:20px;">
-            <i class="fas fa-check-circle" style="font-size:3rem;color:#2ecc71;"></i>
-            <h3>Pesanan Diterima</h3>
-            <p>Driver akan segera menghubungi Anda.</p>
-            <button id="newOrderBtn" class="btn">Pesan Lagi</button>
-        </div>
-    </div>
-</div>
-
-<datalist id="lokasiList">
-  <!-- Kota & Kecamatan -->
-  <option value="Kota Situbondo">
-  <option value="Arjasa">
-  <option value="Asembagus">
-  <option value="Banyuglugur">
-  <option value="Banyuputih">
-  <option value="Besuki">
-  <option value="Bungatan">
-  <option value="Jangkar">
-  <option value="Jatibanteng">
-  <option value="Kapongan">
-  <option value="Kendit">
-  <option value="Mangaran">
-  <option value="Mlandingan">
-  <option value="Panarukan">
-  <option value="Panji">
-  <option value="Situbondo">
-  <option value="Suboh">
-  <option value="Sumber Malang">
-
-  <!-- Kelurahan -->
-  <option value="Ardirejo">
-  <option value="Dawuhan">
-  <option value="Mimbaan">
-  <option value="Patokan">
-
-  <!-- Desa lengkap 132 -->
-  <option value="Alasmalang">
-  <option value="Alastengah">
-  <option value="Alas Bayur">
-  <option value="Agel">
-  <option value="Arjasa">
-  <option value="Asembagus">
-  <option value="Awar-awar">
-  <option value="Baderan">
-  <option value="Bantal">
-  <option value="Battal">
-  <option value="Bayeman">
-  <option value="Bletok">
-  <option value="Bloro">
-  <option value="Blimbing">
-  <option value="Buduan">
-  <option value="Bungatan">
-  <option value="Bugeman">
-  <option value="Balung">
-  <option value="Campoan">
-  <option value="Cemara">
-  <option value="Curah Cottok">
-  <option value="Curah Kalak">
-  <option value="Curah Jeru">
-  <option value="Curah Tatal">
-  <option value="Curahsuri">
-  <option value="Dawuan">
-  <option value="Demung">
-  <option value="Duwet">
-  <option value="Gadingan">
-  <option value="Gebangan">
-  <option value="Gelung">
-  <option value="Gunung Malang">
-  <option value="Gunung Putri">
-  <option value="Gudang">
-  <option value="Jetis">
-  <option value="Jangkar">
-  <option value="Jatibanteng">
-  <option value="Jatisari">
-  <option value="Juglangan">
-  <option value="Kalibagor">
-  <option value="Kalianget">
-  <option value="Kalisari">
-  <option value="Kalimas">
-  <option value="Kalirejo">
-  <option value="Kandang">
-  <option value="Kapongan">
-  <option value="Kayumas">
-  <option value="Kayu Putih">
-  <option value="Kedungdowo">
-  <option value="Kedunglo">
-  <option value="Kembangsari">
-  <option value="Kendit">
-  <option value="Keras">
-  <option value="Ketowan">
-  <option value="Ketah">
-  <option value="Kilensari">
-  <option value="Klampokan">
-  <option value="Klatakan">
-  <option value="Kota Situbondo">
-  <option value="Kotakan">
-  <option value="Kukusan">
-  <option value="Kumbangsari">
-  <option value="Lamongan">
-  <option value="Landangan">
-  <option value="Langkap">
-  <option value="Lubawang">
-  <option value="Mangaran">
-  <option value="Mlandingan Kulon">
-  <option value="Mlandingan Wetan">
-  <option value="Mojodungkol">
-  <option value="Mojosari">
-  <option value="Olean">
-  <option value="Paowan">
-  <option value="Palangan">
-  <option value="Panji Kidul">
-  <option value="Panji Lor">
-  <option value="Pantai Pasir Putih">
-  <option value="Patemon">
-  <option value="Pesisir">
-  <option value="Peleyan">
-  <option value="Pokaan">
-  <option value="Plalangan">
-  <option value="Pesanggrahan">
-  <option value="Rajekwesi">
-  <option value="Selobanteng">
-  <option value="Selomukti">
-  <option value="Selowogo">
-  <option value="Semambung">
-  <option value="Semiring">
-  <option value="Sliwung">
-  <option value="Sopet">
-  <option value="Sumberargo">
-  <option value="Sumberanyar">
-  <option value="Sumberejo">
-  <option value="Sumberkolak">
-  <option value="Sumber Pinang">
-  <option value="Sumberwaru">
-  <option value="Suboh">
-  <option value="Taman">
-  <option value="Tamankursi">
-  <option value="Tamansari">
-  <option value="Talkandang">
-  <option value="Tanah Merah">
-  <option value="Tanjung Glugur">
-  <option value="Tanjung Kamal">
-  <option value="Tanjung Pecinan">
-  <option value="Telempong">
-  <option value="Tepos">
-  <option value="Tlogosari">
-  <option value="Tokelan">
-  <option value="Trebungan">
-  <option value="Widoropayung">
-  <option value="Wonokoyo">
-  <option value="Wonorejo">
-  <option value="Wringinanom">
-  <option value="Wringin Anom">
-  <!-- Titik umum -->
-  <option value="RSUD Situbondo">
-  <option value="Pasar Situbondo">
-  <option value="Terminal Situbondo">
-  <option value="Stasiun Situbondo">
-  <option value="Alun-Alun Situbondo">
-  <option value="Polres Situbondo">
-  <option value="SMAN 1 Situbondo">
-  <option value="Pantai Pasir Putih">
-  <option value="Taman Nasional Baluran">
-  <option value="SPBU 44.571.02 Situbondo">
-  <option value="Indomaret Situbondo">
-  <option value="Hotel Garuda Situbondo">
-</datalist>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ---------- CONFIG ---------- */
-const TARIF_PER_KM = 1200;
-const MINIMUM_FARE = 5000;
-const NIGHT_FARE_MULTIPLIER = 1.2;
-const RAIN_FARE_MULTIPLIER = 1.15;
-const TWO_PASSENGER_MULTIPLIER = 1.3;
+// ======================
+// DATABASE LOKASI LENGKAP
+// ======================
+const locations = [
+    // Kecamatan Situbondo
+    {name: "Alun-Alun Situbondo", lat: -7.7061, lng: 114.0094, category: "Taman"},
+    {name: "Kantor Bupati Situbondo", lat: -7.7058, lng: 114.0089, category: "Kantor"},
+    {name: "RSUD Kanjuruhan Situbondo", lat: -7.7044, lng: 114.0122, category: "Rumah Sakit"},
+    {name: "Pasar Situbondo", lat: -7.7089, lng: 114.0083, category: "Pasar"},
+    
+    // Kecamatan Panarukan
+    {name: "Pasar Panarukan", lat: -7.6694, lng: 113.9678, category: "Pasar"},
+    {name: "SPBU Panarukan", lat: -7.6689, lng: 113.9689, category: "SPBU"},
+    {name: "SMA Negeri 1 Panarukan", lat: -7.6702, lng: 113.9667, category: "Sekolah"},
+    
+    // Kecamatan Mangaran
+    {name: "Pasar Mangaran", lat: -7.6492, lng: 114.0036, category: "Pasar"},
+    {name: "Puskesmas Mangaran", lat: -7.6501, lng: 114.0044, category: "Puskesmas"},
+    {name: "SDN Mangaran 1", lat: -7.6498, lng: 114.0028, category: "Sekolah"},
+    
+    // Kecamatan Besuki
+    {name: "Pasar Besuki", lat: -7.7311, lng: 113.9278, category: "Pasar"},
+    {name: "SPBU Besuki", lat: -7.7305, lng: 113.9289, category: "SPBU"},
+    {name: "Pantai Boom Besuki", lat: -7.7294, lng: 113.9256, category: "Wisata"},
+    
+    // Kecamatan Jangkar
+    {name: "Pasar Jangkar", lat: -7.6917, lng: 113.8756, category: "Pasar"},
+    {name: "Puskesmas Jangkar", lat: -7.6908, lng: 113.8767, category: "Puskesmas"},
+    {name: "Tugu Jangkar", lat: -7.6922, lng: 113.8772, category: "Tugu"},
+    
+    // Kecamatan Asembagus
+    {name: "Pasar Asembagus", lat: -7.7642, lng: 113.8467, category: "Pasar"},
+    {name: "SPBU Asembagus", lat: -7.7639, lng: 113.8478, category: "SPBU"},
+    {name: "Pantai Pasir Putih Asembagus", lat: -7.7656, lng: 113.8456, category: "Wisata"},
+    
+    // Kecamatan Kendit
+    {name: "Pasar Kendit", lat: -7.7167, lng: 114.1234, category: "Pasar"},
+    {name: "Puskesmas Kendit", lat: -7.7156, lng: 114.1245, category: "Puskesmas"},
+    {name: "SDN Kendit 1", lat: -7.7161, lng: 114.1239, category: "Sekolah"},
+    
+    // Kecamatan Arjasa
+    {name: "Pasar Arjasa", lat: -7.6944, lng: 114.0978, category: "Pasar"},
+    {name: "SPBU Arjasa", lat: -7.6939, lng: 114.0989, category: "SPBU"},
+    {name: "Pantai Popoh Arjasa", lat: -7.6956, lng: 114.0967, category: "Wisata"},
+    
+    // Kecamatan Mlandingan
+    {name: "Pasar Mlandingan", lat: -7.7456, lng: 114.0789, category: "Pasar"},
+    {name: "Puskesmas Mlandingan", lat: -7.7445, lng: 114.0798, category: "Puskesmas"},
+    {name: "SMA Negeri 1 Mlandingan", lat: -7.7451, lng: 114.0782, category: "Sekolah"},
+    
+    // Kecamatan Banyuglugur
+    {name: "Pasar Banyuglugur", lat: -7.7234, lng: 114.1567, category: "Pasar"},
+    {name: "Pantai Banyuglugur", lat: -7.7245, lng: 114.1556, category: "Wisata"},
+    
+    // Kecamatan Sumbermalang
+    {name: "Pasar Sumbermalang", lat: -7.6892, lng: 114.2145, category: "Pasar"},
+    {name: "Air Terjun Tancak", lat: -7.6901, lng: 114.2134, category: "Wisata"},
+    
+    // Kecamatan Jatibanteng
+    {name: "Pasar Jatibanteng", lat: -7.7456, lng: 114.2345, category: "Pasar"},
+    {name: "Pantai Jatibanteng", lat: -7.7467, lng: 114.2334, category: "Wisata"},
+    
+    // Kecamatan Bungatan
+    {name: "Pasar Bungatan", lat: -7.7654, lng: 114.1890, category: "Pasar"},
+    {name: "Pantai Bungatan", lat: -7.7667, lng: 114.1878, category: "Wisata"},
+    
+    // Kecamatan Kapongan
+    {name: "Pasar Kapongan", lat: -7.7234, lng: 114.2789, category: "Pasar"},
+    {name: "Pantai Kapongan", lat: -7.7245, lng: 114.2778, category: "Wisata"},
+    
+    // Kecamatan Banyuputih
+    {name: "Pasar Banyuputih", lat: -7.7890, lng: 114.1234, category: "Pasar"},
+    {name: "Pantai Banyuputih", lat: -7.7901, lng: 114.1223, category: "Wisata"},
+    
+    // Kecamatan Suboh
+    {name: "Pasar Suboh", lat: -7.8123, lng: 114.0567, category: "Pasar"},
+    {name: "Pantai Suboh", lat: -7.8134, lng: 114.0556, category: "Wisata"},
+    
+    // Kecamatan Pasir Putih
+    {name: "Pasar Pasir Putih", lat: -7.8345, lng: 114.0123, category: "Pasar"},
+    {name: "Pantai Pasir Putih", lat: -7.8356, lng: 114.0112, category: "Wisata"},
+    
+    // Minimarket & Rumah Makan
+    {name: "Indomaret Situbondo", lat: -7.7067, lng: 114.0089, category: "Minimarket"},
+    {name: "Alfamart Panarukan", lat: -7.6697, lng: 113.9689, category: "Minimarket"},
+    {name: "RM Apung Situbondo", lat: -7.7056, lng: 114.0094, category: "Rumah Makan"},
+    {name: "Warung Makan Panarukan", lat: -7.6689, lng: 113.9678, category: "Rumah Makan"},
+    
+    // Jembatan & Tugu
+    {name: "Jembatan Situbondo", lat: -7.7045, lng: 114.0078, category: "Jembatan"},
+    {name: "Jembatan Panarukan", lat: -7.6684, lng: 113.9673, category: "Jembatan"},
+    {name: "Tugu Jangkar", lat: -7.6922, lng: 113.8772, category: "Tugu"}
+];
 
-/* ---------- KOORDINAT LENGKAP (17 kec + 4 kel + 132 desa + umum) ---------- */
-const COORDS = {
-  /* Kota & Kecamatan */
-  "kota situbondo": [-7.7060, 114.0120],
-  "arjasa": [-7.8180, 114.1000],
-  "asembagus": [-7.8900, 114.1700],
-  "banyuglugur": [-7.7500, 114.0200],
-  "banyuputih": [-7.9300, 114.2100],
-  "besuki": [-8.0500, 114.3300],
-  "bungatan": [-8.0900, 114.3700],
-  "jangkar": [-7.8500, 114.1300],
-  "jatibanteng": [-7.7500, 114.0500],
-  "kapongan": [-7.7830, 114.0700],
-  "kendit": [-8.1300, 114.4100],
-  "mangaran": [-7.7350, 113.9700],
-  "mlandingan": [-8.0100, 114.2900],
-  "panarukan": [-7.6960, 113.9200],
-  "panji": [-7.7400, 114.0400],
-  "situbondo": [-7.7060, 114.0120],
-  "suboh": [-7.9700, 114.2500],
-  "sumber malang": [-7.9900, 114.2700],
+// ======================
+// INISIALISASI PETA
+// ======================
+let map, pickupMarker, destinationMarker;
 
-  /* Kelurahan */
-  "ardirejo": [-7.7055, 114.0105],
-  "dawuhan": [-7.7050, 114.0115],
-  "mimbaan": [-7.7045, 114.0125],
-  "patokan": [-7.7040, 114.0135],
+function initMap() {
+    map = L.map('map').setView([-7.7058, 114.0094], 12);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Tambahkan semua marker
+    locations.forEach(loc => {
+        const marker = L.marker([loc.lat, loc.lng])
+            .addTo(map)
+            .bindPopup(`<b>${loc.name}</b><br>${loc.category}`);
+        
+        marker.on('click', function() {
+            setLocation(loc.name, loc.lat, loc.lng);
+        });
+    });
+}
 
-  /* Sebagian 132 desa (yang memiliki koordinat nyata) */
-  "kalibagor": [-7.7120, 114.0100],
-  "kotakan": [-7.7110, 114.0125],
-  "olean": [-7.7080, 114.0175],
-  "talkandang": [-7.7100, 114.0150],
-  "curah cottok": [-7.7800, 114.0750],
-  "gebangan": [-7.7850, 114.0720],
-  "kapongan": [-7.7830, 114.0700],
-  "kecamatan kapongan": [-7.7830, 114.0700],
-  "peleyan": [-7.7820, 114.0680],
-  "pokaan": [-7.7840, 114.0740],
-  "arjasa": [-7.8180, 114.1000],
-  "bayeman": [-7.8200, 114.1020],
-  "jatisari": [-7.8190, 114.0980],
-  "curah tatal": [-7.8240, 114.1050],
-  "asembagus": [-7.8900, 114.1700],
-  "trigonco": [-7.8950, 114.1750],
-  "parante": [-7.8880, 114.1680],
-  "banyuputih": [-7.9300, 114.2100],
-  "sumberwaru": [-7.9350, 114.2150],
-  "besuki": [-8.0500, 114.3300],
-  "bloro": [-8.0450, 114.3250],
-  "bungatan": [-8.0900, 114.3700],
-  "jatibanteng": [-7.7500, 114.0500],
-  "curahsuri": [-7.7550, 114.0550],
-  "jangkar": [-7.8500, 114.1300],
-  "kumbangsari": [-7.8480, 114.1280],
-  "mangaran": [-7.7350, 113.9700],
-  "mlandingan": [-8.0100, 114.2900],
-  "panarukan": [-7.6960, 113.9200],
-  "panji": [-7.7400, 114.0400],
-  "suboh": [-7.9700, 114.2500],
-  "sumber malang": [-7.9900, 114.2700],
+function setLocation(name, lat, lng, type = 'pickup') {
+    const input = type === 'pickup' ? document.getElementById('pickupLocation') : document.getElementById('destinationLocation');
+    const marker = type === 'pickup' ? pickupMarker : destinationMarker;
+    
+    input.value = name;
+    
+    if (marker) map.removeLayer(marker);
+    
+    const newMarker = L.marker([lat, lng]).addTo(map)
+        .bindPopup(`<b>${type === 'pickup' ? 'Penjemputan' : 'Tujuan'}:</b> ${name}`).openPopup();
+    
+    if (type === 'pickup') pickupMarker = newMarker;
+    else destinationMarker = newMarker;
+    
+    map.setView([lat, lng], 15);
+}
 
-  /* Tempat umum */
-  "rsud situbondo": [-7.7100, 114.0150],
-  "pasar situbondo": [-7.7062, 114.0111],
-  "terminal situbondo": [-7.7040, 114.0160],
-  "stasiun situbondo": [-7.7065, 114.0085],
-  "alun-alun situbondo": [-7.7050, 114.0080],
-  "polres situbondo": [-7.7075, 114.0140],
-  "sman 1 situbondo": [-7.7080, 114.0135],
-  "pantai pasir putih": [-7.6950, 113.9100],
-  "taman nasional baluran": [-7.8500, 114.4000],
-  "spbu 44.571.02 situbondo": [-7.7085, 114.0170],
-  "indomaret situbondo": [-7.7058, 114.0115],
-  "hotel garuda situbondo": [-7.7060, 114.0100]
+// ======================
+// SEARCH LOKAL
+// ======================
+function filterLocations(query, type) {
+    const filtered = locations.filter(loc => 
+        loc.name.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    const container = type === 'pickup' ? 'pickupOptions' : 'destinationOptions';
+    document.getElementById(container).innerHTML = '';
+    
+    if (query.length < 2) return;
+    
+    const categories = [...new Set(filtered.map(loc => loc.category))];
+    
+    categories.forEach(category => {
+        const categoryLocs = filtered.filter(loc => loc.category === category);
+        if (categoryLocs.length === 0) return;
+        
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = category;
+        document.getElementById(container).appendChild(title);
+        
+        categoryLocs.forEach(loc => {
+            const btn = document.createElement('button');
+            btn.className = 'location-btn';
+            btn.textContent = loc.name;
+            btn.onclick = () => setLocation(loc.name, loc.lat, loc.lng, type);
+            document.getElementById(container).appendChild(btn);
+        });
+    });
+}
+
+// Event listener untuk input search
+document.getElementById('pickupLocation').addEventListener('input', (e) => {
+    filterLocations(e.target.value, 'pickup');
+});
+
+document.getElementById('destinationLocation').addEventListener('input', (e) => {
+    filterLocations(e.target.value, 'destination');
+});
+
+// ======================
+// FORM SUBMISSION
+// ======================
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const pickup = document.getElementById('pickupLocation').value;
+    const destination = document.getElementById('destinationLocation').value;
+    
+    if (!pickup || !destination) {
+        alert('Mohon lengkapi lokasi penjemputan dan tujuan');
+        return;
+    }
+    
+    // Kirim ke WhatsApp
+    const message = `PESANAN OJEK NOS SITUBONDO\n\nPenjemputan: ${pickup}\nTujuan: ${destination}`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/6285647709114?text=${encodedMessage}`, '_blank');
+});
+
+// ======================
+// INISIALISASI
+// ======================
+window.onload = function() {
+    initMap();
 };
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const toRad = deg => deg * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon/2)**2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
-function normalize(str) {
-  return str.toLowerCase().trim();
-}
-
-function findCoord(name) {
-  return COORDS[normalize(name)] || null;
-}
-
-/* ---------- DOM ---------- */
-const orderForm    = document.getElementById('orderForm');
-const priceResult  = document.getElementById('priceResult');
-const successMsg   = document.getElementById('successMessage');
-const totalPriceEl = document.getElementById('totalPrice');
-
-orderForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  const nama        = document.getElementById('nama').value.trim();
-  const penjemputan = document.getElementById('penjemputan').value.trim();
-  const tujuan      = document.getElementById('tujuan').value.trim();
-  const penumpang   = document.getElementById('penumpang').value;
-
-  if (!nama || !penjemputan || !tujuan || !penumpang) {
-    alert('Mohon lengkapi semua data.');
-    return;
-  }
-
-  const a = findCoord(penjemputan);
-  const b = findCoord(tujuan);
-  if (!a || !b) {
-    alert('Lokasi tidak ditemukan. Pastikan memilih dari daftar.');
-    return;
-  }
-  const jarak = haversine(...a, ...b).toFixed(1);
-  document.getElementById('jarak').value = jarak;
-
-  let base = Math.max(MINIMUM_FARE, jarak * TARIF_PER_KM);
-  let extra = 0;
-  const now   = new Date();
-  const malam = now.getHours() >= 20 || now.getHours() < 5;
-  const hujan = Math.random() > .7;
-  const dua   = penumpang === "2";
-  if (malam) extra += base * (NIGHT_FARE_MULTIPLIER - 1);
-  if (hujan) extra += base * (RAIN_FARE_MULTIPLIER  - 1);
-  if (dua)   extra += base * (TWO_PASSENGER_MULTIPLIER - 1);
-  const total = Math.round(base + extra);
-  totalPriceEl.textContent = `Rp ${total.toLocaleString('id-ID')}`;
-  priceResult.classList.remove('hidden');
-  priceResult.scrollIntoView({behavior:'smooth'});
-});
-
-document.getElementById('confirmBtn').addEventListener('click', () => {
-  priceResult.classList.add('hidden');
-  successMsg.classList.remove('hidden');
-});
-
-document.getElementById('newOrderBtn').addEventListener('click', () => {
-  orderForm.reset();
-  document.getElementById('jarak').value = '';
-  successMsg.classList.add('hidden');
-});
 </script>
+
 </body>
 </html>
