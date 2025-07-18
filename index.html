@@ -2,11 +2,9 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – FULL FINAL WORKING</title>
+  <title>NOS Desa – FULL ROUTING TERBAIK</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root{
@@ -60,22 +58,23 @@
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FULL WORKING</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – ROUTING 100 % WORK</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
 <div class="container">
   <!-- Peta -->
   <div class="glass-card">
+    <label><i class="fa-solid fa-search"></i> Klik peta 2× untuk pilih titik</label>
     <div id="map"></div>
   </div>
 
   <!-- Detail rute -->
   <div class="glass-card">
     <label>Penjemputan</label>
-    <input id="pickup" readonly placeholder="Klik peta untuk pilih"/>
+    <input id="pickup" readonly placeholder="Belum dipilih"/>
     <label>Tujuan</label>
-    <input id="destination" readonly placeholder="Klik peta untuk pilih"/>
+    <input id="destination" readonly placeholder="Belum dipilih"/>
     <label>Jarak via jalan raya</label>
     <input id="distance" readonly placeholder="0 km"/>
     <label>Estimasi Tarif</label>
@@ -129,10 +128,6 @@
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast" class="toast"></div>
-
-<!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   /* === CONFIG === */
@@ -157,7 +152,7 @@
       }
   });
 
-  /* Hitung rute via OSRM (100 % gratis & stabil) */
+  /* Hitung rute via OSRM – 100 % gratis & stabil */
   async function hitungRute(){
       if(!origin || !dest) return;
       toast('Menghitung rute…');
@@ -178,7 +173,7 @@
               updateFare();
               toast('Rute berhasil dihitung!');
           }else{
-              toast('Gagal menghitung rute');
+              toast('Gagal menghitung rute (coba titik lebih jauh)');
           }
       }catch(e){
           toast('Error koneksi, coba lagi');
