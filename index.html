@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – FINAL SUPER LENGKAP</title>
+  <title>NOS Desa – FINAL FIX ROUTING</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -77,7 +77,7 @@
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FINAL SUPER LENGKAP</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FIX ROUTING</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
@@ -93,10 +93,8 @@
   <div class="glass-card">
     <label>Penjemputan</label>
     <input id="pickup" readonly placeholder="Belum dipilih"/>
-    <button class="btn btn-primary" onclick="copyText('pickup')"><i class="fa-solid fa-copy"></i> Salin</button>
     <label>Tujuan</label>
     <input id="destination" readonly placeholder="Belum dipilih"/>
-    <button class="btn btn-primary" onclick="copyText('destination')"><i class="fa-solid fa-copy"></i> Salin</button>
     <label>Jarak via jalan raya</label>
     <input id="distance" readonly placeholder="0 km"/>
     <label>Estimasi Tarif</label>
@@ -206,12 +204,6 @@
       attribution:'© OpenStreetMap contributors'
   }).addTo(map);
 
-  /* Geocoder */
-  const geocoder = L.Control.Geocoder.nominatim({
-      geocodingQueryParams:{countrycodes:'id',viewbox:'111.8,-8.8,115.8,-6.8',bounded:1}
-  });
-  const searchControl = L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
-
   /* State */
   let originMarker=null, destMarker=null, routeLine=null, distanceKm=0;
   const driverList = [
@@ -243,7 +235,63 @@
       }
   });
 
-  /* POI via Overpass */
+  /* Routing dengan fallback */
+  async function calcRoute(){
+      if(!originMarker||!destMarker)return;
+      toast('Menghitung rute…');
+      
+      const [lat1,lng1]=[originMarker.getLatLng().lat,originMarker.getLatLng().lng];
+      const [lat2,lng2]=[destMarker.getLatLng().lat,destMarker.getLatLng().lng];
+
+      try {
+          // GraphHopper tanpa API key (fallback di bawah)
+          const url=`https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
+          const res=await fetch(url);
+          const data=await res.json();
+          
+          if(data.paths?.[0]){
+              const coords=data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm=(data.paths[0].distance/1000).toFixed(2);
+              drawRoute(coords);
+              updateFare();
+              toast('Rute berhasil dihitung!');
+          } else {
+              throw new Error('GraphHopper gagal');
+          }
+      } catch {
+          // Fallback ke OSRM (lebih stabil tanpa API key)
+          const url=`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+          const res=await fetch(url);
+          const data=await res.json();
+          
+          if(data.routes?.[0]){
+              const coords=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm=(data.routes[0].distance/1000).toFixed(2);
+              drawRoute(coords);
+              updateFare();
+              toast('Rute berhasil dihitung (OSRM)!');
+          } else {
+              toast('Gagal menghitung rute');
+          }
+      }
+  }
+
+  function drawRoute(coords){
+      if(routeLine) map.removeLayer(routeLine);
+      routeLine=L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
+      map.fitBounds(routeLine.getBounds());
+  }
+
+  function updateFare(){
+      const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
+      const passengers=parseInt(document.querySelector('input[name="passengers"]:checked').value);
+      const tarif=vehicle==='motor'?TARIF_MOTOR:TARIF_MOBIL;
+      const total=Math.round(distanceKm*tarif*passengers);
+      document.getElementById('distance').value=distanceKm+' km';
+      document.getElementById('fare').value='Rp '+total.toLocaleString('id-ID');
+  }
+
+  /* POI */
   function showPOI(key,val){
       if(poiLayer) map.removeLayer(poiLayer);
       const bbox=map.getBounds().toBBoxString();
@@ -272,35 +320,6 @@
       });
   }
 
-  /* Routing GraphHopper */
-  async function calcRoute(){
-      if(!originMarker||!destMarker)return;
-      const [lat1,lng1]=[originMarker.getLatLng().lat,originMarker.getLatLng().lng];
-      const [lat2,lng2]=[destMarker.getLatLng().lat,destMarker.getLatLng().lng];
-      const url=`https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
-      try{
-          const res=await fetch(url);
-          const data=await res.json();
-          if(data.paths?.[0]){
-              const coords=data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm=(data.paths[0].distance/1000).toFixed(2);
-              if(routeLine) map.removeLayer(routeLine);
-              routeLine=L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
-              map.fitBounds(routeLine.getBounds());
-              updateFare();
-          }
-      }catch{toast('Gagal hitung rute, cek koneksi');}
-  }
-
-  function updateFare(){
-      const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
-      const passengers=parseInt(document.querySelector('input[name="passengers"]:checked').value);
-      const tarif=vehicle==='motor'?TARIF_MOTOR:TARIF_MOBIL;
-      const total=Math.round(distanceKm*tarif*passengers);
-      document.getElementById('distance').value=distanceKm+' km';
-      document.getElementById('fare').value='Rp '+total.toLocaleString('id-ID');
-  }
-
   function getCurrentLocation(){
       if(navigator.geolocation){
           navigator.geolocation.getCurrentPosition(pos=>{
@@ -325,6 +344,7 @@
       map.setView([-7.5,113],11);
   }
 
+  /* Validasi & next step */
   function validateWA(num){return /^(08|62)\d{8,11}$/.test(num.trim());}
 
   async function nextStep(){
@@ -381,13 +401,6 @@
 
   function backToForm(){
       document.getElementById('driversCard').style.display='none';
-  }
-
-  /* Salin teks */
-  function copyText(id){
-      const el=document.getElementById(id);
-      navigator.clipboard.writeText(el.value);
-      toast('Tersalin!');
   }
 
   /* Toast */
