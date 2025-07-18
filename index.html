@@ -2,22 +2,24 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – ROUTING FIXED 100%</title>
+  <title>NOS Desa – FULL FINAL WORKING</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root{
       --sea:#0088ff;
       --coral:#ff4757;
-      --glass:rgba(255,255,255,.3);
-      --glass-border:rgba(255,255,255,.2);
-      --shadow:0 10px 40px rgba(31,38,135,.2);
-      --radius:20px;
+      --glass:rgba(255,255,255,.35);
+      --glass-border:rgba(255,255,255,.25);
+      --shadow:0 10px 40px rgba(31,38,135,.25);
+      --radius:18px;
       --font:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     }
     [data-theme="dark"]{
-      --glass:rgba(18,18,18,.45);
+      --glass:rgba(18,18,18,.5);
       --glass-border:rgba(255,255,255,.08);
       --shadow:0 10px 40px rgba(0,0,0,.4);
     }
@@ -58,7 +60,7 @@
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – ROUTING FIXED</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FULL WORKING</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
@@ -74,7 +76,7 @@
     <input id="pickup" readonly placeholder="Klik peta untuk pilih"/>
     <label>Tujuan</label>
     <input id="destination" readonly placeholder="Klik peta untuk pilih"/>
-    <label>Jarak</label>
+    <label>Jarak via jalan raya</label>
     <input id="distance" readonly placeholder="0 km"/>
     <label>Estimasi Tarif</label>
     <input id="fare" readonly placeholder="Rp 0"/>
@@ -130,13 +132,15 @@
 <!-- Toast -->
 <div id="toast" class="toast"></div>
 
+<!-- JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   /* === CONFIG === */
   const TARIF_MOTOR = 1500;
   const TARIF_MOBIL = 3000;
   const map = L.map('map').setView([-7.5,113],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap'
+      attribution:'© OpenStreetMap contributors'
   }).addTo(map);
 
   let origin=null, dest=null, routeLine=null, distanceKm=0;
@@ -153,26 +157,24 @@
       }
   });
 
-  /* Hitung rute via OSRM */
+  /* Hitung rute via OSRM (100 % gratis & stabil) */
   async function hitungRute(){
       if(!origin || !dest) return;
       toast('Menghitung rute…');
       const [lat1,lng1] = [origin.getLatLng().lat, origin.getLatLng().lng];
       const [lat2,lng2] = [dest.getLatLng().lat, dest.getLatLng().lng];
 
-      const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
-
       try{
-          const res = await fetch(url);
+          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`);
           const data = await res.json();
           if(data.routes?.[0]){
               const coords = data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
               distanceKm = (data.routes[0].distance/1000).toFixed(2);
-              
+
               if(routeLine) map.removeLayer(routeLine);
               routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
               map.fitBounds(routeLine.getBounds());
-              
+
               updateFare();
               toast('Rute berhasil dihitung!');
           }else{
@@ -192,7 +194,6 @@
       document.getElementById('fare').value = 'Rp ' + total.toLocaleString('id-ID');
   }
 
-  /* Lokasi saat ini */
   function getCurrentLocation(){
       navigator.geolocation.getCurrentPosition(pos=>{
           const {latitude,longitude} = pos.coords;
@@ -225,12 +226,12 @@
       const catatan=document.getElementById('catatan').value;
       const fare=document.getElementById('fare').value;
 
-      const text=`Halo, saya ${nama}\nIngin pesan ojek:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
+      const text=`Halo, saya ${nama}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
       toast('Mengarahkan ke WhatsApp…');
       window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`);
   }
 
-  /* Toast */
+  /* Toast helper */
   function toast(msg){
       const t=document.getElementById('toast');
       t.textContent=msg;
@@ -238,7 +239,7 @@
       setTimeout(()=>t.classList.remove('show'),3000);
   }
 
-  /* Auto dark mode */
+  /* Auto dark-mode */
   document.getElementById('catatan').addEventListener('input',e=>{
       document.getElementById('charCount').textContent=e.target.value.length+' / 300';
   });
