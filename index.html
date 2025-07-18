@@ -2,14 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – SUPER FINAL LENGKAP 2.0</title>
+  <title>NOS Desa – FINAL FIX 100 %</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <!-- === CDN === -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* === DESIGN SYSTEM 2.0 === */
     :root{
       --sea:#0088ff;
       --coral:#ff4757;
@@ -38,17 +36,6 @@
     header{position:sticky;top:0;z-index:1000;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:.75rem 1rem;text-align:center}
     header h1{font-size:1.4rem;font-weight:700}
     .toggle-theme{position:absolute;top:.8rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sea)}
-    /* === LOADING SPINNER === */
-    .spinner{
-      border:4px solid #eee;
-      border-top:4px solid var(--sea);
-      border-radius:50%;
-      width:24px;height:24px;
-      animation:spin 1s linear infinite;
-      margin:.5rem auto;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    /* === CONTAINER === */
     .container{max-width:920px;margin:0 auto;padding:1rem}
     .glass-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px)}
     label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea)}
@@ -68,7 +55,6 @@
     .poi-btn-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:.8rem 0}
     .poi-btn{padding:.5rem 1rem;border:none;border-radius:20px;background:#fff;color:var(--sea);font-size:.75rem;cursor:pointer;transition:background .3s,color .3s}
     .poi-btn:hover{background:var(--sea);color:#fff}
-    /* === DRIVER GRID === */
     .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem}
     .driver-card{background:var(--glass);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s}
     .driver-card:hover{transform:scale(1.05)}
@@ -77,14 +63,8 @@
     .driver-info .name{font-weight:700;font-size:1rem}
     .driver-info .rating{color:var(--coral);margin:.3rem 0}
     .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
-    /* === BOTTOM SHEET === */
     .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s}
     .bottom-sheet.show{transform:translateY(0)}
-    /* === HISTORY CARD === */
-    #historyCard{display:none}
-    .history-item{background:rgba(255,255,255,.15);border-radius:var(--radius);padding:.8rem;margin-bottom:.6rem;font-size:.85rem}
-    .history-item b{color:var(--sea)}
-    /* === RESPONSIVE === */
     @media(max-width:600px){
       .tile{min-width:100px}
       .btn-group{flex-direction:column}
@@ -93,7 +73,7 @@
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – SUPER FINAL 2.0</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FINAL FIX 100 %</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
@@ -169,18 +149,11 @@
     </div>
   </div>
 
-  <!-- HISTORY -->
-  <div id="historyCard" class="glass-card">
-    <label><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan</label>
-    <div id="historyList"></div>
-  </div>
-
   <!-- CTA -->
   <div class="btn-group">
     <button class="btn btn-primary" onclick="getCurrentLocation()"><i class="fa-solid fa-location-crosshairs"></i> Lokasi Saya</button>
     <button class="btn btn-primary" onclick="nextStep()"><i class="fa-brands fa-whatsapp"></i> Lanjut Pilih Driver</button>
     <button class="btn btn-danger" onclick="resetMap()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-    <button class="btn" onclick="toggleHistory()" style="background:#6c5ce7;color:#fff"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</button>
   </div>
 </div>
 
@@ -210,14 +183,14 @@
   <button class="btn btn-primary" id="btnChat" style="width:100%"><i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp</button>
 </div>
 
-<!-- Audio notifikasi (opsional) -->
+<!-- Audio notifikasi -->
 <audio id="notifSound" src="https://cdn.jsdelivr.net/gh/krsanu555/sounds/notification.mp3" preload="auto"></audio>
 
 <!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 <script>
-  /* === CONFIG GRATIS === */
+  /* === CONFIG === */
   const TARIF_MOTOR = 1500;
   const TARIF_MOBIL = 3000;
   const bounds = [[-8.8,111.8],[-6.8,115.8]];
@@ -245,7 +218,6 @@
     {name:"Rizky Pratama",wa:"6285647709116",img:"3",plat:"L 9012 TM",rating:4.7}
   ];
   let poiLayer = null;
-  let history = JSON.parse(localStorage.getItem('nosHistory')||'[]');
 
   /* === Map clicks === */
   map.on('click',async e=>{
@@ -278,18 +250,18 @@
       });
   }
 
-  /* === Routing GraphHopper (gratis) === */
+  /* === Routing OSRM (tanpa key) === */
   async function calcRoute(){
       if(!originMarker || !destMarker) return;
       const [lat1,lng1] = [originMarker.getLatLng().lat,originMarker.getLatLng().lng];
       const [lat2,lng2] = [destMarker.getLatLng().lat,destMarker.getLatLng().lng];
-      const url = `https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
+      const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
       try{
           const res = await fetch(url);
           const data = await res.json();
-          if(data.paths?.[0]){
-              const coords = data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm = (data.paths[0].distance/1000).toFixed(2);
+          if(data.routes?.[0]){
+              const coords = data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm = (data.routes[0].distance/1000).toFixed(2);
               if(routeLine) map.removeLayer(routeLine);
               routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
               map.fitBounds(routeLine.getBounds());
@@ -370,20 +342,6 @@
       const catatan=document.getElementById('catatan').value;
       const fare=document.getElementById('fare').value;
 
-      /* Simpan ke history */
-      history.unshift({
-          tgl:new Date().toLocaleString('id-ID'),
-          nama:namaPen,
-          vehicle,
-          passengers,
-          distance:distanceKm,
-          fare,
-          driver:nama,
-          catatan
-      });
-      if(history.length>10) history.pop();
-      localStorage.setItem('nosHistory',JSON.stringify(history));
-
       ['sumNama','sumVehicle','sumPassengers','sumDistance','sumFare','sumCatatan']
         .forEach((id,val)=>document.getElementById(id).textContent=[namaPen,vehicle==='motor'?'Motor':'Mobil',passengers+' orang',`${distanceKm} km`,fare,catatan||'-'][val]);
 
@@ -393,26 +351,6 @@
 
       const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
       document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
-  }
-
-  /* === HISTORY === */
-  function toggleHistory(){
-      const card=document.getElementById('historyCard');
-      card.style.display=card.style.display==='none'?'block':'none';
-      const list=document.getElementById('historyList');
-      list.innerHTML='';
-      if(history.length===0){list.innerHTML='<div class="history-item">Belum ada riwayat</div>';return;}
-      history.forEach(h=>{
-          const div=document.createElement('div');
-          div.className='history-item';
-          div.innerHTML=`
-            <b>${h.tgl}</b><br>
-            ${h.nama} (${h.vehicle}, ${h.passengers} penumpang)<br>
-            ${h.distance} km – ${h.fare}<br>
-            Driver: ${h.driver}
-          `;
-          list.appendChild(div);
-      });
   }
 
   /* === UTILS === */
@@ -432,16 +370,6 @@
       const hour=new Date().getHours();
       if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
   })();
-
-  /* === Search box sync dengan geocoder === */
-  document.getElementById('searchBox').addEventListener('keyup',function(e){
-      if(e.key==='Enter'){
-          const q=this.value;
-          geocoder.geocode(q,(results)=>{
-              if(results?.[0]) map.setView([results[0].center.lat,results[0].center.lng],15);
-          });
-      }
-  });
 </script>
 </body>
 </html>
