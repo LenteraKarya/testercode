@@ -2,18 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS – Ojek Online Jawa Timur</title>
+  <title>NOS – Ojek Online Jawa Timur (Anti-Blank & Label Lengkap)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    :root{
-      --sea:#0099cc;
-      --sand:#fef7e6;
-      --coral:#ff6b35;
-      --dark:#121212;
-      --darkCard:#1e1e1e;
-    }
+    :root{--sea:#0099cc;--sand:#fef7e6;--coral:#ff6b35;--dark:#121212;--darkCard:#1e1e1e;}
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
     body{background:var(--sand);color:#222;transition:background .3s}
     body.dark{background:var(--dark);color:#eee}
@@ -125,9 +119,11 @@
   const TARIF_MOBIL = 3000;
   const bounds = [[-8.8,111.8],[-6.8,115.8]];
   const map = L.map('map',{center:[-7.5,113],zoom:11,minZoom:9,maxZoom:19,maxBounds:bounds});
-  /* Tile yang stabil, cepat, dan label lengkap */
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap contributors'
+  /* Tile yang stabil, cepat, dan label lengkap – anti-blank saat zoom */
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors',
+    maxNativeZoom:19,
+    maxZoom:19
   }).addTo(map);
 
   let A, B, routeLine, distanceKm = 0;
