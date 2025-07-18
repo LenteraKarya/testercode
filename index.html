@@ -74,6 +74,9 @@
     .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     #reverseRoute{background:none;border:none;color:var(--sea);font-size:1.2rem;cursor:pointer;position:absolute;right:10px;top:50%;transform:translateY(-50%)}
+    .route-info{display:flex;justify-content:space-between;margin-top:.5rem;font-size:.85rem}
+    .route-info span{color:var(--sea-dark);font-weight:600}
+    [data-theme="dark"] .route-info span{color:#74b9ff}
   </style>
 </head>
 <body>
@@ -97,10 +100,10 @@
     <label>Tujuan</label>
     <input id="destination" readonly placeholder="Belum dipilih"/>
     <button id="reverseRoute" title="Balikkan rute"><i class="fa-solid fa-arrow-right-arrow-left"></i></button>
-    <label>Jarak via jalan raya</label>
-    <input id="distance" readonly placeholder="0 km"/>
-    <label>Estimasi Tarif</label>
-    <input id="fare" readonly placeholder="Rp 0"/>
+    <div class="route-info">
+      <span>Jarak via jalan raya: <span id="distance">0 km</span></span>
+      <span>Estimasi Tarif: <span id="fare">Rp 0</span></span>
+    </div>
   </div>
 
   <!-- Kendaraan -->
@@ -108,11 +111,11 @@
     <label><i class="fa-solid fa-truck-pickup"></i> Pilih Kendaraan</label>
     <div class="tile-row">
       <label class="tile selected">
-        <input type="radio" name="vehicle" value="motor" checked onchange="updateFare()"/>
+        <input type="radio" name="vehicle" value="motor" checked/>
         <i class="fa-solid fa-motorcycle"></i><br>Motor
       </label>
       <label class="tile">
-        <input type="radio" name="vehicle" value="mobil" onchange="updateFare()"/>
+        <input type="radio" name="vehicle" value="mobil"/>
         <i class="fa-solid fa-car-side"></i><br>Mobil
       </label>
     </div>
@@ -123,11 +126,11 @@
     <label><i class="fa-solid fa-users"></i> Jumlah Penumpang</label>
     <div class="tile-row">
       <label class="tile selected">
-        <input type="radio" name="passengers" value="1" checked onchange="updateFare()"/>
+        <input type="radio" name="passengers" value="1" checked/>
         <span>1 Orang</span>
       </label>
       <label class="tile">
-        <input type="radio" name="passengers" value="2" onchange="updateFare()"/>
+        <input type="radio" name="passengers" value="2"/>
         <span>2 Orang</span>
       </label>
     </div>
@@ -194,11 +197,13 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
 <script>
   /* === KONFIGURASI AWAL === */
-  const TARIF_MOTOR = 1500;
-  const TARIF_MOBIL = 3000;
-  const bounds = [[-8.8, 111.8], [-6.8, 115.8]];
+  const TARIF_MOTOR = 1500; // Tarif per km untuk motor
+  const TARIF_MOBIL = 3000; // Tarif per km untuk mobil
+  const bounds = [[-8.8, 111.8], [-6.8, 115.8]]; // Batas peta Jawa Timur
   
   // Inisialisasi peta dengan view Jawa Timur
   const map = L.map('map', {
@@ -213,6 +218,21 @@
   // Tambahkan tile layer OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  /* Inisialisasi Routing Machine */
+  const routingControl = L.Routing.control({
+    waypoints: [],
+    routeWhileDragging: true,
+    showAlternatives: false,
+    addWaypoints: false,
+    draggableWaypoints: false,
+    fitSelectedRoutes: true,
+    show: false, // Sembunyikan panel rute default
+    lineOptions: {
+      styles: [{color: '#0088ff', opacity: 0.8, weight: 6}]
+    },
+    createMarker: function() { return null; } // Nonaktifkan marker default
   }).addTo(map);
 
   /* Geocoder untuk pencarian alamat */
@@ -263,9 +283,7 @@
   /* State aplikasi */
   let originMarker = null;
   let destMarker = null;
-  let routeLine = null;
   let distanceKm = 0;
-  let currentRouteRequest = null;
   let isCalculatingRoute = false;
   
   const driverList = [
@@ -295,9 +313,9 @@
     
     document.getElementById('pickup').value = name || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
     
-    // Jika sudah ada tujuan, hitung ulang rute
+    // Update rute jika sudah ada tujuan
     if (destMarker) {
-      calcRoute();
+      updateRoute();
     }
   }
 
@@ -318,24 +336,46 @@
     
     document.getElementById('destination').value = name || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
     
-    // Jika sudah ada penjemputan, hitung ulang rute
+    // Update rute jika sudah ada penjemputan
     if (originMarker) {
-      calcRoute();
+      updateRoute();
     }
   }
 
-  /* Event klik pada peta */
-  map.on('click', async function(e) {
-    if (!originMarker) {
-      setOrigin(e.latlng, 'Lokasi penjemputan');
-    } else if (!destMarker) {
-      setDestination(e.latlng, 'Lokasi tujuan');
-    } else {
-      // Jika kedua titik sudah ada, ganti tujuan
-      map.removeLayer(destMarker);
-      setDestination(e.latlng, 'Lokasi tujuan');
-    }
-  });
+  /* Fungsi untuk memperbarui rute */
+  function updateRoute() {
+    if (!originMarker || !destMarker) return;
+    
+    isCalculatingRoute = true;
+    document.getElementById('distance').textContent = 'Menghitung...';
+    document.getElementById('fare').textContent = 'Menghitung...';
+    
+    // Set waypoints untuk routing control
+    routingControl.setWaypoints([
+      L.latLng(originMarker.getLatLng()),
+      L.latLng(destMarker.getLatLng())
+    ]);
+    
+    // Event ketika rute selesai dihitung
+    routingControl.on('routesfound', function(e) {
+      const routes = e.routes;
+      if (routes && routes.length > 0) {
+        const route = routes[0];
+        distanceKm = (route.summary.totalDistance / 1000).toFixed(2);
+        updateFare();
+      }
+      isCalculatingRoute = false;
+    });
+    
+    // Event ketika terjadi error
+    routingControl.on('routingerror', function(e) {
+      console.error('Routing error:', e.error);
+      alert('Gagal menghitung rute. Silakan coba lokasi yang berbeda.');
+      document.getElementById('distance').textContent = '0 km';
+      document.getElementById('fare').textContent = 'Rp 0';
+      isCalculatingRoute = false;
+    });
+  }
 
   /* Fungsi untuk membalikkan rute */
   document.getElementById('reverseRoute').addEventListener('click', function() {
@@ -355,85 +395,34 @@
     }
   });
 
-  /* Fungsi untuk menghitung rute */
-  async function calcRoute() {
-    if (!originMarker || !destMarker) return;
-    
-    // Batalkan request sebelumnya jika masih berjalan
-    if (currentRouteRequest) {
-      currentRouteRequest.abort();
-    }
-    
-    // Tampilkan indikator loading
-    document.getElementById('distance').value = 'Menghitung rute...';
-    document.getElementById('fare').value = 'Menghitung...';
-    isCalculatingRoute = true;
-    
-    const [lat1, lng1] = [originMarker.getLatLng().lat, originMarker.getLatLng().lng];
-    const [lat2, lng2] = [destMarker.getLatLng().lat, destMarker.getLatLng().lng];
-    
-    try {
-      // Buat AbortController untuk bisa membatalkan request
-      const controller = new AbortController();
-      currentRouteRequest = controller;
-      
-      // Gunakan OSRM sebagai routing engine (gratis)
-      const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
-      
-      const res = await fetch(url, { signal: controller.signal });
-      const data = await res.json();
-      
-      if (data.routes?.[0]) {
-        const route = data.routes[0];
-        distanceKm = (route.distance / 1000).toFixed(2);
-        
-        // Hapus rute sebelumnya jika ada
-        if (routeLine) {
-          map.removeLayer(routeLine);
-        }
-        
-        // Gambar rute baru
-        routeLine = L.geoJSON(route.geometry, {
-          style: {
-            color: '#0088ff',
-            weight: 6,
-            opacity: 0.8
-          }
-        }).addTo(map);
-        
-        // Sesuaikan view peta untuk menampilkan seluruh rute
-        map.fitBounds(routeLine.getBounds(), {
-          padding: [50, 50]
-        });
-        
-        // Update informasi jarak dan tarif
-        updateFare();
-      } else {
-        alert('Tidak dapat menemukan rute antara lokasi tersebut.');
-      }
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        console.error('Error calculating route:', err);
-        alert('Gagal menghitung rute. Silakan coba lagi atau pilih lokasi yang berbeda.');
-      }
-    } finally {
-      isCalculatingRoute = false;
-      currentRouteRequest = null;
-    }
-  }
-
   /* Fungsi untuk memperbarui tarif berdasarkan jarak */
   function updateFare() {
-    if (isCalculatingRoute) return;
-    
     const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
     const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
     const tarif = vehicle === 'motor' ? TARIF_MOTOR : TARIF_MOBIL;
     const total = Math.round(distanceKm * tarif * passengers);
     
-    document.getElementById('distance').value = distanceKm > 0 ? distanceKm + ' km' : '0 km';
-    document.getElementById('fare').value = distanceKm > 0 ? 'Rp ' + total.toLocaleString('id-ID') : 'Rp 0';
+    document.getElementById('distance').textContent = distanceKm + ' km';
+    document.getElementById('fare').textContent = 'Rp ' + total.toLocaleString('id-ID');
   }
+
+  /* Event listener untuk perubahan kendaraan dan penumpang */
+  document.querySelectorAll('input[name="vehicle"], input[name="passengers"]').forEach(input => {
+    input.addEventListener('change', updateFare);
+  });
+
+  /* Event klik pada peta */
+  map.on('click', function(e) {
+    if (!originMarker) {
+      setOrigin(e.latlng, 'Lokasi penjemputan');
+    } else if (!destMarker) {
+      setDestination(e.latlng, 'Lokasi tujuan');
+    } else {
+      // Jika kedua titik sudah ada, ganti tujuan
+      map.removeLayer(destMarker);
+      setDestination(e.latlng, 'Lokasi tujuan');
+    }
+  });
 
   /* Fungsi untuk mendapatkan lokasi saat ini */
   function getCurrentLocation() {
@@ -486,19 +475,25 @@
   /* Fungsi untuk mereset peta */
   function resetMap() {
     // Hapus semua layer dari peta
-    [originMarker, destMarker, routeLine, poiLayer].forEach(layer => {
+    [originMarker, destMarker, poiLayer].forEach(layer => {
       if (layer) map.removeLayer(layer);
     });
     
+    // Reset routing control
+    routingControl.setWaypoints([]);
+    
     // Reset state
-    originMarker = destMarker = routeLine = poiLayer = null;
+    originMarker = destMarker = poiLayer = null;
     distanceKm = 0;
     
     // Reset form
-    ['pickup', 'destination', 'distance', 'fare', 'nama', 'wa', 'catatan'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    
+    document.getElementById('pickup').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('distance').textContent = '0 km';
+    document.getElementById('fare').textContent = 'Rp 0';
+    document.getElementById('nama').value = '';
+    document.getElementById('wa').value = '';
+    document.getElementById('catatan').value = '';
     document.getElementById('charCount').textContent = '0 / 300';
     document.getElementById('shimmerCard').style.display = 'none';
     document.getElementById('driversCard').style.display = 'none';
@@ -578,8 +573,13 @@
       return;
     }
     
-    if (distanceKm <= 0) {
+    if (isCalculatingRoute) {
       alert('Harap tunggu hingga perhitungan rute selesai');
+      return;
+    }
+    
+    if (distanceKm <= 0) {
+      alert('Harap pastikan rute sudah terhitung dengan benar');
       return;
     }
     
@@ -629,15 +629,16 @@
     const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
     const passengers = document.querySelector('input[name="passengers"]:checked').value;
     const catatan = document.getElementById('catatan').value;
-    const fare = document.getElementById('fare').value;
+    const fare = document.getElementById('fare').textContent;
     const pickup = document.getElementById('pickup').value;
     const destination = document.getElementById('destination').value;
+    const distance = document.getElementById('distance').textContent;
     
     // Update ringkasan pesanan
     document.getElementById('sumNama').textContent = namaPen;
     document.getElementById('sumVehicle').textContent = vehicle === 'motor' ? 'Motor' : 'Mobil';
     document.getElementById('sumPassengers').textContent = passengers + ' orang';
-    document.getElementById('sumDistance').textContent = `${distanceKm} km`;
+    document.getElementById('sumDistance').textContent = distance;
     document.getElementById('sumFare').textContent = fare;
     document.getElementById('sumCatatan').textContent = catatan || '-';
     
@@ -652,7 +653,7 @@
                  `• Penumpang: ${passengers} orang\n` +
                  `• Penjemputan: ${pickup}\n` +
                  `• Tujuan: ${destination}\n` +
-                 `• Jarak: ${distanceKm} km\n` +
+                 `• Jarak: ${distance}\n` +
                  `• Estimasi tarif: ${fare}\n` +
                  `${catatan ? `• Catatan: ${catatan}\n` : ''}\n` +
                  `Apakah Anda bisa menerima pesanan ini?`;
@@ -708,6 +709,11 @@
       
       // Tambahkan class selected ke tile yang diklik
       this.classList.add('selected');
+      
+      // Jika ini pilihan kendaraan atau penumpang, update tarif
+      if (groupName === 'vehicle' || groupName === 'passengers') {
+        updateFare();
+      }
     });
   });
 </script>
