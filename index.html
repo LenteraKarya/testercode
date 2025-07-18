@@ -2,25 +2,27 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – FINAL FIX 100 %</title>
+  <title>NOS Desa – SUPER FINAL LENGKAP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
+    /* === DESIGN SYSTEM === */
     :root{
       --sea:#0088ff;
+      --sea-dark:#006fd6;
       --coral:#ff4757;
-      --glass:rgba(255,255,255,.25);
+      --glass:rgba(255,255,255,.3);
       --glass-border:rgba(255,255,255,.2);
-      --shadow:0 10px 40px rgba(31,38,135,.25);
+      --shadow:0 10px 40px rgba(31,38,135,.2);
       --radius:20px;
       --font:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     }
     [data-theme="dark"]{
       --glass:rgba(18,18,18,.45);
       --glass-border:rgba(255,255,255,.08);
-      --shadow:0 10px 40px rgba(0,0,0,.45);
+      --shadow:0 10px 40px rgba(0,0,0,.4);
     }
     *,*::before,*::after{box-sizing:border-box;padding:0;margin:0}
     body{
@@ -32,15 +34,15 @@
       flex-direction:column;
       transition:background .4s,color .4s;
     }
-    [data-theme="dark"] body{background:linear-gradient(135deg,#2d3436,#000);}
+    [data-theme="dark"] body{background:linear-gradient(135deg,#2d3436,#000);color:#eee}
     header{position:sticky;top:0;z-index:1000;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:.75rem 1rem;text-align:center}
     header h1{font-size:1.4rem;font-weight:700}
     .toggle-theme{position:absolute;top:.8rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sea)}
-    .container{max-width:920px;margin:0 auto;padding:1rem}
+    .container{max-width:900px;margin:0 auto;padding:1rem}
     .glass-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px)}
-    label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea)}
-    input,textarea,select{width:100%;padding:.8rem;border:none;border-radius:14px;background:rgba(255,255,255,.75);font-size:.95rem}
-    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:rgba(255,255,255,.1);color:#fff}
+    label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea-dark)}
+    input,textarea{width:100%;padding:.8rem;border:none;border-radius:14px;background:rgba(255,255,255,.75);font-size:.95rem}
+    [data-theme="dark"] input,[data-theme="dark"] textarea{background:rgba(255,255,255,.1);color:#fff}
     .btn-group{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
     .btn{flex:1 1 150px;padding:.8rem 1rem;border:none;border-radius:25px;font-weight:700;cursor:pointer;font-size:.85rem}
     .btn-primary{background:var(--sea);color:#fff;box-shadow:0 4px 14px rgba(0,136,255,.45)}
@@ -63,17 +65,20 @@
     .driver-info .name{font-weight:700;font-size:1rem}
     .driver-info .rating{color:var(--coral);margin:.3rem 0}
     .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
-    .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s}
+    .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s;max-height:80vh;overflow-y:auto}
     .bottom-sheet.show{transform:translateY(0)}
-    @media(max-width:600px){
-      .tile{min-width:100px}
-      .btn-group{flex-direction:column}
-    }
+    .shimmer{position:relative;overflow:hidden;background:#e0e0e0}
+    [data-theme="dark"] .shimmer{background:#333}
+    .shimmer::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #reverseRoute{background:none;border:none;color:var(--sea);font-size:1.2rem;cursor:pointer;position:absolute;right:10px;top:50%;transform:translateY(-50%)}
   </style>
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FINAL FIX 100 %</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – SUPER FINAL LENGKAP</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
@@ -86,11 +91,12 @@
   </div>
 
   <!-- Detail rute -->
-  <div class="glass-card">
+  <div class="glass-card" style="position:relative">
     <label>Penjemputan</label>
     <input id="pickup" readonly placeholder="Belum dipilih"/>
     <label>Tujuan</label>
     <input id="destination" readonly placeholder="Belum dipilih"/>
+    <button id="reverseRoute" title="Balikkan rute"><i class="fa-solid fa-arrow-right-arrow-left"></i></button>
     <label>Jarak via jalan raya</label>
     <input id="distance" readonly placeholder="0 km"/>
     <label>Estimasi Tarif</label>
@@ -101,7 +107,7 @@
   <div class="glass-card">
     <label><i class="fa-solid fa-truck-pickup"></i> Pilih Kendaraan</label>
     <div class="tile-row">
-      <label class="tile">
+      <label class="tile selected">
         <input type="radio" name="vehicle" value="motor" checked onchange="updateFare()"/>
         <i class="fa-solid fa-motorcycle"></i><br>Motor
       </label>
@@ -112,11 +118,11 @@
     </div>
   </div>
 
-  <!-- Penumpang -->
+  <!-- Penumpang 1-2 orang -->
   <div class="glass-card">
     <label><i class="fa-solid fa-users"></i> Jumlah Penumpang</label>
     <div class="tile-row">
-      <label class="tile">
+      <label class="tile selected">
         <input type="radio" name="passengers" value="1" checked onchange="updateFare()"/>
         <span>1 Orang</span>
       </label>
@@ -162,6 +168,7 @@
   <div class="driver-grid">
     <div class="driver-card shimmer"><div style="height:120px"></div></div>
     <div class="driver-card shimmer"><div style="height:120px"></div></div>
+    <div class="driver-card shimmer"><div style="height:120px"></div></div>
   </div>
 </div>
 
@@ -183,193 +190,526 @@
   <button class="btn btn-primary" id="btnChat" style="width:100%"><i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp</button>
 </div>
 
-<!-- Audio notifikasi -->
-<audio id="notifSound" src="https://cdn.jsdelivr.net/gh/krsanu555/sounds/notification.mp3" preload="auto"></audio>
-
 <!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.js"></script>
 <script>
-  /* === CONFIG === */
+  /* === KONFIGURASI AWAL === */
   const TARIF_MOTOR = 1500;
   const TARIF_MOBIL = 3000;
-  const bounds = [[-8.8,111.8],[-6.8,115.8]];
-  const map = L.map('map',{center:[-7.5,113],zoom:11,minZoom:9,maxZoom:19,maxBounds:bounds});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap contributors'
+  const bounds = [[-8.8, 111.8], [-6.8, 115.8]];
+  
+  // Inisialisasi peta dengan view Jawa Timur
+  const map = L.map('map', {
+    center: [-7.5, 113],
+    zoom: 11,
+    minZoom: 9,
+    maxZoom: 19,
+    maxBounds: bounds,
+    maxBoundsViscosity: 1.0
+  });
+
+  // Tambahkan tile layer OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  /* === Geocoder + locate === */
+  /* Geocoder untuk pencarian alamat */
   const geocoder = L.Control.Geocoder.nominatim({
-      geocodingQueryParams:{
-          countrycodes:'id',
-          viewbox:'111.8,-8.8,115.8,-6.8',
-          bounded:1
-      }
+    geocodingQueryParams: {
+      countrycodes: 'id',
+      viewbox: '111.8,-8.8,115.8,-6.8',
+      bounded: 1
+    }
   });
-  L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
-  L.control.locate({position:'topright',strings:{title:'Lokasi saya'}}).addTo(map);
 
-  /* === State === */
-  let originMarker, destMarker, routeLine, distanceKm = 0;
+  // Tambahkan kontrol geocoder ke peta
+  L.Control.geocoder({
+    geocoder,
+    collapsed: false,
+    placeholder: 'Cari jalan, desa, SPBU, sekolah…',
+    defaultMarkGeocode: false
+  }).on('markgeocode', function(e) {
+    const { center, name } = e.geocode;
+    
+    if (!originMarker) {
+      // Jika belum ada penjemputan, set sebagai penjemputan
+      setOrigin(center, name);
+    } else if (!destMarker) {
+      // Jika sudah ada penjemputan tapi belum tujuan, set sebagai tujuan
+      setDestination(center, name);
+    } else {
+      // Jika keduanya sudah ada, ganti tujuan
+      map.removeLayer(destMarker);
+      setDestination(center, name);
+    }
+    
+    map.setView(center, 15);
+  }).addTo(map);
+
+  // Tambahkan kontrol lokasi
+  L.control.locate({
+    position: 'topright',
+    strings: {
+      title: 'Lokasi saya'
+    },
+    locateOptions: {
+      maxZoom: 16,
+      enableHighAccuracy: true
+    }
+  }).addTo(map);
+
+  /* State aplikasi */
+  let originMarker = null;
+  let destMarker = null;
+  let routeLine = null;
+  let distanceKm = 0;
+  let currentRouteRequest = null;
+  let isCalculatingRoute = false;
+  
   const driverList = [
-    {name:"Budi Santoso",wa:"6285647709114",img:"1",plat:"S 1234 JI",rating:4.9},
-    {name:"Ani Wijaya",wa:"6285647709115",img:"2",plat:"N 5678 AT",rating:4.8},
-    {name:"Rizky Pratama",wa:"6285647709116",img:"3",plat:"L 9012 TM",rating:4.7}
+    {name: "Budi Santoso", wa: "6285647709114", img: "1", plat: "S 1234 JI", rating: 4.9},
+    {name: "Ani Wijaya", wa: "6285647709115", img: "2", plat: "N 5678 AT", rating: 4.8},
+    {name: "Rizky Pratama", wa: "6285647709116", img: "3", plat: "L 9012 TM", rating: 4.7},
+    {name: "Dewi Lestari", wa: "6285647709117", img: "4", plat: "S 3456 AB", rating: 4.85},
+    {name: "Eko Prasetyo", wa: "6285647709118", img: "5", plat: "N 7890 CD", rating: 4.75}
   ];
+  
   let poiLayer = null;
 
-  /* === Map clicks === */
-  map.on('click',async e=>{
-      if(!originMarker){
-          originMarker = L.marker(e.latlng).addTo(map).bindPopup('Penjemputan').openPopup();
-          document.getElementById('pickup').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-      }else if(!destMarker){
-          destMarker = L.marker(e.latlng).addTo(map).bindPopup('Tujuan').openPopup();
-          document.getElementById('destination').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-          await calcRoute();
-      }
-  });
-
-  /* === POI via Overpass === */
-  function showPOI(key,val){
-      if(poiLayer) map.removeLayer(poiLayer);
-      const bbox = map.getBounds().toBBoxString();
-      const query = `[out:json][timeout:25];(node["${key}"="${val}"](${bbox});way["${key}"="${val}"](${bbox}););out center;`;
-      fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:query})
-      .then(res=>res.json())
-      .then(data=>{
-          poiLayer = L.layerGroup().addTo(map);
-          data.elements.forEach(el=>{
-              const lat = el.type==='node'?el.lat:el.center.lat;
-              const lng = el.type==='node'?el.lon:el.center.lon;
-              L.marker([lat,lng],{icon:L.icon({iconUrl:'https://i.imgur.com/7h1B8I0.png',iconSize:[22,22]})})
-                .addTo(poiLayer)
-                .bindPopup(el.tags?.name || val);
-          });
-      });
+  /* Fungsi untuk menetapkan titik penjemputan */
+  function setOrigin(latlng, name) {
+    if (originMarker) {
+      map.removeLayer(originMarker);
+    }
+    
+    originMarker = L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'custom-marker',
+        html: '<i class="fa-solid fa-circle-dot" style="color:#0088ff;font-size:24px"></i>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).addTo(map).bindPopup(`<b>Penjemputan</b><br>${name || 'Lokasi penjemputan'}`).openPopup();
+    
+    document.getElementById('pickup').value = name || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+    
+    // Jika sudah ada tujuan, hitung ulang rute
+    if (destMarker) {
+      calcRoute();
+    }
   }
 
-  /* === Routing OSRM (tanpa key) === */
-  async function calcRoute(){
-      if(!originMarker || !destMarker) return;
-      const [lat1,lng1] = [originMarker.getLatLng().lat,originMarker.getLatLng().lng];
-      const [lat2,lng2] = [destMarker.getLatLng().lat,destMarker.getLatLng().lng];
+  /* Fungsi untuk menetapkan titik tujuan */
+  function setDestination(latlng, name) {
+    if (destMarker) {
+      map.removeLayer(destMarker);
+    }
+    
+    destMarker = L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'custom-marker',
+        html: '<i class="fa-solid fa-location-dot" style="color:#ff4757;font-size:24px"></i>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).addTo(map).bindPopup(`<b>Tujuan</b><br>${name || 'Lokasi tujuan'}`).openPopup();
+    
+    document.getElementById('destination').value = name || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+    
+    // Jika sudah ada penjemputan, hitung ulang rute
+    if (originMarker) {
+      calcRoute();
+    }
+  }
+
+  /* Event klik pada peta */
+  map.on('click', async function(e) {
+    if (!originMarker) {
+      setOrigin(e.latlng, 'Lokasi penjemputan');
+    } else if (!destMarker) {
+      setDestination(e.latlng, 'Lokasi tujuan');
+    } else {
+      // Jika kedua titik sudah ada, ganti tujuan
+      map.removeLayer(destMarker);
+      setDestination(e.latlng, 'Lokasi tujuan');
+    }
+  });
+
+  /* Fungsi untuk membalikkan rute */
+  document.getElementById('reverseRoute').addEventListener('click', function() {
+    if (originMarker && destMarker) {
+      const originLatLng = originMarker.getLatLng();
+      const destLatLng = destMarker.getLatLng();
+      const originName = document.getElementById('pickup').value;
+      const destName = document.getElementById('destination').value;
+      
+      // Hapus marker yang ada
+      map.removeLayer(originMarker);
+      map.removeLayer(destMarker);
+      
+      // Set marker baru dengan posisi terbalik
+      setOrigin(destLatLng, destName);
+      setDestination(originLatLng, originName);
+    }
+  });
+
+  /* Fungsi untuk menghitung rute */
+  async function calcRoute() {
+    if (!originMarker || !destMarker) return;
+    
+    // Batalkan request sebelumnya jika masih berjalan
+    if (currentRouteRequest) {
+      currentRouteRequest.abort();
+    }
+    
+    // Tampilkan indikator loading
+    document.getElementById('distance').value = 'Menghitung rute...';
+    document.getElementById('fare').value = 'Menghitung...';
+    isCalculatingRoute = true;
+    
+    const [lat1, lng1] = [originMarker.getLatLng().lat, originMarker.getLatLng().lng];
+    const [lat2, lng2] = [destMarker.getLatLng().lat, destMarker.getLatLng().lng];
+    
+    try {
+      // Buat AbortController untuk bisa membatalkan request
+      const controller = new AbortController();
+      currentRouteRequest = controller;
+      
+      // Gunakan OSRM sebagai routing engine (gratis)
       const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
-      try{
-          const res = await fetch(url);
-          const data = await res.json();
-          if(data.routes?.[0]){
-              const coords = data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm = (data.routes[0].distance/1000).toFixed(2);
-              if(routeLine) map.removeLayer(routeLine);
-              routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
-              map.fitBounds(routeLine.getBounds());
-              updateFare();
+      
+      const res = await fetch(url, { signal: controller.signal });
+      const data = await res.json();
+      
+      if (data.routes?.[0]) {
+        const route = data.routes[0];
+        distanceKm = (route.distance / 1000).toFixed(2);
+        
+        // Hapus rute sebelumnya jika ada
+        if (routeLine) {
+          map.removeLayer(routeLine);
+        }
+        
+        // Gambar rute baru
+        routeLine = L.geoJSON(route.geometry, {
+          style: {
+            color: '#0088ff',
+            weight: 6,
+            opacity: 0.8
           }
-      }catch{alert('Gagal menghitung rute, coba refresh atau periksa koneksi.');}
+        }).addTo(map);
+        
+        // Sesuaikan view peta untuk menampilkan seluruh rute
+        map.fitBounds(routeLine.getBounds(), {
+          padding: [50, 50]
+        });
+        
+        // Update informasi jarak dan tarif
+        updateFare();
+      } else {
+        alert('Tidak dapat menemukan rute antara lokasi tersebut.');
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Error calculating route:', err);
+        alert('Gagal menghitung rute. Silakan coba lagi atau pilih lokasi yang berbeda.');
+      }
+    } finally {
+      isCalculatingRoute = false;
+      currentRouteRequest = null;
+    }
   }
 
-  function updateFare(){
-      const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
-      const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
-      const tarif = vehicle === 'motor' ? TARIF_MOTOR : TARIF_MOBIL;
-      const total = Math.round(distanceKm * tarif * passengers);
-      document.getElementById('distance').value = distanceKm + ' km';
-      document.getElementById('fare').value = 'Rp ' + total.toLocaleString('id-ID');
+  /* Fungsi untuk memperbarui tarif berdasarkan jarak */
+  function updateFare() {
+    if (isCalculatingRoute) return;
+    
+    const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
+    const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
+    const tarif = vehicle === 'motor' ? TARIF_MOTOR : TARIF_MOBIL;
+    const total = Math.round(distanceKm * tarif * passengers);
+    
+    document.getElementById('distance').value = distanceKm > 0 ? distanceKm + ' km' : '0 km';
+    document.getElementById('fare').value = distanceKm > 0 ? 'Rp ' + total.toLocaleString('id-ID') : 'Rp 0';
   }
 
-  function getCurrentLocation(){
-      navigator.geolocation.getCurrentPosition(pos=>{
-          const {latitude,longitude} = pos.coords;
-          map.setView([latitude,longitude],15);
-          if(originMarker){map.removeLayer(originMarker);originMarker=null;}
-          originMarker = L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
-          document.getElementById('pickup').value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+  /* Fungsi untuk mendapatkan lokasi saat ini */
+  function getCurrentLocation() {
+    if (navigator.geolocation) {
+      // Tampilkan indikator loading
+      const btn = document.querySelector('[onclick="getCurrentLocation()"]');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<span class="loading"></span> Mendeteksi lokasi...';
+      btn.disabled = true;
+      
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 15);
+          
+          if (!originMarker) {
+            setOrigin([latitude, longitude], 'Lokasi saya');
+          } else {
+            // Jika sudah ada penjemputan, set sebagai tujuan
+            if (!destMarker) {
+              setDestination([latitude, longitude], 'Lokasi tujuan');
+            } else {
+              // Jika keduanya sudah ada, tanya pengguna
+              if (confirm('Ganti lokasi penjemputan dengan lokasi saat ini?')) {
+                setOrigin([latitude, longitude], 'Lokasi saya');
+              }
+            }
+          }
+          
+          // Kembalikan tombol ke state semula
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+        },
+        function(err) {
+          alert('Gagal mendapatkan lokasi: ' + err.message);
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      alert('Browser tidak mendukung geolokasi');
+    }
+  }
+
+  /* Fungsi untuk mereset peta */
+  function resetMap() {
+    // Hapus semua layer dari peta
+    [originMarker, destMarker, routeLine, poiLayer].forEach(layer => {
+      if (layer) map.removeLayer(layer);
+    });
+    
+    // Reset state
+    originMarker = destMarker = routeLine = poiLayer = null;
+    distanceKm = 0;
+    
+    // Reset form
+    ['pickup', 'destination', 'distance', 'fare', 'nama', 'wa', 'catatan'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    
+    document.getElementById('charCount').textContent = '0 / 300';
+    document.getElementById('shimmerCard').style.display = 'none';
+    document.getElementById('driversCard').style.display = 'none';
+    document.getElementById('summarySheet').classList.remove('show');
+    
+    // Reset pilihan kendaraan dan penumpang
+    document.querySelectorAll('.tile').forEach(tile => {
+      tile.classList.remove('selected');
+    });
+    document.querySelector('.tile input[value="motor"]').parentElement.classList.add('selected');
+    document.querySelector('.tile input[value="1"]').parentElement.classList.add('selected');
+    
+    // Kembalikan view peta ke default
+    map.setView([-7.5, 113], 11);
+  }
+
+  /* Validasi nomor WhatsApp */
+  function validateWA(num) {
+    return /^(08|62)\d{8,11}$/.test(num.trim());
+  }
+
+  /* Fungsi untuk menampilkan POI */
+  function showPOI(key, val) {
+    if (poiLayer) {
+      map.removeLayer(poiLayer);
+      poiLayer = null;
+    }
+    
+    const bbox = map.getBounds().toBBoxString();
+    const query = `[out:json][timeout:25];(node["${key}"="${val}"](${bbox});way["${key}"="${val}"](${bbox}););out center;`;
+    
+    fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      body: query
+    })
+    .then(res => res.json())
+    .then(data => {
+      poiLayer = L.layerGroup().addTo(map);
+      
+      data.elements.forEach(el => {
+        const lat = el.type === 'node' ? el.lat : el.center.lat;
+        const lng = el.type === 'node' ? el.lon : el.center.lon;
+        
+        L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'poi-marker',
+            html: `<i class="fa-solid fa-map-marker-alt" style="color:#ff4757;font-size:20px"></i>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 20]
+          })
+        })
+        .addTo(poiLayer)
+        .bindPopup(el.tags?.name || val);
       });
+    })
+    .catch(err => {
+      console.error('Error fetching POI:', err);
+      alert('Gagal memuat POI. Silakan coba lagi.');
+    });
   }
 
-  function resetMap(){
-      [originMarker,destMarker,routeLine].forEach(l=>l&&map.removeLayer(l));
-      originMarker=destMarker=routeLine=null;
-      if(poiLayer) map.removeLayer(poiLayer);
-      ['pickup','destination','distance','fare','nama','wa','catatan'].forEach(id=>document.getElementById(id).value='');
-      document.getElementById('charCount').textContent='0 / 300';
-      document.getElementById('shimmerCard').style.display='none';
-      document.getElementById('driversCard').style.display='none';
-      document.getElementById('summarySheet').classList.remove('show');
-      map.setView([-7.5,113],11);
+  /* Fungsi untuk lanjut ke pemilihan driver */
+  async function nextStep() {
+    if (!originMarker || !destMarker) {
+      alert('Harap pilih titik penjemputan dan tujuan terlebih dahulu');
+      return;
+    }
+    
+    if (!document.getElementById('nama').value.trim()) {
+      alert('Harap isi nama lengkap');
+      return;
+    }
+    
+    const wa = document.getElementById('wa').value.trim();
+    if (!validateWA(wa)) {
+      alert('Nomor WhatsApp harus diawali 08/62 dan terdiri dari 10-13 digit angka');
+      return;
+    }
+    
+    if (distanceKm <= 0) {
+      alert('Harap tunggu hingga perhitungan rute selesai');
+      return;
+    }
+    
+    // Tampilkan loading skeleton
+    document.getElementById('shimmerCard').style.display = 'block';
+    document.getElementById('driversCard').style.display = 'none';
+    
+    // Simulasikan loading data driver
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Sembunyikan loading dan tampilkan driver
+    document.getElementById('shimmerCard').style.display = 'none';
+    renderDrivers();
+    document.getElementById('driversCard').style.display = 'block';
+    
+    // Scroll ke bagian driver
+    document.getElementById('driversCard').scrollIntoView({ behavior: 'smooth' });
   }
 
-  function validateWA(num){return /^(08|62)\d{8,11}$/.test(num.trim());}
-
-  async function nextStep(){
-      if(!originMarker || !destMarker){alert('Pilih Penjemputan & Tujuan');return;}
-      if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
-      const wa=document.getElementById('wa').value.trim();
-      if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
-      document.getElementById('shimmerCard').style.display='block';
-      document.getElementById('driversCard').style.display='none';
-      await new Promise(r=>setTimeout(r,800));
-      document.getElementById('shimmerCard').style.display='none';
-      renderDrivers();
-      document.getElementById('driversCard').style.display='block';
+  /* Fungsi untuk merender daftar driver */
+  function renderDrivers() {
+    const container = document.getElementById('drivers');
+    container.innerHTML = '';
+    
+    // Acak urutan driver untuk variasi
+    const shuffledDrivers = [...driverList].sort(() => Math.random() - 0.5);
+    
+    shuffledDrivers.forEach(d => {
+      const div = document.createElement('div');
+      div.className = 'driver-card';
+      div.innerHTML = `
+        <img src="https://i.pravatar.cc/300?img=${d.img}" alt="${d.name}" loading="lazy">
+        <div class="driver-info">
+          <div class="name">${d.name}</div>
+          <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
+          <div class="plate">${d.plat}</div>
+          <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
   }
 
-  function renderDrivers(){
-      const container=document.getElementById('drivers');
-      container.innerHTML='';
-      driverList.forEach(d=>{
-          const div=document.createElement('div');
-          div.className='driver-card';
-          div.innerHTML=`
-            <img src="https://i.pravatar.cc/200?img=${d.img}" alt="${d.name}">
-            <div class="driver-info">
-              <div class="name">${d.name}</div>
-              <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
-              <div class="plate">${d.plat}</div>
-              <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
-            </div>
-          `;
-          container.appendChild(div);
-      });
+  /* Fungsi untuk memilih driver */
+  function selectDriver(no, nama) {
+    const namaPen = document.getElementById('nama').value;
+    const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
+    const passengers = document.querySelector('input[name="passengers"]:checked').value;
+    const catatan = document.getElementById('catatan').value;
+    const fare = document.getElementById('fare').value;
+    const pickup = document.getElementById('pickup').value;
+    const destination = document.getElementById('destination').value;
+    
+    // Update ringkasan pesanan
+    document.getElementById('sumNama').textContent = namaPen;
+    document.getElementById('sumVehicle').textContent = vehicle === 'motor' ? 'Motor' : 'Mobil';
+    document.getElementById('sumPassengers').textContent = passengers + ' orang';
+    document.getElementById('sumDistance').textContent = `${distanceKm} km`;
+    document.getElementById('sumFare').textContent = fare;
+    document.getElementById('sumCatatan').textContent = catatan || '-';
+    
+    // Sembunyikan daftar driver dan tampilkan ringkasan
+    document.getElementById('driversCard').style.display = 'none';
+    document.getElementById('summarySheet').classList.add('show');
+    
+    // Format pesan WhatsApp
+    const text = `Halo ${nama}, saya ${namaPen}\n\n` +
+                 `Saya ingin memesan layanan NOS dengan detail berikut:\n` +
+                 `• Kendaraan: ${vehicle === 'motor' ? 'Motor' : 'Mobil'}\n` +
+                 `• Penumpang: ${passengers} orang\n` +
+                 `• Penjemputan: ${pickup}\n` +
+                 `• Tujuan: ${destination}\n` +
+                 `• Jarak: ${distanceKm} km\n` +
+                 `• Estimasi tarif: ${fare}\n` +
+                 `${catatan ? `• Catatan: ${catatan}\n` : ''}\n` +
+                 `Apakah Anda bisa menerima pesanan ini?`;
+    
+    // Set event handler untuk tombol WhatsApp
+    document.getElementById('btnChat').onclick = () => {
+      window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`, '_blank');
+    };
   }
 
-  function selectDriver(no,nama){
-      const namaPen=document.getElementById('nama').value;
-      const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
-      const passengers=document.querySelector('input[name="passengers"]:checked').value;
-      const catatan=document.getElementById('catatan').value;
-      const fare=document.getElementById('fare').value;
-
-      ['sumNama','sumVehicle','sumPassengers','sumDistance','sumFare','sumCatatan']
-        .forEach((id,val)=>document.getElementById(id).textContent=[namaPen,vehicle==='motor'?'Motor':'Mobil',passengers+' orang',`${distanceKm} km`,fare,catatan||'-'][val]);
-
-      document.getElementById('driversCard').style.display='none';
-      document.getElementById('summarySheet').classList.add('show');
-      document.getElementById('notifSound').play();
-
-      const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
-      document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
-  }
-
-  /* === UTILS === */
-  document.getElementById('catatan').addEventListener('input',e=>{
-      document.getElementById('charCount').textContent=e.target.value.length+' / 300';
+  /* Event listener untuk textarea catatan */
+  document.getElementById('catatan').addEventListener('input', function(e) {
+    document.getElementById('charCount').textContent = e.target.value.length + ' / 300';
   });
-  const html=document.documentElement;
-  const toggleBtn=document.getElementById('toggleTheme');
-  toggleBtn.onclick=()=>{
-      html.dataset.theme=html.dataset.theme==='dark'?'':'dark';
-      localStorage.setItem('theme',html.dataset.theme);
+
+  /* Event listener untuk toggle theme */
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('toggleTheme');
+  
+  toggleBtn.onclick = function() {
+    const isDark = html.dataset.theme === 'dark';
+    html.dataset.theme = isDark ? '' : 'dark';
+    localStorage.setItem('theme', html.dataset.theme);
+    toggleBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-moon' : 'fa-sun'}"></i>`;
   };
-  (()=>{
-      const saved=localStorage.getItem('theme');
-      if(saved==='dark')html.dataset.theme='dark';
-      else html.dataset.theme='';
-      const hour=new Date().getHours();
-      if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
+
+  /* Inisialisasi tema */
+  (function() {
+    const saved = localStorage.getItem('theme');
+    const hour = new Date().getHours();
+    
+    // Prioritaskan tema yang disimpan pengguna
+    if (saved) {
+      html.dataset.theme = saved;
+    } 
+    // Jika tidak ada preferensi, gunakan dark mode pada malam hari
+    else if (hour >= 18 || hour < 6) {
+      html.dataset.theme = 'dark';
+    }
+    
+    // Set ikon toggle sesuai tema
+    toggleBtn.innerHTML = `<i class="fa-solid ${html.dataset.theme === 'dark' ? 'fa-sun' : 'fa-moon'}"></i>`;
   })();
+
+  /* Event listener untuk pilihan kendaraan dan penumpang */
+  document.querySelectorAll('.tile').forEach(tile => {
+    tile.addEventListener('click', function() {
+      // Hapus class selected dari semua tile dalam grup yang sama
+      const groupName = this.querySelector('input').name;
+      document.querySelectorAll(`.tile input[name="${groupName}"]`).forEach(input => {
+        input.parentElement.classList.remove('selected');
+      });
+      
+      // Tambahkan class selected ke tile yang diklik
+      this.classList.add('selected');
+    });
+  });
 </script>
 </body>
 </html>
