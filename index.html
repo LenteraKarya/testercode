@@ -2,24 +2,27 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – FULL ROUTING TERBAIK</title>
+  <title>NOS Desa – SUPER FINAL LENGKAP 2.0</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <!-- === CDN === -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
+    /* === DESIGN SYSTEM 2.0 === */
     :root{
       --sea:#0088ff;
       --coral:#ff4757;
-      --glass:rgba(255,255,255,.35);
-      --glass-border:rgba(255,255,255,.25);
+      --glass:rgba(255,255,255,.25);
+      --glass-border:rgba(255,255,255,.2);
       --shadow:0 10px 40px rgba(31,38,135,.25);
-      --radius:18px;
+      --radius:20px;
       --font:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     }
     [data-theme="dark"]{
-      --glass:rgba(18,18,18,.5);
+      --glass:rgba(18,18,18,.45);
       --glass-border:rgba(255,255,255,.08);
-      --shadow:0 10px 40px rgba(0,0,0,.4);
+      --shadow:0 10px 40px rgba(0,0,0,.45);
     }
     *,*::before,*::after{box-sizing:border-box;padding:0;margin:0}
     body{
@@ -35,14 +38,25 @@
     header{position:sticky;top:0;z-index:1000;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:.75rem 1rem;text-align:center}
     header h1{font-size:1.4rem;font-weight:700}
     .toggle-theme{position:absolute;top:.8rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sea)}
-    .container{max-width:900px;margin:0 auto;padding:1rem}
+    /* === LOADING SPINNER === */
+    .spinner{
+      border:4px solid #eee;
+      border-top:4px solid var(--sea);
+      border-radius:50%;
+      width:24px;height:24px;
+      animation:spin 1s linear infinite;
+      margin:.5rem auto;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* === CONTAINER === */
+    .container{max-width:920px;margin:0 auto;padding:1rem}
     .glass-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px)}
-    label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block}
-    input,textarea{width:100%;padding:.8rem;border:none;border-radius:14px;background:rgba(255,255,255,.75);font-size:.95rem}
-    [data-theme="dark"] input,[data-theme="dark"] textarea{background:rgba(255,255,255,.1);color:#fff}
+    label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea)}
+    input,textarea,select{width:100%;padding:.8rem;border:none;border-radius:14px;background:rgba(255,255,255,.75);font-size:.95rem}
+    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:rgba(255,255,255,.1);color:#fff}
     .btn-group{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
     .btn{flex:1 1 150px;padding:.8rem 1rem;border:none;border-radius:25px;font-weight:700;cursor:pointer;font-size:.85rem}
-    .btn-primary{background:var(--sea);color:#fff}
+    .btn-primary{background:var(--sea);color:#fff;box-shadow:0 4px 14px rgba(0,136,255,.45)}
     .btn-danger{background:var(--coral);color:#fff}
     #map{height:65vh;border-radius:var(--radius);box-shadow:var(--shadow)}
     .tile-row{display:flex;gap:.8rem;justify-content:center;margin:.8rem 0}
@@ -51,21 +65,43 @@
     .tile i{font-size:2.2rem;margin-bottom:.4rem;color:var(--sea)}
     .tile span{font-weight:700;font-size:1rem}
     .tile input{display:none}
-    #toast{position:fixed;top:1rem;right:1rem;background:var(--sea);color:#fff;padding:.75rem 1rem;border-radius:14px;box-shadow:var(--shadow);z-index:1002;display:none}
-    #toast.show{display:block;animation:fadeInOut 3s ease-in-out forwards}
-    @keyframes fadeInOut{0%{opacity:0}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+    .poi-btn-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:.8rem 0}
+    .poi-btn{padding:.5rem 1rem;border:none;border-radius:20px;background:#fff;color:var(--sea);font-size:.75rem;cursor:pointer;transition:background .3s,color .3s}
+    .poi-btn:hover{background:var(--sea);color:#fff}
+    /* === DRIVER GRID === */
+    .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem}
+    .driver-card{background:var(--glass);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s}
+    .driver-card:hover{transform:scale(1.05)}
+    .driver-card img{width:100%;height:120px;object-fit:cover}
+    .driver-info{padding:.8rem;font-size:.85rem}
+    .driver-info .name{font-weight:700;font-size:1rem}
+    .driver-info .rating{color:var(--coral);margin:.3rem 0}
+    .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
+    /* === BOTTOM SHEET === */
+    .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s}
+    .bottom-sheet.show{transform:translateY(0)}
+    /* === HISTORY CARD === */
+    #historyCard{display:none}
+    .history-item{background:rgba(255,255,255,.15);border-radius:var(--radius);padding:.8rem;margin-bottom:.6rem;font-size:.85rem}
+    .history-item b{color:var(--sea)}
+    /* === RESPONSIVE === */
+    @media(max-width:600px){
+      .tile{min-width:100px}
+      .btn-group{flex-direction:column}
+    }
   </style>
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – ROUTING 100 % WORK</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – SUPER FINAL 2.0</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
 <div class="container">
-  <!-- Peta -->
+  <!-- Peta + search -->
   <div class="glass-card">
-    <label><i class="fa-solid fa-search"></i> Klik peta 2× untuk pilih titik</label>
+    <label><i class="fa-solid fa-search"></i> Cari alamat, desa, SPBU, sekolah…</label>
+    <input id="searchBox" type="text" placeholder="Ketik nama jalan, desa, SPBU, sekolah…"/>
     <div id="map"></div>
   </div>
 
@@ -120,70 +156,152 @@
     <div id="charCount" style="font-size:.7rem;text-align:right">0 / 300</div>
   </div>
 
+  <!-- POI Sekitar -->
+  <div class="glass-card">
+    <label><i class="fa-solid fa-map-pin"></i> Tampilkan POI di sekitar</label>
+    <div class="poi-btn-row">
+      <button class="poi-btn" onclick="showPOI('amenity','fuel')">SPBU</button>
+      <button class="poi-btn" onclick="showPOI('amenity','school')">Sekolah</button>
+      <button class="poi-btn" onclick="showPOI('shop','convenience')">Minimarket</button>
+      <button class="poi-btn" onclick="showPOI('amenity','place_of_worship')">Masjid/Gereja</button>
+      <button class="poi-btn" onclick="showPOI('amenity','restaurant')">Warung</button>
+      <button class="poi-btn" onclick="showPOI('tourism','attraction')">Wisata</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="historyCard" class="glass-card">
+    <label><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan</label>
+    <div id="historyList"></div>
+  </div>
+
   <!-- CTA -->
   <div class="btn-group">
     <button class="btn btn-primary" onclick="getCurrentLocation()"><i class="fa-solid fa-location-crosshairs"></i> Lokasi Saya</button>
-    <button class="btn btn-primary" onclick="nextStep()"><i class="fa-brands fa-whatsapp"></i> Pesan Driver</button>
+    <button class="btn btn-primary" onclick="nextStep()"><i class="fa-brands fa-whatsapp"></i> Lanjut Pilih Driver</button>
     <button class="btn btn-danger" onclick="resetMap()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+    <button class="btn" onclick="toggleHistory()" style="background:#6c5ce7;color:#fff"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</button>
   </div>
 </div>
 
+<!-- Shimmer skeleton -->
+<div id="shimmerCard" class="glass-card" style="display:none">
+  <div class="driver-grid">
+    <div class="driver-card shimmer"><div style="height:120px"></div></div>
+    <div class="driver-card shimmer"><div style="height:120px"></div></div>
+  </div>
+</div>
+
+<!-- Driver list -->
+<div id="driversCard" class="glass-card" style="display:none">
+  <label><i class="fa-solid fa-id-card"></i> Pilih Driver</label>
+  <div id="drivers" class="driver-grid"></div>
+</div>
+
+<!-- Bottom sheet -->
+<div id="summarySheet" class="bottom-sheet">
+  <h3><i class="fa-solid fa-clipboard-check"></i> Ringkasan Pesanan</h3>
+  <p><strong>Nama:</strong> <span id="sumNama"></span></p>
+  <p><strong>Kendaraan:</strong> <span id="sumVehicle"></span></p>
+  <p><strong>Penumpang:</strong> <span id="sumPassengers"></span></p>
+  <p><strong>Jarak:</strong> <span id="sumDistance"></span></p>
+  <p><strong>Estimasi:</strong> <span id="sumFare"></span></p>
+  <p><strong>Catatan:</strong> <span id="sumCatatan"></span></p>
+  <button class="btn btn-primary" id="btnChat" style="width:100%"><i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp</button>
+</div>
+
+<!-- Audio notifikasi (opsional) -->
+<audio id="notifSound" src="https://cdn.jsdelivr.net/gh/krsanu555/sounds/notification.mp3" preload="auto"></audio>
+
+<!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 <script>
-  /* === CONFIG === */
+  /* === CONFIG GRATIS === */
   const TARIF_MOTOR = 1500;
   const TARIF_MOBIL = 3000;
-  const map = L.map('map').setView([-7.5,113],11);
+  const bounds = [[-8.8,111.8],[-6.8,115.8]];
+  const map = L.map('map',{center:[-7.5,113],zoom:11,minZoom:9,maxZoom:19,maxBounds:bounds});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution:'© OpenStreetMap contributors'
   }).addTo(map);
 
-  let origin=null, dest=null, routeLine=null, distanceKm=0;
+  /* === Geocoder + locate === */
+  const geocoder = L.Control.Geocoder.nominatim({
+      geocodingQueryParams:{
+          countrycodes:'id',
+          viewbox:'111.8,-8.8,115.8,-6.8',
+          bounded:1
+      }
+  });
+  L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
+  L.control.locate({position:'topright',strings:{title:'Lokasi saya'}}).addTo(map);
 
-  /* Klik peta */
+  /* === State === */
+  let originMarker, destMarker, routeLine, distanceKm = 0;
+  const driverList = [
+    {name:"Budi Santoso",wa:"6285647709114",img:"1",plat:"S 1234 JI",rating:4.9},
+    {name:"Ani Wijaya",wa:"6285647709115",img:"2",plat:"N 5678 AT",rating:4.8},
+    {name:"Rizky Pratama",wa:"6285647709116",img:"3",plat:"L 9012 TM",rating:4.7}
+  ];
+  let poiLayer = null;
+  let history = JSON.parse(localStorage.getItem('nosHistory')||'[]');
+
+  /* === Map clicks === */
   map.on('click',async e=>{
-      if(!origin){
-          origin = L.marker(e.latlng).addTo(map).bindPopup('Penjemputan').openPopup();
+      if(!originMarker){
+          originMarker = L.marker(e.latlng).addTo(map).bindPopup('Penjemputan').openPopup();
           document.getElementById('pickup').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-      }else if(!dest){
-          dest = L.marker(e.latlng).addTo(map).bindPopup('Tujuan').openPopup();
+      }else if(!destMarker){
+          destMarker = L.marker(e.latlng).addTo(map).bindPopup('Tujuan').openPopup();
           document.getElementById('destination').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-          await hitungRute();
+          await calcRoute();
       }
   });
 
-  /* Hitung rute via OSRM – 100 % gratis & stabil */
-  async function hitungRute(){
-      if(!origin || !dest) return;
-      toast('Menghitung rute…');
-      const [lat1,lng1] = [origin.getLatLng().lat, origin.getLatLng().lng];
-      const [lat2,lng2] = [dest.getLatLng().lat, dest.getLatLng().lng];
+  /* === POI via Overpass === */
+  function showPOI(key,val){
+      if(poiLayer) map.removeLayer(poiLayer);
+      const bbox = map.getBounds().toBBoxString();
+      const query = `[out:json][timeout:25];(node["${key}"="${val}"](${bbox});way["${key}"="${val}"](${bbox}););out center;`;
+      fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:query})
+      .then(res=>res.json())
+      .then(data=>{
+          poiLayer = L.layerGroup().addTo(map);
+          data.elements.forEach(el=>{
+              const lat = el.type==='node'?el.lat:el.center.lat;
+              const lng = el.type==='node'?el.lon:el.center.lon;
+              L.marker([lat,lng],{icon:L.icon({iconUrl:'https://i.imgur.com/7h1B8I0.png',iconSize:[22,22]})})
+                .addTo(poiLayer)
+                .bindPopup(el.tags?.name || val);
+          });
+      });
+  }
 
+  /* === Routing GraphHopper (gratis) === */
+  async function calcRoute(){
+      if(!originMarker || !destMarker) return;
+      const [lat1,lng1] = [originMarker.getLatLng().lat,originMarker.getLatLng().lng];
+      const [lat2,lng2] = [destMarker.getLatLng().lat,destMarker.getLatLng().lng];
+      const url = `https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
       try{
-          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`);
+          const res = await fetch(url);
           const data = await res.json();
-          if(data.routes?.[0]){
-              const coords = data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm = (data.routes[0].distance/1000).toFixed(2);
-
+          if(data.paths?.[0]){
+              const coords = data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm = (data.paths[0].distance/1000).toFixed(2);
               if(routeLine) map.removeLayer(routeLine);
               routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
               map.fitBounds(routeLine.getBounds());
-
               updateFare();
-              toast('Rute berhasil dihitung!');
-          }else{
-              toast('Gagal menghitung rute (coba titik lebih jauh)');
           }
-      }catch(e){
-          toast('Error koneksi, coba lagi');
-      }
+      }catch{alert('Gagal menghitung rute, coba refresh atau periksa koneksi.');}
   }
 
   function updateFare(){
       const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
       const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
-      const tarif = vehicle==='motor' ? TARIF_MOTOR : TARIF_MOBIL;
+      const tarif = vehicle === 'motor' ? TARIF_MOTOR : TARIF_MOBIL;
       const total = Math.round(distanceKm * tarif * passengers);
       document.getElementById('distance').value = distanceKm + ' km';
       document.getElementById('fare').value = 'Rp ' + total.toLocaleString('id-ID');
@@ -193,48 +311,111 @@
       navigator.geolocation.getCurrentPosition(pos=>{
           const {latitude,longitude} = pos.coords;
           map.setView([latitude,longitude],15);
-          if(origin){map.removeLayer(origin);origin=null;}
-          origin = L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
+          if(originMarker){map.removeLayer(originMarker);originMarker=null;}
+          originMarker = L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
           document.getElementById('pickup').value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-      },()=>toast('Aktifkan GPS terlebih dahulu'));
+      });
   }
 
   function resetMap(){
-      [origin,dest,routeLine].forEach(l=>l&&map.removeLayer(l));
-      origin=dest=routeLine=null;
+      [originMarker,destMarker,routeLine].forEach(l=>l&&map.removeLayer(l));
+      originMarker=destMarker=routeLine=null;
+      if(poiLayer) map.removeLayer(poiLayer);
       ['pickup','destination','distance','fare','nama','wa','catatan'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('charCount').textContent='0 / 300';
+      document.getElementById('shimmerCard').style.display='none';
+      document.getElementById('driversCard').style.display='none';
+      document.getElementById('summarySheet').classList.remove('show');
       map.setView([-7.5,113],11);
   }
 
   function validateWA(num){return /^(08|62)\d{8,11}$/.test(num.trim());}
 
-  function nextStep(){
-      if(!origin||!dest){toast('Pilih titik penjemputan & tujuan');return;}
-      if(!document.getElementById('nama').value.trim()){toast('Isi nama lengkap');return;}
+  async function nextStep(){
+      if(!originMarker || !destMarker){alert('Pilih Penjemputan & Tujuan');return;}
+      if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
       const wa=document.getElementById('wa').value.trim();
-      if(!validateWA(wa)){toast('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
-      
-      const nama=document.getElementById('nama').value;
+      if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
+      document.getElementById('shimmerCard').style.display='block';
+      document.getElementById('driversCard').style.display='none';
+      await new Promise(r=>setTimeout(r,800));
+      document.getElementById('shimmerCard').style.display='none';
+      renderDrivers();
+      document.getElementById('driversCard').style.display='block';
+  }
+
+  function renderDrivers(){
+      const container=document.getElementById('drivers');
+      container.innerHTML='';
+      driverList.forEach(d=>{
+          const div=document.createElement('div');
+          div.className='driver-card';
+          div.innerHTML=`
+            <img src="https://i.pravatar.cc/200?img=${d.img}" alt="${d.name}">
+            <div class="driver-info">
+              <div class="name">${d.name}</div>
+              <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
+              <div class="plate">${d.plat}</div>
+              <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
+            </div>
+          `;
+          container.appendChild(div);
+      });
+  }
+
+  function selectDriver(no,nama){
+      const namaPen=document.getElementById('nama').value;
       const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
       const passengers=document.querySelector('input[name="passengers"]:checked').value;
       const catatan=document.getElementById('catatan').value;
       const fare=document.getElementById('fare').value;
 
-      const text=`Halo, saya ${nama}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
-      toast('Mengarahkan ke WhatsApp…');
-      window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`);
+      /* Simpan ke history */
+      history.unshift({
+          tgl:new Date().toLocaleString('id-ID'),
+          nama:namaPen,
+          vehicle,
+          passengers,
+          distance:distanceKm,
+          fare,
+          driver:nama,
+          catatan
+      });
+      if(history.length>10) history.pop();
+      localStorage.setItem('nosHistory',JSON.stringify(history));
+
+      ['sumNama','sumVehicle','sumPassengers','sumDistance','sumFare','sumCatatan']
+        .forEach((id,val)=>document.getElementById(id).textContent=[namaPen,vehicle==='motor'?'Motor':'Mobil',passengers+' orang',`${distanceKm} km`,fare,catatan||'-'][val]);
+
+      document.getElementById('driversCard').style.display='none';
+      document.getElementById('summarySheet').classList.add('show');
+      document.getElementById('notifSound').play();
+
+      const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
+      document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
   }
 
-  /* Toast helper */
-  function toast(msg){
-      const t=document.getElementById('toast');
-      t.textContent=msg;
-      t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'),3000);
+  /* === HISTORY === */
+  function toggleHistory(){
+      const card=document.getElementById('historyCard');
+      card.style.display=card.style.display==='none'?'block':'none';
+      const list=document.getElementById('historyList');
+      list.innerHTML='';
+      if(history.length===0){list.innerHTML='<div class="history-item">Belum ada riwayat</div>';return;}
+      history.forEach(h=>{
+          const div=document.createElement('div');
+          div.className='history-item';
+          div.innerHTML=`
+            <b>${h.tgl}</b><br>
+            ${h.nama} (${h.vehicle}, ${h.passengers} penumpang)<br>
+            ${h.distance} km – ${h.fare}<br>
+            Driver: ${h.driver}
+          `;
+          list.appendChild(div);
+      });
   }
 
-  /* Auto dark-mode */
+  /* === UTILS === */
   document.getElementById('catatan').addEventListener('input',e=>{
       document.getElementById('charCount').textContent=e.target.value.length+' / 300';
   });
@@ -248,7 +429,19 @@
       const saved=localStorage.getItem('theme');
       if(saved==='dark')html.dataset.theme='dark';
       else html.dataset.theme='';
+      const hour=new Date().getHours();
+      if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
   })();
+
+  /* === Search box sync dengan geocoder === */
+  document.getElementById('searchBox').addEventListener('keyup',function(e){
+      if(e.key==='Enter'){
+          const q=this.value;
+          geocoder.geocode(q,(results)=>{
+              if(results?.[0]) map.setView([results[0].center.lat,results[0].center.lng],15);
+          });
+      }
+  });
 </script>
 </body>
 </html>
