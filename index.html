@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Premium – Ojek Online Jawa Timur (Final)</title>
+  <title>NOS Desa – SUPER FINAL LENGKAP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <!-- Leaflet & Font Awesome -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -13,17 +12,16 @@
     :root{
       --sea:#0088ff;
       --coral:#ff4757;
-      --sand:#f7f7f7;
-      --glass:rgba(255,255,255,.28);
+      --glass:rgba(255,255,255,.3);
       --glass-border:rgba(255,255,255,.2);
-      --shadow:0 10px 40px rgba(31,38,135,.18);
+      --shadow:0 10px 40px rgba(31,38,135,.2);
       --radius:20px;
       --font:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     }
     [data-theme="dark"]{
-      --sand:#121212;
       --glass:rgba(18,18,18,.45);
       --glass-border:rgba(255,255,255,.08);
+      --shadow:0 10px 40px rgba(0,0,0,.4);
     }
     *,*::before,*::after{box-sizing:border-box;padding:0;margin:0}
     body{
@@ -36,91 +34,27 @@
       transition:background .4s,color .4s;
     }
     [data-theme="dark"] body{background:linear-gradient(135deg,#2d3436,#000);}
-    header{
-      position:sticky;top:0;z-index:1000;
-      background:var(--glass);
-      backdrop-filter:blur(12px);
-      border-bottom:1px solid var(--glass-border);
-      padding:.75rem 1rem;
-      text-align:center;
-      box-shadow:var(--shadow);
-    }
+    header{position:sticky;top:0;z-index:1000;background:var(--glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-border);padding:.75rem 1rem;text-align:center}
     header h1{font-size:1.4rem;font-weight:700}
-    .toggle-theme{
-      position:absolute;
-      top:.6rem;
-      right:1rem;
-      background:none;
-      border:none;
-      font-size:1.3rem;
-      cursor:pointer;
-      color:var(--sea);
-    }
-    .container{max-width:1200px;margin:0 auto;padding:1rem}
-    .glass-card{
-      background:var(--glass);
-      border:1px solid var(--glass-border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:1.5rem;
-      margin-bottom:1rem;
-      backdrop-filter:blur(12px);
-      transition:transform .3s;
-    }
-    .glass-card:hover{transform:translateY(-3px)}
+    .toggle-theme{position:absolute;top:.8rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sea)}
+    .container{max-width:900px;margin:0 auto;padding:1rem}
+    .glass-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px)}
     label{font-size:.9rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea-dark)}
-    input,textarea{
-      width:100%;
-      padding:.8rem;
-      border:none;
-      border-radius:14px;
-      background:rgba(255,255,255,.75);
-      font-size:.95rem;
-      transition:background .3s;
-    }
+    input,textarea{width:100%;padding:.8rem;border:none;border-radius:14px;background:rgba(255,255,255,.75);font-size:.95rem}
     [data-theme="dark"] input,[data-theme="dark"] textarea{background:rgba(255,255,255,.1);color:#fff}
     .btn-group{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
-    .btn{
-      flex:1 1 150px;
-      padding:.8rem 1rem;
-      border:none;
-      border-radius:25px;
-      font-weight:700;
-      cursor:pointer;
-      font-size:.85rem;
-      transition:transform .2s,box-shadow .3s;
-    }
-    .btn:active{transform:scale(.96)}
+    .btn{flex:1 1 150px;padding:.8rem 1rem;border:none;border-radius:25px;font-weight:700;cursor:pointer;font-size:.85rem}
     .btn-primary{background:var(--sea);color:#fff;box-shadow:0 4px 14px rgba(0,136,255,.45)}
     .btn-danger{background:var(--coral);color:#fff}
     #map{height:65vh;border-radius:var(--radius);box-shadow:var(--shadow)}
     .tile-row{display:flex;gap:.8rem;justify-content:center;margin:.8rem 0}
-    .tile{
-      flex:1 1 120px;
-      max-width:180px;
-      padding:1.2rem 1rem;
-      border:2px solid transparent;
-      border-radius:var(--radius);
-      text-align:center;
-      cursor:pointer;
-      transition:border .3s,transform .2s;
-      background:var(--glass);
-    }
+    .tile{flex:1 1 120px;max-width:180px;padding:1.2rem 1rem;border:2px solid transparent;border-radius:var(--radius);text-align:center;cursor:pointer;transition:border .3s,transform .2s;background:var(--glass)}
     .tile.selected{border-color:var(--sea);transform:scale(1.05)}
     .tile i{font-size:2.2rem;margin-bottom:.4rem;color:var(--sea)}
     .tile span{font-weight:700;font-size:1rem}
     .tile input{display:none}
     .poi-btn-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:.8rem 0}
-    .poi-btn{
-      padding:.5rem 1rem;
-      border:none;
-      border-radius:20px;
-      background:#fff;
-      color:var(--sea);
-      font-size:.75rem;
-      cursor:pointer;
-      transition:background .3s,color .3s;
-    }
+    .poi-btn{padding:.5rem 1rem;border:none;border-radius:20px;background:#fff;color:var(--sea);font-size:.75rem;cursor:pointer;transition:background .3s,color .3s}
     .poi-btn:hover{background:var(--sea);color:#fff}
     .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem}
     .driver-card{background:var(--glass);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s}
@@ -130,34 +64,18 @@
     .driver-info .name{font-weight:700;font-size:1rem}
     .driver-info .rating{color:var(--coral);margin:.3rem 0}
     .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
-    .bottom-sheet{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      z-index:1001;
-      background:var(--glass);
-      backdrop-filter:blur(15px);
-      border-top:1px solid var(--glass-border);
-      border-radius:var(--radius) var(--radius) 0 0;
-      padding:1.2rem;
-      transform:translateY(100%);
-      transition:transform .4s;
-      box-shadow:var(--shadow);
-    }
+    .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s}
     .bottom-sheet.show{transform:translateY(0)}
-    .bottom-sheet h3{font-size:1.1rem;margin-bottom:.6rem}
-    .bottom-sheet p{margin:.3rem 0;font-size:.9rem}
   </style>
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – Fitur Lengkap & Gratis</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – SUPER FINAL LENGKAP</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
 <div class="container">
-  <!-- Peta & Cari -->
+  <!-- Peta + search -->
   <div class="glass-card">
     <label><i class="fa-solid fa-search"></i> Cari alamat, desa, SPBU, sekolah…</label>
     <input id="searchBox" type="text" placeholder="Ketik nama jalan, desa, SPBU, sekolah…"/>
@@ -191,7 +109,7 @@
     </div>
   </div>
 
-  <!-- Penumpang -->
+  <!-- Penumpang 1-2 orang -->
   <div class="glass-card">
     <label><i class="fa-solid fa-users"></i> Jumlah Penumpang</label>
     <div class="tile-row">
@@ -215,7 +133,7 @@
     <div id="charCount" style="font-size:.7rem;text-align:right">0 / 300</div>
   </div>
 
-  <!-- POI Sekitar (baru) -->
+  <!-- POI Sekitar -->
   <div class="glass-card">
     <label><i class="fa-solid fa-map-pin"></i> Tampilkan POI di sekitar</label>
     <div class="poi-btn-row">
@@ -264,7 +182,6 @@
 
 <!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 <script>
   /* === CONFIG GRATIS === */
@@ -285,8 +202,6 @@
       }
   });
   L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
-
-  /* Locate */
   L.control.locate({position:'topright',strings:{title:'Lokasi saya'}}).addTo(map);
 
   /* State */
@@ -329,31 +244,31 @@
       });
   }
 
-  /* Routing OSRM */
+  /* Routing GraphHopper (gratis) */
   async function calcRoute(){
       if(!originMarker || !destMarker) return;
       const [lat1,lng1] = [originMarker.getLatLng().lat,originMarker.getLatLng().lng];
       const [lat2,lng2] = [destMarker.getLatLng().lat,destMarker.getLatLng().lng];
-      const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+      // GraphHopper tanpa API key
+      const url = `https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
       try{
           const res = await fetch(url);
           const data = await res.json();
-          if(data.routes?.[0]){
-              const coords = data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm = (data.routes[0].distance/1000).toFixed(2);
+          if(data.paths?.[0]){
+              const coords = data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm = (data.paths[0].distance/1000).toFixed(2);
               if(routeLine) map.removeLayer(routeLine);
               routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
               map.fitBounds(routeLine.getBounds());
               updateFare();
           }
-      }catch{alert('Gagal menghitung rute.');}
+      }catch{alert('Gagal menghitung rute, coba refresh atau periksa koneksi.');}
   }
 
-  /* Utility */
   function updateFare(){
       const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
       const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
-      const tarif = vehicle === 'motor' ? TARIF_MOTOR : TARIF_MOBIL;
+      const tarif = vehicle === 'motor' ? 1500 : 3000;
       const total = Math.round(distanceKm * tarif * passengers);
       document.getElementById('distance').value = distanceKm + ' km';
       document.getElementById('fare').value = 'Rp ' + total.toLocaleString('id-ID');
@@ -375,81 +290,79 @@
       if(poiLayer) map.removeLayer(poiLayer);
       ['pickup','destination','distance','fare','nama','wa','catatan'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('charCount').textContent='0 / 300';
-    document.getElementById('shimmerCard').style.display='none';
-    document.getElementById('driversCard').style.display='none';
-    document.getElementById('summarySheet').classList.remove('show');
-    map.setView([-7.5,113],11);
+      document.getElementById('shimmerCard').style.display='none';
+      document.getElementById('driversCard').style.display='none';
+      document.getElementById('summarySheet').classList.remove('show');
+      map.setView([-7.5,113],11);
   }
 
   function validateWA(num){return /^(08|62)\d{8,11}$/.test(num.trim());}
 
   async function nextStep(){
-    if(!originMarker || !destMarker){alert('Pilih Penjemputan & Tujuan');return;}
-    if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
-    const wa=document.getElementById('wa').value.trim();
-    if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
-
-    document.getElementById('shimmerCard').style.display='block';
-    document.getElementById('driversCard').style.display='none';
-    await new Promise(r=>setTimeout(r,800));
-    document.getElementById('shimmerCard').style.display='none';
-    renderDrivers();
-    document.getElementById('driversCard').style.display='block';
+      if(!originMarker || !destMarker){alert('Pilih Penjemputan & Tujuan');return;}
+      if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
+      const wa=document.getElementById('wa').value.trim();
+      if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
+      document.getElementById('shimmerCard').style.display='block';
+      document.getElementById('driversCard').style.display='none';
+      await new Promise(r=>setTimeout(r,800));
+      document.getElementById('shimmerCard').style.display='none';
+      renderDrivers();
+      document.getElementById('driversCard').style.display='block';
   }
 
   function renderDrivers(){
-    const container=document.getElementById('drivers');
-    container.innerHTML='';
-    driverList.forEach(d=>{
-      const div=document.createElement('div');
-      div.className='driver-card';
-      div.innerHTML=`
-        <img src="https://i.pravatar.cc/200?img=${d.img}" alt="${d.name}">
-        <div class="driver-info">
-          <div class="name">${d.name}</div>
-          <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
-          <div class="plate">${d.plat}</div>
-          <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
-        </div>
-      `;
-      container.appendChild(div);
-    });
+      const container=document.getElementById('drivers');
+      container.innerHTML='';
+      driverList.forEach(d=>{
+          const div=document.createElement('div');
+          div.className='driver-card';
+          div.innerHTML=`
+            <img src="https://i.pravatar.cc/200?img=${d.img}" alt="${d.name}">
+            <div class="driver-info">
+              <div class="name">${d.name}</div>
+              <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
+              <div class="plate">${d.plat}</div>
+              <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
+            </div>
+          `;
+          container.appendChild(div);
+      });
   }
 
   function selectDriver(no,nama){
-    const namaPen=document.getElementById('nama').value;
-    const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
-    const passengers=document.querySelector('input[name="passengers"]:checked').value;
-    const catatan=document.getElementById('catatan').value;
-    const fare=document.getElementById('fare').value;
+      const namaPen=document.getElementById('nama').value;
+      const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
+      const passengers=document.querySelector('input[name="passengers"]:checked').value;
+      const catatan=document.getElementById('catatan').value;
+      const fare=document.getElementById('fare').value;
 
-    ['sumNama','sumVehicle','sumPassengers','sumDistance','sumFare','sumCatatan']
-      .forEach((id,val)=>document.getElementById(id).textContent=[namaPen,vehicle==='motor'?'Motor':'Mobil',passengers+' orang',`${distanceKm} km`,fare,catatan||'-'][val]);
+      ['sumNama','sumVehicle','sumPassengers','sumDistance','sumFare','sumCatatan']
+        .forEach((id,val)=>document.getElementById(id).textContent=[namaPen,vehicle==='motor'?'Motor':'Mobil',passengers+' orang',`${distanceKm} km`,fare,catatan||'-'][val]);
 
-    document.getElementById('driversCard').style.display='none';
-    document.getElementById('summarySheet').classList.add('show');
+      document.getElementById('driversCard').style.display='none';
+      document.getElementById('summarySheet').classList.add('show');
 
-    const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
-    document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
+      const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
+      document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
   }
 
-  /* Char counter & Theme */
+  /* Auto dark mode + char counter */
   document.getElementById('catatan').addEventListener('input',e=>{
-    document.getElementById('charCount').textContent=e.target.value.length+' / 300';
+      document.getElementById('charCount').textContent=e.target.value.length+' / 300';
   });
   const html=document.documentElement;
   const toggleBtn=document.getElementById('toggleTheme');
   toggleBtn.onclick=()=>{
-    html.dataset.theme=html.dataset.theme==='dark'?'':'dark';
-    localStorage.setItem('theme',html.dataset.theme);
+      html.dataset.theme=html.dataset.theme==='dark'?'':'dark';
+      localStorage.setItem('theme',html.dataset.theme);
   };
   (()=>{
-    const saved=localStorage.getItem('theme');
-    if(saved==='dark')html.dataset.theme='dark';
-    else html.dataset.theme='';
-    // Auto dark mode (18:00–06:00)
-    const hour=new Date().getHours();
-    if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
+      const saved=localStorage.getItem('theme');
+      if(saved==='dark')html.dataset.theme='dark';
+      else html.dataset.theme='';
+      const hour=new Date().getHours();
+      if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
   })();
 </script>
 </body>
