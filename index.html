@@ -2,13 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
-  <title>NOS Desa – SUPER FINAL LENGKAP</title>
+  <title>NOS Desa – FINAL SUPER LENGKAP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    /* === DESIGN SYSTEM === */
     :root{
       --sea:#0088ff;
       --coral:#ff4757;
@@ -66,11 +67,17 @@
     .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
     .bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1001;background:var(--glass);backdrop-filter:blur(15px);border-top:1px solid var(--glass-border);border-radius:var(--radius) var(--radius) 0 0;padding:1.2rem;transform:translateY(100%);transition:transform .4s}
     .bottom-sheet.show{transform:translateY(0)}
+    .toast{position:fixed;top:1rem;right:1rem;background:var(--sea);color:#fff;padding:.75rem 1rem;border-radius:14px;box-shadow:var(--shadow);z-index:1002;display:none}
+    .toast.show{display:block;animation:fadeInOut 3s ease-in-out forwards}
+    @keyframes fadeInOut{0%{opacity:0}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+    .shimmer{position:relative;overflow:hidden}
+    .shimmer::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,#ffffff40,transparent);animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{left:-100%}100%{left:100%}}
   </style>
 </head>
 <body>
 <header>
-  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – SUPER FINAL LENGKAP</h1>
+  <h1><i class="fa-solid fa-motorcycle"></i> NOS Desa – FINAL SUPER LENGKAP</h1>
   <button class="toggle-theme" id="toggleTheme" title="Ganti tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
 </header>
 
@@ -86,8 +93,10 @@
   <div class="glass-card">
     <label>Penjemputan</label>
     <input id="pickup" readonly placeholder="Belum dipilih"/>
+    <button class="btn btn-primary" onclick="copyText('pickup')"><i class="fa-solid fa-copy"></i> Salin</button>
     <label>Tujuan</label>
     <input id="destination" readonly placeholder="Belum dipilih"/>
+    <button class="btn btn-primary" onclick="copyText('destination')"><i class="fa-solid fa-copy"></i> Salin</button>
     <label>Jarak via jalan raya</label>
     <input id="distance" readonly placeholder="0 km"/>
     <label>Estimasi Tarif</label>
@@ -166,6 +175,7 @@
 <div id="driversCard" class="glass-card" style="display:none">
   <label><i class="fa-solid fa-id-card"></i> Pilih Driver</label>
   <div id="drivers" class="driver-grid"></div>
+  <button class="btn btn-danger" onclick="backToForm()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
 </div>
 
 <!-- Bottom sheet -->
@@ -180,11 +190,14 @@
   <button class="btn btn-primary" id="btnChat" style="width:100%"><i class="fa-brands fa-whatsapp"></i> Kirim ke WhatsApp</button>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
 <!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
 <script>
-  /* === CONFIG GRATIS === */
+  /* === CONFIG === */
   const TARIF_MOTOR = 1500;
   const TARIF_MOBIL = 3000;
   const bounds = [[-8.8,111.8],[-6.8,115.8]];
@@ -195,32 +208,37 @@
 
   /* Geocoder */
   const geocoder = L.Control.Geocoder.nominatim({
-      geocodingQueryParams:{
-          countrycodes:'id',
-          viewbox:'111.8,-8.8,115.8,-6.8',
-          bounded:1
-      }
+      geocodingQueryParams:{countrycodes:'id',viewbox:'111.8,-8.8,115.8,-6.8',bounded:1}
   });
-  L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
-  L.control.locate({position:'topright',strings:{title:'Lokasi saya'}}).addTo(map);
+  const searchControl = L.Control.geocoder({geocoder,collapsed:false,placeholder:'Cari jalan, desa, SPBU, sekolah…'}).addTo(map);
 
   /* State */
-  let originMarker, destMarker, routeLine, distanceKm = 0;
+  let originMarker=null, destMarker=null, routeLine=null, distanceKm=0;
   const driverList = [
     {name:"Budi Santoso",wa:"6285647709114",img:"1",plat:"S 1234 JI",rating:4.9},
     {name:"Ani Wijaya",wa:"6285647709115",img:"2",plat:"N 5678 AT",rating:4.8},
     {name:"Rizky Pratama",wa:"6285647709116",img:"3",plat:"L 9012 TM",rating:4.7}
   ];
-  let poiLayer = null;
+  let poiLayer=null;
 
-  /* Map clicks */
+  /* Auto lokasi saat buka */
+  if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+          const {latitude,longitude}=pos.coords;
+          map.setView([latitude,longitude],15);
+          originMarker=L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
+          document.getElementById('pickup').value=`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+      },()=>toast('GPS dimatikan, silakan aktifkan atau pilih lokasi manual'));
+  }
+
+  /* Map click */
   map.on('click',async e=>{
       if(!originMarker){
-          originMarker = L.marker(e.latlng).addTo(map).bindPopup('Penjemputan').openPopup();
-          document.getElementById('pickup').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+          originMarker=L.marker(e.latlng).addTo(map).bindPopup('Penjemputan').openPopup();
+          document.getElementById('pickup').value=`${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
       }else if(!destMarker){
-          destMarker = L.marker(e.latlng).addTo(map).bindPopup('Tujuan').openPopup();
-          document.getElementById('destination').value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+          destMarker=L.marker(e.latlng).addTo(map).bindPopup('Tujuan').openPopup();
+          document.getElementById('destination').value=`${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
           await calcRoute();
       }
   });
@@ -228,60 +246,71 @@
   /* POI via Overpass */
   function showPOI(key,val){
       if(poiLayer) map.removeLayer(poiLayer);
-      const bbox = map.getBounds().toBBoxString();
-      const query = `[out:json][timeout:25];(node["${key}"="${val}"](${bbox});way["${key}"="${val}"](${bbox}););out center;`;
+      const bbox=map.getBounds().toBBoxString();
+      const query=`[out:json][timeout:25];(node["${key}"="${val}"](${bbox});way["${key}"="${val}"](${bbox}););out center;`;
       fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:query})
       .then(res=>res.json())
       .then(data=>{
-          poiLayer = L.layerGroup().addTo(map);
+          poiLayer=L.layerGroup().addTo(map);
           data.elements.forEach(el=>{
-              const lat = el.type==='node'?el.lat:el.center.lat;
-              const lng = el.type==='node'?el.lon:el.center.lon;
+              const lat=el.type==='node'?el.lat:el.center.lat;
+              const lng=el.type==='node'?el.lon:el.center.lon;
               L.marker([lat,lng],{icon:L.icon({iconUrl:'https://i.imgur.com/7h1B8I0.png',iconSize:[22,22]})})
                 .addTo(poiLayer)
-                .bindPopup(el.tags?.name || val);
+                .bindPopup(el.tags?.name||val)
+                .on('click',()=>{
+                  if(!originMarker){
+                      originMarker=L.marker([lat,lng]).addTo(map).bindPopup('Penjemputan').openPopup();
+                      document.getElementById('pickup').value=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                  }else if(!destMarker){
+                      destMarker=L.marker([lat,lng]).addTo(map).bindPopup('Tujuan').openPopup();
+                      document.getElementById('destination').value=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                      calcRoute();
+                  }
+                });
           });
       });
   }
 
-  /* Routing GraphHopper (gratis) */
+  /* Routing GraphHopper */
   async function calcRoute(){
-      if(!originMarker || !destMarker) return;
-      const [lat1,lng1] = [originMarker.getLatLng().lat,originMarker.getLatLng().lng];
-      const [lat2,lng2] = [destMarker.getLatLng().lat,destMarker.getLatLng().lng];
-      // GraphHopper tanpa API key
-      const url = `https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
+      if(!originMarker||!destMarker)return;
+      const [lat1,lng1]=[originMarker.getLatLng().lat,originMarker.getLatLng().lng];
+      const [lat2,lng2]=[destMarker.getLatLng().lat,destMarker.getLatLng().lng];
+      const url=`https://graphhopper.com/api/1/route?point=${lat1},${lng1}&point=${lat2},${lng2}&vehicle=car&locale=id&calc_points=true&points_encoded=false`;
       try{
-          const res = await fetch(url);
-          const data = await res.json();
+          const res=await fetch(url);
+          const data=await res.json();
           if(data.paths?.[0]){
-              const coords = data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
-              distanceKm = (data.paths[0].distance/1000).toFixed(2);
+              const coords=data.paths[0].points.coordinates.map(c=>[c[1],c[0]]);
+              distanceKm=(data.paths[0].distance/1000).toFixed(2);
               if(routeLine) map.removeLayer(routeLine);
-              routeLine = L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
+              routeLine=L.polyline(coords,{color:'#0088ff',weight:6}).addTo(map);
               map.fitBounds(routeLine.getBounds());
               updateFare();
           }
-      }catch{alert('Gagal menghitung rute, coba refresh atau periksa koneksi.');}
+      }catch{toast('Gagal hitung rute, cek koneksi');}
   }
 
   function updateFare(){
-      const vehicle = document.querySelector('input[name="vehicle"]:checked').value;
-      const passengers = parseInt(document.querySelector('input[name="passengers"]:checked').value);
-      const tarif = vehicle === 'motor' ? 1500 : 3000;
-      const total = Math.round(distanceKm * tarif * passengers);
-      document.getElementById('distance').value = distanceKm + ' km';
-      document.getElementById('fare').value = 'Rp ' + total.toLocaleString('id-ID');
+      const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
+      const passengers=parseInt(document.querySelector('input[name="passengers"]:checked').value);
+      const tarif=vehicle==='motor'?TARIF_MOTOR:TARIF_MOBIL;
+      const total=Math.round(distanceKm*tarif*passengers);
+      document.getElementById('distance').value=distanceKm+' km';
+      document.getElementById('fare').value='Rp '+total.toLocaleString('id-ID');
   }
 
   function getCurrentLocation(){
-      navigator.geolocation.getCurrentPosition(pos=>{
-          const {latitude,longitude} = pos.coords;
-          map.setView([latitude,longitude],15);
-          if(originMarker){map.removeLayer(originMarker);originMarker=null;}
-          originMarker = L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
-          document.getElementById('pickup').value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-      });
+      if(navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(pos=>{
+              const {latitude,longitude}=pos.coords;
+              map.setView([latitude,longitude],15);
+              if(originMarker){map.removeLayer(originMarker);originMarker=null;}
+              originMarker=L.marker([latitude,longitude]).addTo(map).bindPopup('Lokasi Saya').openPopup();
+              document.getElementById('pickup').value=`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+          },()=>toast('GPS dimatikan, silakan aktifkan'));
+      }else{toast('Browser tidak support GPS');}
   }
 
   function resetMap(){
@@ -299,10 +328,10 @@
   function validateWA(num){return /^(08|62)\d{8,11}$/.test(num.trim());}
 
   async function nextStep(){
-      if(!originMarker || !destMarker){alert('Pilih Penjemputan & Tujuan');return;}
-      if(!document.getElementById('nama').value.trim()){alert('Isi nama lengkap');return;}
+      if(!originMarker||!destMarker){toast('Pilih Penjemputan & Tujuan');return;}
+      if(!document.getElementById('nama').value.trim()){toast('Isi nama lengkap');return;}
       const wa=document.getElementById('wa').value.trim();
-      if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
+      if(!validateWA(wa)){toast('Nomor WhatsApp harus 08/62 + 8-11 digit');return;}
       document.getElementById('shimmerCard').style.display='block';
       document.getElementById('driversCard').style.display='none';
       await new Promise(r=>setTimeout(r,800));
@@ -344,10 +373,32 @@
       document.getElementById('summarySheet').classList.add('show');
 
       const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
-      document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
+      document.getElementById('btnChat').onclick=()=>{
+          toast('Mengarahkan ke WhatsApp…');
+          window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
+      };
   }
 
-  /* Auto dark mode + char counter */
+  function backToForm(){
+      document.getElementById('driversCard').style.display='none';
+  }
+
+  /* Salin teks */
+  function copyText(id){
+      const el=document.getElementById(id);
+      navigator.clipboard.writeText(el.value);
+      toast('Tersalin!');
+  }
+
+  /* Toast */
+  function toast(msg){
+      const t=document.getElementById('toast');
+      t.textContent=msg;
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'),3000);
+  }
+
+  /* Auto dark mode */
   document.getElementById('catatan').addEventListener('input',e=>{
       document.getElementById('charCount').textContent=e.target.value.length+' / 300';
   });
@@ -361,8 +412,10 @@
       const saved=localStorage.getItem('theme');
       if(saved==='dark')html.dataset.theme='dark';
       else html.dataset.theme='';
-      const hour=new Date().getHours();
-      if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
+      if(!saved){
+          const hour=new Date().getHours();
+          if(hour>=18||hour<6){html.dataset.theme='dark';localStorage.setItem('theme','dark');}
+      }
   })();
 </script>
 </body>
