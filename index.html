@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css"/>
-  <!-- Font Awesome Pro CDN -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root{
@@ -34,7 +34,7 @@
       color:#222;
       transition:background .4s,color .4s;
     }
-    body::before{ /* gradient background */
+    body::before{
       content:'';
       position:fixed;
       inset:0;
@@ -65,7 +65,6 @@
       cursor:pointer;
       color:var(--sea-dark);
     }
-    /* Layout */
     .container{max-width:1200px;margin:0 auto;padding:.5rem}
     .glass-card{
       background:var(--glass);
@@ -79,15 +78,21 @@
     }
     .glass-card:hover{transform:translateY(-2px)}
     label{font-size:.8rem;font-weight:600;margin:.3rem 0 .1rem;display:block}
-    input,textarea{
+    input,textarea,select{
       width:100%;
       padding:.6rem;
       border:none;
       border-radius:12px;
       background:rgba(255,255,255,.7);
       transition:background .3s;
+      font-size:.9rem;
     }
-    [data-theme="dark"] input,[data-theme="dark"] textarea{background:rgba(255,255,255,.1);color:#fff}
+    [data-theme="dark"] input,
+    [data-theme="dark"] textarea,
+    [data-theme="dark"] select{
+      background:rgba(255,255,255,.1);
+      color:#fff;
+    }
     .btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
     .btn{
       flex:1 1 150px;
@@ -102,13 +107,7 @@
     .btn:active{transform:scale(.96)}
     .btn-primary{background:var(--sea);color:#fff;box-shadow:0 4px 14px rgba(0,136,255,.45)}
     .btn-danger{background:var(--coral);color:#fff}
-    /* Peta */
-    #map{
-      height:60vh;
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-    /* Vehicle cards */
+    #map{height:60vh;border-radius:var(--radius);box-shadow:var(--shadow)}
     .vehicle-options{display:flex;gap:.6rem;justify-content:center;margin:.6rem 0}
     .vehicle-card{
       flex:1 1 90px;
@@ -126,24 +125,18 @@
     }
     .vehicle-card i{font-size:1.8rem;margin-bottom:.3rem;color:var(--sea)}
     .vehicle-card input{display:none}
-    /* Driver shimmer skeleton */
+    /* shimmer skeleton */
     .shimmer{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
     @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
     .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem}
-    .driver-card{
-      background:var(--glass);
-      border-radius:var(--radius);
-      overflow:hidden;
-      box-shadow:var(--shadow);
-      transition:transform .3s;
-    }
+    .driver-card{background:var(--glass);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s}
     .driver-card:hover{transform:scale(1.03)}
     .driver-card img{width:100%;height:110px;object-fit:cover}
     .driver-info{padding:.6rem;font-size:.8rem}
     .driver-info .name{font-weight:700;font-size:.9rem}
     .driver-info .rating{color:var(--coral);margin:.2rem 0}
     .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.2rem .4rem;font-weight:600}
-    /* Bottom sheet summary */
+    /* bottom sheet */
     .bottom-sheet{
       position:fixed;
       bottom:0;
@@ -162,7 +155,17 @@
     .bottom-sheet.show{transform:translateY(0)}
     .bottom-sheet h3{font-size:1rem;margin-bottom:.5rem}
     .bottom-sheet p{margin:.2rem 0;font-size:.8rem}
-    /* Responsive */
+    .passenger-select{display:flex;gap:.4rem;margin:.3rem 0}
+    .passenger-select label{
+      flex:1;text-align:center;
+      padding:.4rem;
+      border:1px solid var(--glass-border);
+      border-radius:12px;
+      cursor:pointer;
+    }
+    .passenger-select input{display:none}
+    .passenger-select input:checked+span{background:var(--sea);color:#fff}
+    /* responsive */
     @media(min-width:600px){
       header h1{font-size:1.6rem}
       .btn-group{justify-content:flex-start}
@@ -177,13 +180,13 @@
 </header>
 
 <div class="container">
-  <!-- Card peta -->
+  <!-- peta -->
   <div class="glass-card">
     <label><i class="fa-solid fa-map-location-dot"></i> Pilih Lokasi / Cari Tempat</label>
     <div id="map"></div>
   </div>
 
-  <!-- Form -->
+  <!-- form -->
   <div class="glass-card">
     <label>Penjemputan</label>
     <input id="pickup" readonly placeholder="Belum dipilih"/>
@@ -191,11 +194,11 @@
     <input id="destination" readonly placeholder="Belum dipilih"/>
     <label>Jarak via jalan</label>
     <input id="distance" readonly placeholder="0 km"/>
-    <label>Estimasi Tarif (Motor Rp 1.500/km)</label>
+    <label id="fareLabel">Estimasi Tarif</label>
     <input id="fare" readonly placeholder="Rp 0"/>
   </div>
 
-  <!-- Kendaraan -->
+  <!-- kendaraan -->
   <div class="glass-card">
     <label><i class="fa-solid fa-truck-pickup"></i> Pilih Kendaraan</label>
     <div class="vehicle-options">
@@ -208,9 +211,20 @@
         <i class="fa-solid fa-car-side"></i><br>Mobil
       </label>
     </div>
+    <label>Jumlah Penumpang</label>
+    <div class="passenger-select">
+      <label>
+        <input type="radio" name="passengers" value="1" checked onchange="updateFare()"/>
+        <span>1 Orang</span>
+      </label>
+      <label>
+        <input type="radio" name="passengers" value="2" onchange="updateFare()"/>
+        <span>2 Orang</span>
+      </label>
+    </div>
   </div>
 
-  <!-- Data penumpang -->
+  <!-- data penumpang -->
   <div class="glass-card">
     <label><i class="fa-solid fa-user-check"></i> Data Penumpang</label>
     <input id="nama" placeholder="Nama lengkap"/>
@@ -233,7 +247,7 @@
   </div>
 </div>
 
-<!-- Shimmer skeleton driver -->
+<!-- shimmer skeleton -->
 <div id="shimmerCard" class="glass-card" style="display:none">
   <label><i class="fa-solid fa-id-card"></i> Memuat Driver…</label>
   <div class="driver-grid">
@@ -242,17 +256,18 @@
   </div>
 </div>
 
-<!-- Driver list -->
+<!-- daftar driver -->
 <div id="driversCard" class="glass-card" style="display:none">
   <label><i class="fa-solid fa-id-card"></i> Pilih Driver</label>
   <div id="drivers" class="driver-grid"></div>
 </div>
 
-<!-- Bottom sheet ringkasan -->
+<!-- bottom sheet ringkasan -->
 <div id="summarySheet" class="bottom-sheet">
   <h3><i class="fa-solid fa-clipboard-check"></i> Ringkasan Pesanan</h3>
   <p><strong>Nama:</strong> <span id="sumNama"></span></p>
   <p><strong>Kendaraan:</strong> <span id="sumVehicle"></span></p>
+  <p><strong>Penumpang:</strong> <span id="sumPassengers"></span></p>
   <p><strong>Jarak:</strong> <span id="sumDistance"></span></p>
   <p><strong>Estimasi:</strong> <span id="sumFare"></span></p>
   <p><strong>Catatan:</strong> <span id="sumCatatan"></span></p>
@@ -268,7 +283,7 @@
 <script>
   /* === CONFIG === */
   const TARIF_MOTOR = 1500;
-  const TARIF_MOBIL = 3500;
+  const TARIF_MOBIL = 3000;
   const bounds = [[-8.8,111.8],[-6.8,115.8]];
   const map = L.map('map',{center:[-7.5,113],zoom:11,minZoom:9,maxZoom:19,maxBounds:bounds});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -277,7 +292,17 @@
   }).addTo(map);
 
   /* Geocoder & Locate */
-  L.Control.geocoder({collapsed:false,placeholder:'Cari jalan/gang/pasar…'}).addTo(map);
+  L.Control.geocoder({
+    collapsed:false,
+    placeholder:'Cari jalan/gang/pasar/dusun/desa…',
+    geocoder: L.Control.Geocoder.nominatim({
+      geocodingQueryParams: {
+        countrycodes: 'id',
+        viewbox: '111.8,-8.8,115.8,-6.8',
+        bounded: 1
+      }
+    })
+  }).addTo(map);
   L.control.locate({position:'topright',strings:{title:'Lokasi saya'}}).addTo(map);
 
   /* Theme toggle */
@@ -346,8 +371,9 @@
 
   function updateFare(){
     const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
+    const passengers=parseInt(document.querySelector('input[name="passengers"]:checked').value);
     const tarif=vehicle==='motor'?TARIF_MOTOR:TARIF_MOBIL;
-    const total=Math.round(distanceKm*tarif);
+    const total=Math.round(distanceKm*tarif*passengers);
     document.getElementById('distance').value=`${distanceKm} km`;
     document.getElementById('fare').value=`Rp ${total.toLocaleString('id-ID')}`;
   }
@@ -382,10 +408,9 @@
     const wa=document.getElementById('wa').value.trim();
     if(!validateWA(wa)){alert('Nomor WhatsApp harus 08/62 + 8-11 digit angka');return;}
     
-    // Tampilkan shimmer
     document.getElementById('shimmerCard').style.display='block';
     document.getElementById('driversCard').style.display='none';
-    await new Promise(r=>setTimeout(r,800)); // simulasi loading
+    await new Promise(r=>setTimeout(r,800));
     
     document.getElementById('shimmerCard').style.display='none';
     renderDrivers();
@@ -416,11 +441,13 @@
   function selectDriver(no,nama){
     const namaPen=document.getElementById('nama').value;
     const vehicle=document.querySelector('input[name="vehicle"]:checked').value;
+    const passengers=document.querySelector('input[name="passengers"]:checked').value;
     const catatan=document.getElementById('catatan').value;
     const fare=document.getElementById('fare').value;
 
     document.getElementById('sumNama').textContent=namaPen;
     document.getElementById('sumVehicle').textContent=vehicle==='motor'?'Motor':'Mobil';
+    document.getElementById('sumPassengers').textContent=passengers+' orang';
     document.getElementById('sumDistance').textContent=`${distanceKm} km`;
     document.getElementById('sumFare').textContent=fare;
     document.getElementById('sumCatatan').textContent=catatan || '-';
@@ -428,14 +455,14 @@
     document.getElementById('driversCard').style.display='none';
     document.getElementById('summarySheet').classList.add('show');
 
-    const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
+    const text=`Halo ${nama}, saya ${namaPen}\nIngin pesan ojek NOS:\nKendaraan: ${vehicle}\nPenumpang: ${passengers} orang\nJarak: ${distanceKm} km\nEstimasi: ${fare}\nCatatan: ${catatan}`;
     document.getElementById('btnChat').onclick=()=>window.open(`https://wa.me/${no}?text=${encodeURIComponent(text)}`);
   }
 
-  /* Keyboard shortcuts */
+  /* shortcuts */
   document.addEventListener('keydown',e=>{
-    if(e.ctrlKey && e.key==='/'){resetMap();}
-    if(e.ctrlKey && e.key==='Enter'){nextStep();}
+    if(e.ctrlKey && e.key==='/') resetMap();
+    if(e.ctrlKey && e.key==='Enter') nextStep();
   });
 </script>
 </body>
