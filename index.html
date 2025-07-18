@@ -19,7 +19,7 @@
       --glass:rgba(255,255,255,.25);
       --glass-border:rgba(255,255,255,.18);
       --shadow:0 8px 32px rgba(31,38,135,.25);
-      --radius:18px;
+      --radius:20px;
       --font:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
     }
     [data-theme="dark"]{
@@ -36,136 +36,86 @@
     }
     body::before{
       content:'';
-      position:fixed;
-      inset:0;
-      z-index:-1;
-      background:linear-gradient(135deg,#74b9ff,#0984e3);
-      opacity:.9;
+      position:fixed;inset:0;z-index:-1;
+      background:linear-gradient(135deg,#74b9ff,#0984e3);opacity:.9;
     }
-    [data-theme="dark"] body::before{
-      background:linear-gradient(135deg,#2d3436,#000);
-    }
+    [data-theme="dark"] body::before{background:linear-gradient(135deg,#2d3436,#000);}
     header{
       position:sticky;top:0;z-index:1000;
-      background:var(--glass);
-      backdrop-filter:blur(12px);
+      background:var(--glass);backdrop-filter:blur(12px);
       border-bottom:1px solid var(--glass-border);
-      padding:.75rem 1rem;
-      text-align:center;
-      box-shadow:var(--shadow);
+      padding:.75rem 1rem;text-align:center;box-shadow:var(--shadow);
     }
-    header h1{font-size:1.3rem;font-weight:700}
+    header h1{font-size:1.35rem;font-weight:700}
     .toggle-theme{
-      position:absolute;
-      top:.6rem;
-      right:.8rem;
-      background:none;
-      border:none;
-      font-size:1.2rem;
-      cursor:pointer;
-      color:var(--sea-dark);
+      position:absolute;top:.6rem;right:.8rem;
+      background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sea-dark);
     }
-    .container{max-width:1200px;margin:0 auto;padding:.5rem}
+    .container{max-width:1200px;margin:0 auto;padding:.75rem}
     .glass-card{
-      background:var(--glass);
-      border:1px solid var(--glass-border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:1rem;
-      margin-bottom:.75rem;
-      backdrop-filter:blur(12px);
+      background:var(--glass);border:1px solid var(--glass-border);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px);
       transition:transform .3s;
     }
-    .glass-card:hover{transform:translateY(-2px)}
-    label{font-size:.8rem;font-weight:600;margin:.3rem 0 .1rem;display:block}
+    .glass-card:hover{transform:translateY(-3px)}
+    label{font-size:.85rem;font-weight:600;margin:.4rem 0 .2rem;display:block;color:var(--sea-dark)}
     input,textarea,select{
-      width:100%;
-      padding:.6rem;
-      border:none;
-      border-radius:12px;
-      background:rgba(255,255,255,.7);
+      width:100%;padding:.9rem;border:none;border-radius:14px;
+      background:rgba(255,255,255,.75);font-size:.95rem;
       transition:background .3s;
-      font-size:.9rem;
     }
-    [data-theme="dark"] input,
-    [data-theme="dark"] textarea,
-    [data-theme="dark"] select{
-      background:rgba(255,255,255,.1);
-      color:#fff;
+    [data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{
+      background:rgba(255,255,255,.12);color:#fff;
     }
-    .btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
+    .btn-group{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem}
     .btn{
-      flex:1 1 150px;
-      padding:.7rem 1rem;
-      border:none;
-      border-radius:25px;
-      font-weight:700;
-      cursor:pointer;
-      font-size:.85rem;
+      flex:1 1 160px;padding:.8rem;border:none;border-radius:25px;
+      font-weight:700;cursor:pointer;font-size:.9rem;
       transition:transform .2s,box-shadow .3s;
     }
     .btn:active{transform:scale(.96)}
     .btn-primary{background:var(--sea);color:#fff;box-shadow:0 4px 14px rgba(0,136,255,.45)}
     .btn-danger{background:var(--coral);color:#fff}
-    #map{height:60vh;border-radius:var(--radius);box-shadow:var(--shadow)}
-    .vehicle-options{display:flex;gap:.6rem;justify-content:center;margin:.6rem 0}
-    .vehicle-card{
-      flex:1 1 90px;
-      text-align:center;
-      padding:.6rem;
-      border-radius:var(--radius);
-      border:2px solid transparent;
-      cursor:pointer;
-      transition:border .3s,transform .2s;
+    #map{height:62vh;border-radius:var(--radius);box-shadow:var(--shadow)}
+    /* kendaraan & penumpang premium */
+    .section-title{font-weight:700;font-size:1rem;margin-bottom:.6rem;color:var(--sea-dark)}
+    .vehicle-tiles,.passenger-tiles{display:flex;gap:.8rem;justify-content:center;margin:.6rem 0}
+    .vehicle-tile,.passenger-tile{
+      flex:1 1 120px;max-width:180px;
+      padding:1rem;border:2px solid transparent;border-radius:var(--radius);
+      text-align:center;cursor:pointer;transition:border .3s,transform .2s,box-shadow .3s;
+      background:var(--glass);box-shadow:var(--shadow);
     }
-    .vehicle-card.selected{
-      border-color:var(--sea);
-      background:rgba(0,136,255,.15);
-      transform:scale(1.05)
+    .vehicle-tile.selected,.passenger-tile.selected{
+      border-color:var(--sea);background:rgba(0,136,255,.15);transform:scale(1.05)
     }
-    .vehicle-card i{font-size:1.8rem;margin-bottom:.3rem;color:var(--sea)}
-    .vehicle-card input{display:none}
+    .vehicle-tile i{font-size:2.2rem;margin-bottom:.4rem;color:var(--sea)}
+    .passenger-tile span{font-weight:700;font-size:1rem}
+    .vehicle-tile input,.passenger-tile input{display:none}
     /* shimmer skeleton */
     .shimmer{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite}
     @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-    .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem}
+    .driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.8rem}
     .driver-card{background:var(--glass);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s}
     .driver-card:hover{transform:scale(1.03)}
-    .driver-card img{width:100%;height:110px;object-fit:cover}
-    .driver-info{padding:.6rem;font-size:.8rem}
-    .driver-info .name{font-weight:700;font-size:.9rem}
-    .driver-info .rating{color:var(--coral);margin:.2rem 0}
-    .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.2rem .4rem;font-weight:600}
+    .driver-card img{width:100%;height:120px;object-fit:cover}
+    .driver-info{padding:.8rem;font-size:.85rem}
+    .driver-info .name{font-weight:700;font-size:.95rem}
+    .driver-info .rating{color:var(--coral);margin:.3rem 0}
+    .driver-info .plate{background:rgba(255,255,255,.3);border-radius:8px;padding:.3rem .6rem;font-weight:600}
     /* bottom sheet */
     .bottom-sheet{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      z-index:1001;
-      background:var(--glass);
-      backdrop-filter:blur(15px);
+      position:fixed;inset:0 0 auto 0;
+      z-index:1001;background:var(--glass);backdrop-filter:blur(15px);
       border-top:1px solid var(--glass-border);
       border-radius:var(--radius) var(--radius) 0 0;
-      padding:1rem;
-      transform:translateY(100%);
-      transition:transform .4s;
-      box-shadow:var(--shadow);
+      padding:1.2rem;transform:translateY(110%);
+      transition:transform .4s;box-shadow:var(--shadow);
     }
     .bottom-sheet.show{transform:translateY(0)}
-    .bottom-sheet h3{font-size:1rem;margin-bottom:.5rem}
-    .bottom-sheet p{margin:.2rem 0;font-size:.8rem}
-    .passenger-select{display:flex;gap:.4rem;margin:.3rem 0}
-    .passenger-select label{
-      flex:1;text-align:center;
-      padding:.4rem;
-      border:1px solid var(--glass-border);
-      border-radius:12px;
-      cursor:pointer;
-    }
-    .passenger-select input{display:none}
-    .passenger-select input:checked+span{background:var(--sea);color:#fff}
-    /* responsive */
+    .bottom-sheet h3{font-size:1.05rem;margin-bottom:.6rem}
+    .bottom-sheet p{margin:.3rem 0;font-size:.85rem}
     @media(min-width:600px){
       header h1{font-size:1.6rem}
       .btn-group{justify-content:flex-start}
@@ -182,11 +132,11 @@
 <div class="container">
   <!-- peta -->
   <div class="glass-card">
-    <label><i class="fa-solid fa-map-location-dot"></i> Pilih Lokasi / Cari Tempat</label>
+    <label class="section-title"><i class="fa-solid fa-map-location-dot"></i> Pilih Lokasi / Cari Tempat</label>
     <div id="map"></div>
   </div>
 
-  <!-- form -->
+  <!-- detail rute -->
   <div class="glass-card">
     <label>Penjemputan</label>
     <input id="pickup" readonly placeholder="Belum dipilih"/>
@@ -194,30 +144,34 @@
     <input id="destination" readonly placeholder="Belum dipilih"/>
     <label>Jarak via jalan</label>
     <input id="distance" readonly placeholder="0 km"/>
-    <label id="fareLabel">Estimasi Tarif</label>
+    <label>Estimasi Tarif</label>
     <input id="fare" readonly placeholder="Rp 0"/>
   </div>
 
   <!-- kendaraan -->
   <div class="glass-card">
-    <label><i class="fa-solid fa-truck-pickup"></i> Pilih Kendaraan</label>
-    <div class="vehicle-options">
-      <label class="vehicle-card">
+    <div class="section-title"><i class="fa-solid fa-truck-pickup"></i> Pilih Kendaraan</div>
+    <div class="vehicle-tiles">
+      <label class="vehicle-tile">
         <input type="radio" name="vehicle" value="motor" checked onchange="updateFare()"/>
         <i class="fa-solid fa-motorcycle"></i><br>Motor
       </label>
-      <label class="vehicle-card">
+      <label class="vehicle-tile">
         <input type="radio" name="vehicle" value="mobil" onchange="updateFare()"/>
         <i class="fa-solid fa-car-side"></i><br>Mobil
       </label>
     </div>
-    <label>Jumlah Penumpang</label>
-    <div class="passenger-select">
-      <label>
+  </div>
+
+  <!-- penumpang -->
+  <div class="glass-card">
+    <div class="section-title"><i class="fa-solid fa-users"></i> Jumlah Penumpang</div>
+    <div class="passenger-tiles">
+      <label class="passenger-tile">
         <input type="radio" name="passengers" value="1" checked onchange="updateFare()"/>
         <span>1 Orang</span>
       </label>
-      <label>
+      <label class="passenger-tile">
         <input type="radio" name="passengers" value="2" onchange="updateFare()"/>
         <span>2 Orang</span>
       </label>
@@ -226,10 +180,10 @@
 
   <!-- data penumpang -->
   <div class="glass-card">
-    <label><i class="fa-solid fa-user-check"></i> Data Penumpang</label>
+    <div class="section-title"><i class="fa-solid fa-user-check"></i> Data Penumpang</div>
     <input id="nama" placeholder="Nama lengkap"/>
-    <input id="wa" placeholder="08 / 62" type="tel" maxlength="13" pattern="\d*"/>
-    <textarea id="catatan" rows="2" placeholder="Catatan (maks 300)" maxlength="300"></textarea>
+    <input id="wa" placeholder="Nomor WhatsApp (08/62)" type="tel" maxlength="13" pattern="\d*"/>
+    <textarea id="catatan" rows="3" placeholder="Catatan tambahan (maks 300 karakter)" maxlength="300"></textarea>
     <div id="charCount" style="font-size:.7rem;text-align:right">0 / 300</div>
   </div>
 
@@ -249,16 +203,16 @@
 
 <!-- shimmer skeleton -->
 <div id="shimmerCard" class="glass-card" style="display:none">
-  <label><i class="fa-solid fa-id-card"></i> Memuat Driver…</label>
+  <div class="section-title"><i class="fa-solid fa-id-card"></i> Memuat Driver…</div>
   <div class="driver-grid">
-    <div class="driver-card shimmer"><div style="height:110px"></div></div>
-    <div class="driver-card shimmer"><div style="height:110px"></div></div>
+    <div class="driver-card shimmer"><div style="height:120px"></div></div>
+    <div class="driver-card shimmer"><div style="height:120px"></div></div>
   </div>
 </div>
 
 <!-- daftar driver -->
 <div id="driversCard" class="glass-card" style="display:none">
-  <label><i class="fa-solid fa-id-card"></i> Pilih Driver</label>
+  <div class="section-title"><i class="fa-solid fa-id-card"></i> Pilih Driver</div>
   <div id="drivers" class="driver-grid"></div>
 </div>
 
@@ -295,11 +249,11 @@
   L.Control.geocoder({
     collapsed:false,
     placeholder:'Cari jalan/gang/pasar/dusun/desa…',
-    geocoder: L.Control.Geocoder.nominatim({
-      geocodingQueryParams: {
-        countrycodes: 'id',
-        viewbox: '111.8,-8.8,115.8,-6.8',
-        bounded: 1
+    geocoder:L.Control.Geocoder.nominatim({
+      geocodingQueryParams:{
+        countrycodes:'id',
+        viewbox:'111.8,-8.8,115.8,-6.8',
+        bounded:1
       }
     })
   }).addTo(map);
@@ -427,9 +381,7 @@
         <img src="https://i.pravatar.cc/200?img=${d.img}" alt="${d.name}">
         <div class="driver-info">
           <div class="name">${d.name}</div>
-          <div class="rating">
-            <i class="fa-solid fa-star"></i> ${d.rating}
-          </div>
+          <div class="rating"><i class="fa-solid fa-star"></i> ${d.rating}</div>
           <div class="plate">${d.plat}</div>
           <button class="btn btn-primary" onclick="selectDriver('${d.wa}','${d.name}')">Pilih Driver</button>
         </div>
