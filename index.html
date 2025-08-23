@@ -1078,7 +1078,7 @@
         <h3>Selamat Datang di APLIKASI BARJAS</h3>
         <p>Dinas Peternakan dan Perikanan Kabupaten Situbondo</p>
         <p>Terima kasih telah menggunakan aplikasi kami. Untuk keamanan data, harap mengganti password default dan lakukan backup data secara berkala.</p>
-        <p><span class="highlight">Password default:</span> Dis******05</p>
+        <p><span class="highlight">Password default:</span> Disnakkan05</p>
         <p><small>Hubungi admin untuk bantuan lebih lanjut</small></p>
     </div>
 
@@ -1673,7 +1673,7 @@
                                             <div class="mt-3">
                                                 <button class="btn btn-outline-info btn-sm w-100" id="refreshSystemInfoBtn">
                                                     <i class="fas fa-sync-alt me-2"></i>Refresh Info Sistem
-                                                </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1935,7 +1935,7 @@
                 toastHeader.style.color = 'white';
             } else {
                 toastHeader.style.background = 'linear-gradient(135deg, #0d47a1, #082e5c)';
-                toastHeader.style.background = 'white';
+                toastHeader.style.color = 'white';
             }
             
             // Set waktu
@@ -2813,6 +2813,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
+            // PERBAIKAN: Event listener untuk menutup welcome notification
             document.getElementById('closeWelcome').addEventListener('click', function() {
                 document.getElementById('welcomeNotification').classList.remove('show');
             });
