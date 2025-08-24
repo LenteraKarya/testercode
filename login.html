@@ -259,6 +259,46 @@
     </style>
 </head>
 <body>
+        <script>
+        // Fungsi untuk logout
+        function logout() {
+            localStorage.removeItem('barjas_logged_in');
+            localStorage.removeItem('barjas_login_time');
+            window.location.href = 'login.html';
+        }
+        
+        // Event listener untuk tombol logout
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+            
+        // Cek status login
+        if (!localStorage.getItem('barjas_logged_in')) {
+            window.location.href = 'login.html';
+        }
+        
+        // Cek waktu login (opsional untuk keamanan tambahan)
+        const loginTime = localStorage.getItem('barjas_login_time');
+        if (loginTime) {
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - parseInt(loginTime);
+            
+            // Jika sudah lebih dari 8 jam, logout otomatis
+            if (elapsedTime > 8 * 60 * 60 * 1000) {
+                localStorage.removeItem('barjas_logged_in');
+                localStorage.removeItem('barjas_login_time');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+
+    <li class="nav-item">
+    <a class="nav-link" href="#" id="logoutBtn">
+        <i class="fas fa-sign-out-alt feature-icon"></i>Logout
+    </a>
+</li>
+    
     <!-- Particle Background -->
     <div id="particles-js"></div>
 
