@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Lentera Karya Situbondo</title>
+    <title>Login - APLIKASI BARJAS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0d47a1, #082e5c);
+            --success-gradient: linear-gradient(135deg, #00695c, #004d40);
+            --warning-gradient: linear-gradient(135deg, #ff8f00, #e65100);
+            --login-gradient: linear-gradient(135deg, #0d47a1 0%, #00695c 50%, #ff8f00 100%);
+            --login-bg-gradient: linear-gradient(135deg, #f5f9ff 0%, #e8f5e9 100%);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.15);
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: var(--login-bg-gradient);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
-            position: relative;
             overflow-x: hidden;
         }
         
-        /* Particle Background */
+        /* Container untuk particles.js */
         #particles-js {
-            position: absolute;
+            position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
@@ -35,437 +39,195 @@
             z-index: 0;
         }
         
-        .container {
+        .login-container {
+            max-width: 450px;
             width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            transform: translateZ(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             z-index: 10;
-            margin: 20px;
         }
         
-        .container:hover {
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+        
+        .login-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
         
-        header {
-            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
+        .login-header {
+            background: var(--login-gradient);
             color: white;
-            padding: 35px 30px;
+            padding: 25px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
         
-        header::after {
+        .login-header::before {
             content: "";
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #3498db, #2ecc71, #f39c12);
-            box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
         }
         
-        .logo {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 25px rgba(52, 152, 219, 0.5);
+        .login-logo {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .logo::before {
-            content: "";
-            position: absolute;
-            width: 60%;
-            height: 60%;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-        }
-        
-        .logo img {
-            width: 70%;
-            height: auto;
             z-index: 1;
         }
         
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
         }
         
-        header p {
-            font-size: 16px;
-            opacity: 0.9;
+        .login-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
             font-weight: 300;
             letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
         
-        .login-content {
-            padding: 35px;
-            background: rgba(255, 255, 255, 0.9);
+        .login-body {
+            padding: 25px;
         }
         
-        .welcome-message {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1), rgba(243, 156, 18, 0.1));
-            border-radius: 15px;
-            text-align: center;
-            border-left: 4px solid #3498db;
-        }
-        
-        .welcome-message h2 {
-            color: #2c3e50;
-            margin-bottom: 12px;
-            font-size: 22px;
+        .form-label {
             font-weight: 600;
-            background: linear-gradient(135deg, #3498db, #2ecc71, #f39c12);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .welcome-message p {
-            color: #34495e;
-            line-height: 1.7;
-            font-size: 15px;
-            font-weight: 400;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 12px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 16px;
-            letter-spacing: 0.5px;
-        }
-        
-        .username-display {
-            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1), rgba(243, 156, 18, 0.1));
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            font-weight: 600;
-            color: #2c3e50;
-            text-align: center;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-            letter-spacing: 0.5px;
-            backdrop-filter: blur(5px);
+            color: #444;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 16px;
+            font-size: 0.9rem;
         }
         
-        .input-with-icon {
-            position: relative;
+        .form-label i {
+            margin-right: 6px;
+            color: #0d47a1;
         }
         
-        .input-with-icon i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-            font-size: 18px;
-            z-index: 1;
-        }
-        
-        .input-with-icon input {
-            padding-left: 50px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 17px;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            border-radius: 12px;
-            font-size: 16px;
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
             transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-            color: #2c3e50;
-            box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
         }
         
-        .form-group input::placeholder {
-            color: #95a5a6;
-            font-weight: 400;
+        .form-control:focus {
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
         }
         
-        .form-group input:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2), inset 0 1px 5px rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 1);
+        .input-group-text {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
         
-        .toggle-password {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #7f8c8d;
-            font-size: 18px;
-            z-index: 1;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.5);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .toggle-password:hover {
-            color: #3498db;
-            background: rgba(52, 152, 219, 0.1);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        button {
-            width: 100%;
-            padding: 17px;
-            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
-            color: white;
+        .btn-login {
+            background: var(--login-gradient);
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 16px;
+            padding: 12px 20px;
             font-weight: 600;
+            box-shadow: var(--shadow-md);
+            border-radius: 8px;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-            letter-spacing: 0.5px;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
             position: relative;
             overflow: hidden;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         
-        button::before {
+        .btn-login::before {
             content: "";
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s;
         }
         
-        button:hover::before {
+        .btn-login:hover::before {
             left: 100%;
         }
         
-        button:hover {
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
-            transform: translateY(-3px);
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
         
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button:disabled {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 50%, #636e72 100%);
+        .btn-login:disabled {
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        button:disabled::before {
-            display: none;
-        }
-        
-        .notification {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            animation: fadeIn 0.5s;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            font-weight: 500;
-        }
-        
-        .success {
-            background: linear-gradient(to right, rgba(39, 174, 96, 0.2), rgba(46, 204, 113, 0.2));
-            color: #2c3e50;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-        
-        .error {
-            background: linear-gradient(to right, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.2));
-            color: #2c3e50;
-            border: 1px solid rgba(192, 57, 43, 0.3);
-        }
-        
-        .password-info {
-            margin-top: 30px;
-            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1), rgba(243, 156, 18, 0.1));
-            padding: 22px;
-            border-radius: 15px;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .password-info h3 {
-            margin-bottom: 18px;
-            color: #2c3e50;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-weight: 600;
-        }
-        
-        .password-info p {
-            font-size: 15px;
-            color: #34495e;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            font-weight: 400;
-        }
-        
-        .password-hint {
-            margin-top: 18px;
-            font-size: 14px;
-            font-style: italic;
-            background: rgba(52, 152, 219, 0.1);
-            padding: 12px;
-            border-radius: 10px;
-            color: #3498db;
-            border-left: 3px solid #3498db;
-            font-weight: 500;
-        }
-        
-        .developer-info {
-            margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1), rgba(243, 156, 18, 0.1));
-            border-radius: 15px;
-            text-align: center;
-            border-top: 1px solid rgba(52, 152, 219, 0.2);
-        }
-        
-        .developer-info h3 {
-            color: #2c3e50;
+        .security-shield {
+            font-size: 3rem;
+            color: white;
             margin-bottom: 15px;
-            font-size: 17px;
-            background: linear-gradient(135deg, #3498db, #2ecc71, #f39c12);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .contact-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .contact-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #3498db;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s;
-            padding: 10px 16px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            font-weight: 500;
-        }
-        
-        .contact-link:hover {
-            background: rgba(52, 152, 219, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(52, 152, 219, 0.2);
-            color: #2980b9;
-        }
-        
-        footer {
+        .copyright {
             text-align: center;
-            padding: 22px;
-            font-size: 14px;
-            color: #7f8c8d;
-            border-top: 1px solid rgba(52, 152, 219, 0.2);
-            background: rgba(255, 255, 255, 0.7);
-            letter-spacing: 0.5px;
-            font-weight: 500;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.85rem;
         }
         
-        .attempts-counter {
-            text-align: right;
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
-            font-weight: 500;
+        .attempts-warning {
+            font-size: 0.85rem;
+            color: #dc3545;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
         }
         
         .countdown-timer {
-            margin-top: 15px;
-            padding: 12px;
-            background: linear-gradient(to right, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1));
-            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 10px;
             text-align: center;
             display: none;
-            border: 1px solid rgba(192, 57, 43, 0.2);
+        }
+        
+        .input-error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
             font-weight: 500;
-            color: #c0392b;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        /* Animations */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
@@ -476,178 +238,312 @@
             animation: shake 0.5s;
         }
         
-        @media (max-width: 768px) {
-            .container {
-                border-radius: 15px;
-                max-width: 90%;
-            }
-            
-            body {
-                padding: 15px;
-            }
-            
-            .login-content {
-                padding: 25px;
-            }
-            
-            header {
-                padding: 25px 20px;
-            }
-            
-            .contact-links {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .contact-link {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            header h1 {
-                font-size: 24px;
-            }
-            
-            .welcome-message h2 {
-                font-size: 20px;
-            }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
         
-        @media (max-width: 500px) {
-            .container {
-                border-radius: 12px;
-                max-width: 95%;
-            }
-            
-            .login-content {
-                padding: 20px;
-            }
-            
-            header {
-                padding: 20px 15px;
-            }
-            
-            header h1 {
-                font-size: 22px;
-            }
-            
-            .welcome-message {
-                padding: 15px;
-            }
-            
-            .password-info {
-                padding: 18px;
-            }
-            
-            .developer-info {
-                padding: 15px;
-            }
-            
-            .contact-link {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #0d47a1;
+            border-radius: 8px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #082e5c;
         }
     </style>
 </head>
 <body>
+    <!-- Particle Background -->
     <div id="particles-js"></div>
-    
-    <div class="container">
-        <header>
-            <div class="logo">
-                <img src="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png" alt="Lentera Karya Situbondo">
-            </div>
-            <h1>Lentera Karya Situbondo</h1>
-            <p>Sistem Keamanan Premium</p>
-        </header>
-        
-        <div class="login-content">
-            <div class="welcome-message">
-                <h2>Selamat Datang di Aplikasi<br>Lentera Karya Situbondo</h2>
-                <p>Kami mengucapkan terima kasih atas kepercayaan Anda menggunakan aplikasi Lentera Karya Situbondo. Sistem ini dirancang untuk memberikan pengalaman terbaik dengan keamanan tingkat tinggi yang melindungi data dan informasi penting Anda.</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="username">Username</label>
-                <div class="username-display" id="username-display">
-                    <i class="fas fa-user-circle"></i> Lentera Karya Situbondo
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-with-icon">
-                    <i class="fas fa-key"></i>
-                    <input type="password" id="password" placeholder="Masukkan password yang valid">
-                    <span class="toggle-password" id="toggle-password">
-                        <i class="fas fa-eye"></i>
-                    </span>
-                </div>
-                <div class="attempts-counter">
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="security-shield">
                     <i class="fas fa-shield-alt"></i>
-                    Percobaan: <span id="attempts-count">0</span>/5
                 </div>
+                <h1 class="login-title">APLIKASI BARJAS</h1>
+                <p class="login-subtitle">Dinas Peternakan dan Perikanan Situbondo</p>
             </div>
             
-            <div id="countdown-timer" class="countdown-timer">
-                <i class="fas fa-clock"></i> Tombol login dibekukan selama: <span id="countdown">05:00</span>
-            </div>
-            
-            <button id="login-btn">
-                <i class="fas fa-lock"></i> Akses Sistem
-            </button>
-            
-            <div id="notification" class="notification"></div>
-            
-            <div class="password-info">
-                <h3>
-                    <i class="fas fa-info-circle"></i>
-                    Informasi Password
-                </h3>
-                <p>Password terdiri dari 9 karakter dengan format khusus yang telah ditentukan. Pastikan Anda memasukkan password dengan format yang benar untuk mengakses sistem.</p>
-                <div class="password-hint">
-                    <i class="fas fa-lightbulb"></i> Format: Huruf Kapital + 0 + 7 Digit Angka (contoh: A01234567)
-                </div>
-            </div>
-            
-            <div class="developer-info">
-                <h3>Hak Cipta &copy; 2025 Lentera Karya Situbondo</h3>
-                <p>Untuk bantuan dan informasi lebih lanjut:</p>
-                <div class="contact-links">
-                    <a href="https://www.anekamarket.my.id" target="_blank" class="contact-link">
-                        <i class="fas fa-globe"></i> www.anekamarket.my.id
-                    </a>
-                    <a href="https://wa.me/6285647709114" target="_blank" class="contact-link">
-                        <i class="fab fa-whatsapp"></i> +62 856-4770-9114
-                    </a>
-                    <a href="mailto:admin@anekamarket.my.id" class="contact-link">
-                        <i class="fas fa-envelope"></i> admin@anekamarket.my.id
-                    </a>
-                </div>
+            <div class="login-body">
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="username" class="form-label"><i class="fas fa-user"></i>Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            <input type="text" class="form-control" id="username" value="Lentera Karya Situbondo" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label"><i class="fas fa-lock"></i>Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Masukkan password sistem" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="password-error">Password salah. Silakan coba lagi.</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login" id="loginBtn">
+                        <i class="fas fa-sign-in-alt me-2"></i> Masuk ke Aplikasi
+                    </button>
+                    
+                    <div class="attempts-warning" id="attemptsWarning">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <span id="attemptsCount">2</span> percobaan tersisa sebelum sistem terkunci.
+                    </div>
+                    
+                    <div class="countdown-timer" id="countdownTimer">
+                        <i class="fas fa-clock me-1"></i>
+                        Sistem terkunci. Coba lagi dalam <span id="countdown">05:00</span>
+                    </div>
+                </form>
             </div>
         </div>
         
-        <footer>
+        <div class="copyright">
             &copy; 2025 Lentera Karya Situbondo. Hak Cipta Dilindungi.
-        </footer>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi partikel background
+        // Daftar password yang valid (huruf kapital A-Z diikuti 8 digit angka)
+        const validPasswords = [
+            "S01634851", "V02468642", "X03579753", "I04445555", 
+            "Z05252525", "L06644228", "E07722277", "H08877665", 
+            "J09753123", "A01234567", "B02345678", "C03456789",
+            "D04567890", "F05678901", "G06789012", "K07890123",
+            "M08901234", "N09012345", "O00123456", "P01234567",
+            "Q02345678", "R03456789", "T04567890", "U05678901",
+            "W06789012", "Y07890123"
+        ];
+        
+        // Inisialisasi variabel
+        let loginAttempts = 0;
+        const maxAttempts = 5;
+        let isLocked = false;
+        let lockUntil = 0;
+        
+        // Fungsi untuk inisialisasi aplikasi login
+        function initLogin() {
+            // Cek status kunci
+            checkLockStatus();
+            
+            // Setup event listeners
+            setupLoginEvents();
+            
+            // Inisialisasi particles.js
+            initParticles();
+        }
+        
+        // Fungsi untuk memeriksa status kunci
+        function checkLockStatus() {
+            const savedLock = localStorage.getItem('barjas_login_lock');
+            const savedAttempts = localStorage.getItem('barjas_login_attempts');
+            
+            if (savedLock) {
+                lockUntil = parseInt(savedLock);
+                const currentTime = Date.now();
+                
+                if (currentTime < lockUntil) {
+                    // Masih dalam masa terkunci
+                    isLocked = true;
+                    startCountdown(lockUntil - currentTime);
+                } else {
+                    // Masa terkunci sudah selesai
+                    isLocked = false;
+                    localStorage.removeItem('barjas_login_lock');
+                }
+            }
+            
+            if (savedAttempts) {
+                loginAttempts = parseInt(savedAttempts);
+                updateAttemptsWarning();
+            }
+        }
+        
+        // Fungsi untuk mengatur event listeners
+        function setupLoginEvents() {
+            // Form submission
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                attemptLogin();
+            });
+            
+            // Toggle password visibility
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const passwordInput = document.getElementById('password');
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Ganti icon
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+        }
+        
+        // Fungsi untuk mencoba login
+        function attemptLogin() {
+            if (isLocked) {
+                showError('Sistem terkunci. Silakan coba lagi setelah waktu yang ditentukan.');
+                return;
+            }
+            
+            const password = document.getElementById('password').value.trim();
+            
+            // Validasi password
+            if (validPasswords.includes(password)) {
+                // Login berhasil
+                loginSuccess();
+            } else {
+                // Login gagal
+                loginFailed();
+            }
+        }
+        
+        // Fungsi ketika login berhasil
+        function loginSuccess() {
+            // Reset attempts
+            loginAttempts = 0;
+            localStorage.removeItem('barjas_login_attempts');
+            
+            // Simpan status login
+            localStorage.setItem('barjas_logged_in', 'true');
+            localStorage.setItem('barjas_login_time', Date.now().toString());
+            
+            // Redirect ke aplikasi utama
+            window.location.href = 'index.html';
+        }
+        
+        // Fungsi ketika login gagal
+        function loginFailed() {
+            // Tambah attempt
+            loginAttempts++;
+            localStorage.setItem('barjas_login_attempts', loginAttempts.toString());
+            
+            // Update warning
+            updateAttemptsWarning();
+            
+            // Animasi shake
+            document.getElementById('loginForm').classList.add('shake');
+            setTimeout(() => {
+                document.getElementById('loginForm').classList.remove('shake');
+            }, 500);
+            
+            // Tampilkan error
+            showError('Password salah. Silakan coba lagi.');
+            
+            // Kosongkan password field
+            document.getElementById('password').value = '';
+            
+            // Cek jika sudah mencapai batas maksimal
+            if (loginAttempts >= maxAttempts) {
+                lockSystem();
+            }
+        }
+        
+        // Fungsi untuk mengunci sistem
+        function lockSystem() {
+            isLocked = true;
+            const lockTime = 5 * 60 * 1000; // 5 menit dalam milidetik
+            lockUntil = Date.now() + lockTime;
+            
+            // Simpan ke localStorage
+            localStorage.setItem('barjas_login_lock', lockUntil.toString());
+            
+            // Tampilkan countdown
+            startCountdown(lockTime);
+            
+            // Sembunyikan form
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('attemptsWarning').style.display = 'none';
+            document.getElementById('countdownTimer').style.display = 'block';
+        }
+        
+        // Fungsi untuk memulai countdown
+        function startCountdown(duration) {
+            const countdownElement = document.getElementById('countdown');
+            const timerDisplay = document.getElementById('countdownTimer');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            timerDisplay.style.display = 'block';
+            loginBtn.disabled = true;
+            
+            const timer = setInterval(function() {
+                duration -= 1000;
+                
+                if (duration <= 0) {
+                    clearInterval(timer);
+                    isLocked = false;
+                    localStorage.removeItem('barjas_login_lock');
+                    timerDisplay.style.display = 'none';
+                    loginBtn.disabled = false;
+                    return;
+                }
+                
+                const minutes = Math.floor(duration / 60000);
+                const seconds = Math.floor((duration % 60000) / 1000);
+                
+                countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        // Fungsi untuk memperbarui peringatan percobaan
+        function updateAttemptsWarning() {
+            const attemptsLeft = maxAttempts - loginAttempts;
+            const warningElement = document.getElementById('attemptsWarning');
+            const countElement = document.getElementById('attemptsCount');
+            
+            if (attemptsLeft > 0 && attemptsLeft < 3) {
+                countElement.textContent = attemptsLeft;
+                warningElement.style.display = 'block';
+            } else {
+                warningElement.style.display = 'none';
+            }
+        }
+        
+        // Fungsi untuk menampilkan error
+        function showError(message) {
+            const errorElement = document.getElementById('password-error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Highlight input
+            document.getElementById('password').classList.add('input-error');
+            
+            // Sembunyikan error setelah 3 detik
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+                document.getElementById('password').classList.remove('input-error');
+            }, 3000);
+        }
+        
+        // Fungsi untuk inisialisasi particles.js
+        function initParticles() {
             particlesJS('particles-js', {
                 particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: ["#3498db", "#2ecc71", "#f39c12"] },
+                    number: { value: 30, density: { enable: true, value_area: 800 } },
+                    color: { value: "#0d47a1" },
                     shape: { type: "circle" },
                     opacity: { value: 0.5, random: true },
                     size: { value: 3, random: true },
                     line_linked: {
                         enable: true,
                         distance: 150,
-                        color: "#3498db",
+                        color: "#0d47a1",
                         opacity: 0.4,
                         width: 1
                     },
@@ -667,200 +563,18 @@
                         onhover: { enable: true, mode: "grab" },
                         onclick: { enable: true, mode: "push" },
                         resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
                     }
                 },
                 retina_detect: true
             });
-            
-            const passwordInput = document.getElementById('password');
-            const loginBtn = document.getElementById('login-btn');
-            const notification = document.getElementById('notification');
-            const attemptsCounter = document.getElementById('attempts-count');
-            const togglePassword = document.getElementById('toggle-password');
-            const countdownTimer = document.getElementById('countdown-timer');
-            const countdownDisplay = document.getElementById('countdown');
-            
-            // Inisialisasi jumlah percobaan login
-            let loginAttempts = parseInt(localStorage.getItem('loginAttempts')) || 0;
-            attemptsCounter.textContent = loginAttempts;
-            
-            // Waktu pembekuan tombol (dalam milidetik)
-            const LOCK_DURATION = 5 * 60 * 1000; // 5 menit
-            
-            // Batas maksimal percobaan login
-            const MAX_ATTEMPTS = 5;
-            
-            // Cek apakah tombol login sedang dibekukan
-            const lockUntil = localStorage.getItem('loginLockUntil');
-            if (lockUntil && new Date().getTime() < parseInt(lockUntil)) {
-                disableLoginForm();
-                const timeLeft = parseInt(lockUntil) - new Date().getTime();
-                startCountdown(timeLeft);
-            } else if (loginAttempts >= MAX_ATTEMPTS) {
-                disableLoginForm();
-                showNotification('Anda telah melebihi batas percobaan login. Silakan coba lagi nanti.', 'error');
-            }
-            
-            // Fungsi untuk memvalidasi password
-            function isValidPassword(password) {
-                // Cek panjang password
-                if (password.length !== 9) {
-                    return false;
-                }
-                
-                // Cek apakah karakter pertama adalah huruf kapital A-Z
-                const firstChar = password.charAt(0);
-                if (!/^[A-Z]$/.test(firstChar)) {
-                    return false;
-                }
-                
-                // Cek apakah karakter kedua adalah angka 0
-                if (password.charAt(1) !== '0') {
-                    return false;
-                }
-                
-                // Cek apakah 7 karakter berikutnya adalah angka
-                const numberPart = password.substring(2);
-                if (!/^\d{7}$/.test(numberPart)) {
-                    return false;
-                }
-                
-                return true;
-            }
-            
-            // Fungsi untuk menonaktifkan form login
-            function disableLoginForm() {
-                passwordInput.disabled = true;
-                loginBtn.disabled = true;
-                loginBtn.style.opacity = '0.7';
-                loginBtn.style.cursor = 'not-allowed';
-                loginBtn.innerHTML = '<i class="fas fa-ban"></i> Login Diblokir';
-            }
-            
-            // Fungsi untuk mengaktifkan form login
-            function enableLoginForm() {
-                passwordInput.disabled = false;
-                loginBtn.disabled = false;
-                loginBtn.style.opacity = '1';
-                loginBtn.style.cursor = 'pointer';
-                loginBtn.innerHTML = '<i class="fas fa-lock"></i> Akses Sistem';
-                countdownTimer.style.display = 'none';
-                
-                // Reset counter percobaan
-                loginAttempts = 0;
-                localStorage.setItem('loginAttempts', loginAttempts);
-                attemptsCounter.textContent = loginAttempts;
-                
-                // Hapus waktu pembekuan
-                localStorage.removeItem('loginLockUntil');
-            }
-            
-            // Fungsi untuk memulai countdown
-            function startCountdown(duration) {
-                let timer = duration;
-                const interval = 1000; // 1 detik
-                
-                countdownTimer.style.display = 'block';
-                
-                const countdownInterval = setInterval(function() {
-                    const minutes = Math.floor(timer / 60000);
-                    const seconds = Math.floor((timer % 60000) / 1000);
-                    
-                    countdownDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    if (timer <= 0) {
-                        clearInterval(countdownInterval);
-                        enableLoginForm();
-                    }
-                    
-                    timer -= interval;
-                }, interval);
-            }
-            
-            // Event listener untuk tombol login
-            loginBtn.addEventListener('click', function() {
-                const password = passwordInput.value.trim();
-                
-                if (!password) {
-                    showNotification('Silakan masukkan password', 'error');
-                    passwordInput.classList.add('shake');
-                    setTimeout(() => passwordInput.classList.remove('shake'), 500);
-                    return;
-                }
-                
-                if (isValidPassword(password)) {
-                    showNotification('Akses diberikan! Mengarahkan ke dashboard...', 'success');
-                    
-                    // Reset counter percobaan
-                    localStorage.setItem('loginAttempts', '0');
-                    
-                    // Simpan status login di localStorage
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('loginTime', new Date().getTime());
-                    
-                    // Redirect setelah 2 detik
-                    setTimeout(function() {
-                        // Redirect ke halaman utama
-                        window.location.href = 'index.html'; // Ganti dengan halaman tujuan
-                    }, 2000);
-                } else {
-                    // Tambah counter percobaan
-                    loginAttempts++;
-                    localStorage.setItem('loginAttempts', loginAttempts);
-                    attemptsCounter.textContent = loginAttempts;
-                    
-                    showNotification('Password tidak valid. Silakan coba lagi.', 'error');
-                    passwordInput.classList.add('shake');
-                    setTimeout(() => passwordInput.classList.remove('shake'), 500);
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                    
-                    // Cek jika sudah melebihi batas percobaan
-                    if (loginAttempts >= MAX_ATTEMPTS) {
-                        // Set waktu pembekuan
-                        const lockUntilTime = new Date().getTime() + LOCK_DURATION;
-                        localStorage.setItem('loginLockUntil', lockUntilTime);
-                        
-                        disableLoginForm();
-                        startCountdown(LOCK_DURATION);
-                        showNotification('Anda telah melebihi batas percobaan login. Silakan coba lagi setelah 5 menit.', 'error');
-                    }
-                }
-            });
-            
-            // Event listener untuk toggle password visibility
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                // Toggle icon
-                togglePassword.innerHTML = type === 'password' ? 
-                    '<i class="fas fa-eye"></i>' : 
-                    '<i class="fas fa-eye-slash"></i>';
-            });
-            
-            // Event listener untuk tekan Enter di field password
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    loginBtn.click();
-                }
-            });
-            
-            // Fungsi untuk menampilkan notifikasi
-            function showNotification(message, type) {
-                notification.textContent = message;
-                notification.className = 'notification ' + type;
-                notification.style.display = 'block';
-                
-                // Sembunyikan notifikasi setelah 5 detik
-                setTimeout(function() {
-                    notification.style.display = 'none';
-                }, 5000);
-            }
-            
-            // Fokus ke input password saat halaman dimuat
-            passwordInput.focus();
-        });
+        }
+        
+        // Inisialisasi aplikasi saat dokumen siap
+        document.addEventListener('DOMContentLoaded', initLogin);
     </script>
 </body>
 </html>
