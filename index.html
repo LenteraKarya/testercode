@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lentera Karya Situbondo - Portal Utama</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APLIKASI BARJAS - Dinas Peternakan dan Perikanan Situbondo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
@@ -948,64 +952,579 @@
             font-size: 3rem;
             margin-bottom: 15px;
         }
+        
+           * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Particle Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .logo img {
+            width: 70%;
+            height: auto;
+        }
+        
+        .brand {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+        }
+        
+        .brand span {
+            background: linear-gradient(135deg, #3498db, #2ecc71, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            padding: 8px 15px;
+            border-radius: 10px;
+        }
+        
+        nav a:hover {
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 5%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 50px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            font-weight: 800;
+        }
+        
+        .hero h1 span {
+            background: linear-gradient(135deg, #3498db, #2ecc71, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Features Section */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 50%, #f39c12 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 28px;
+        }
+        
+        .feature-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .feature-card p {
+            color: #34495e;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 5%;
+            text-align: center;
+            margin-top: auto;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .footer-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-links a:hover {
+            color: #3498db;
+        }
+        
+        .copyright {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: modalFadeIn 0.5s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: rotate(90deg);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .feature-card {
+                max-width: 100%;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-container" id="loginScreen">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-logo">
-                    <i class="fas fa-hand-holding-water"></i>
-                </div>
-                <h3>APLIKASI BARJAS</h3>
-                <p>Dinas Peternakan dan Perikanan Situbondo</p>
+    <div id="particles-js"></div>
+    
+    <header>
+        <div class="logo-container">
+            <div class="logo">
+                <img src="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png" alt="Lentera Karya Situbondo">
             </div>
-            <div class="login-body">
-                <div class="mb-3">
-                    <label for="loginUsername" class="form-label"><i class="fas fa-user"></i>Username</label>
-                    <input type="text" class="form-control" id="loginUsername" value="Lentera Karya Situbondo" readonly>
-                </div>
-                <div class="mb-3">
-                    <label for="loginPassword" class="form-label"><i class="fas fa-lock"></i>Password</label>
-                    <input type="password" class="form-control" id="loginPassword" placeholder="Masukkan password">
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberLogin">
-                    <label class="form-check-label" for="rememberLogin">Ingat saya</label>
-                </div>
-                <div class="d-grid">
-                    <button class="btn btn-primary" id="loginBtn">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login
-                    </button>
-                </div>
+            <div class="brand">Lentera <span>Karya Situbondo</span></div>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="#"><i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> Tentang</a></li>
+                <li><a href="#"><i class="fas fa-concierge-bell"></i> Layanan</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> Kontak</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="main-content">
+        <section class="hero">
+            <h1>Selamat Datang di <span>Lentera Karya Situbondo</span></h1>
+            <p>Kami hadir untuk memberikan solusi terbaik dengan sistem keamanan premium yang melindungi data dan informasi penting Anda. Dengan teknologi terkini, kami menjamin pengalaman pengguna yang aman dan nyaman.</p>
+            
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary" id="login-btn-main">
+                    <i class="fas fa-lock"></i> Login ke Sistem
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-book"></i> Pelajari Lebih Lanjut
+                </a>
             </div>
-            <div class="login-footer">
-                <p class="small text-muted">Gunakan password yang telah ditetapkan</p>
+        </section>
+        
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Keamanan Premium</h3>
+                <p>Sistem kami dilengkapi dengan enkripsi tingkat tinggi dan perlindungan data yang canggih untuk menjaga informasi Anda tetap aman.</p>
             </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Performa Tinggi</h3>
+                <p>Dengan infrastruktur server yang handal, kami menjamin akses cepat dan stabil kapan saja Anda membutuhkannya.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Dukungan Pelanggan</h3>
+                <p>Tim support kami siap membantu 24/7 melalui berbagai channel komunikasi untuk memastikan pengalaman terbaik.</p>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://www.anekamarket.my.id" target="_blank">
+                    <i class="fas fa-globe"></i> www.anekamarket.my.id
+                </a>
+                <a href="https://wa.me/6285647709114" target="_blank">
+                    <i class="fab fa-whatsapp"></i> +62 856-4770-9114
+                </a>
+                <a href="mailto:admin@anekamarket.my.id">
+                    <i class="fas fa-envelope"></i> admin@anekamarket.my.id
+                </a>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 Lentera Karya Situbondo. Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="close-modal" id="close-login">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="modal-content">
+            <!-- Konten login.html akan dimuat di sini -->
         </div>
     </div>
 
-    <!-- Welcome Splash Screen -->
-    <div class="welcome-splash" id="welcomeSplash">
-        <button class="welcome-splash-close" id="closeSplash">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="welcome-splash-content">
-            <div class="welcome-splash-logo">
-                <i class="fas fa-hand-holding-water"></i>
-            </div>
-            <h1 class="welcome-splash-title">Selamat Datang di APLIKASI BARJAS</h1>
-            <p class="welcome-splash-message">
-                Aplikasi Bantuan Barang dan Jasa - Dinas Peternakan dan Perikanan Situbondo.<br>
-                Terima kasih telah menggunakan aplikasi kami. Semoga aplikasi ini dapat membantu 
-                dalam pengelolaan data bantuan secara efektif dan efisien.
-            </p>
-            <div class="welcome-splash-countdown">
-                Aplikasi akan dimuat dalam: <span id="splashCountdown">8</span> detik
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi partikel background
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: ["#3498db", "#2ecc71", "#f39c12"] },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#3498db",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Modal login functionality
+            const loginBtnMain = document.getElementById('login-btn-main');
+            const loginModal = document.getElementById('login-modal');
+            const closeLogin = document.getElementById('close-login');
+            const modalContent = document.querySelector('.modal-content');
+            
+            // Load login form when modal is opened
+            loginBtnMain.addEventListener('click', function() {
+                loginModal.style.display = 'flex';
+                
+                // Load login form content
+                fetch('login.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        modalContent.innerHTML = data;
+                        
+                        // Reinitialize any scripts from login.html if needed
+                        const scripts = modalContent.querySelectorAll('script');
+                        scripts.forEach(script => {
+                            const newScript = document.createElement('script');
+                            newScript.text = script.text;
+                            document.body.appendChild(newScript).parentNode.removeChild(newScript);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading login form:', error);
+                        modalContent.innerHTML = '<div style="padding: 40px; text-align: center; color: #2c3e50;"><h2>Error</h2><p>Gagal memuat formulir login. Silakan coba lagi.</p></div>';
+                    });
+            });
+            
+            // Close modal
+            closeLogin.addEventListener('click', function() {
+                loginModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            loginModal.addEventListener('click', function(e) {
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            });
+            
+            // Check if user is already logged in
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                // User is logged in, change button text
+                loginBtnMain.innerHTML = '<i class="fas fa-user"></i> Dashboard';
+                loginBtnMain.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'dashboard.html'; // Ganti dengan halaman dashboard yang sesuai
+                });
+            }
+        });
 
     <!-- Particle Background -->
     <div id="particles-js"></div>
