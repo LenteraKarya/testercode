@@ -1866,8 +1866,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcQS_0C5bZ8VcYVfDcL3pNQ4l4V6wX5jE&libraries=places&callback=initMap" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script> 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcQS_0C5bZ8VcYVfDcL3pNQ4l4V6wX5jE&libraries=places" async defer></script>
     
     <script>
@@ -1950,38 +1949,41 @@
             }
             
             // Isi dropdown desa untuk Kota Situbondo
-            const desaSelect = document.getElementById('desa');
-            const filterDesaSelect = document.getElementById('filterDesa');
+const desaSelect = document.getElementById('desa');
+const filterDesaSelect = document.getElementById('filterDesa');
+
+// Pastikan elemen ada sebelum memanipulasi
+if (desaSelect && filterDesaSelect) {
+    // Kosongkan dropdown terlebih dahulu (kecuali opsi default)
+    while (desaSelect.options.length > 1) desaSelect.remove(1);
+    while (filterDesaSelect.options.length > 1) filterDesaSelect.remove(1);
+    
+    const desaList = [
+        "Arjasa", "Awar-awar", "Badean", "Banyuputih", "Banyuputih Kidul", "Batuinan", "Besuki", "Blimbing", "Bungatan", 
+        "Curahtatal", "Jangkar", "Jatibanteng", "Kapongan", "Kendit", "Klatakan", "Kotakan", "Kumberejo", "Kumbo", 
+        "Landangan", "Mangaran", "Mlandingan", "Mojosari", "Panarukan", "Panji", "Patokan", "Peleyan", "Sumberanyar", 
+        "Sumberejo", "Sumberkencono", "Sumberkolak", "Sumbermalang", "Sumberwaru", "Talkandang", "Wringinanom"
+    ];
+    
+    desaList.sort().forEach(desa => {
+        const option = document.createElement('option');
+        option.value = desa;
+        option.textContent = desa;
+        
+        const filterOption = document.createElement('option');
+        filterOption.value = desa;
+        filterOption.textContent = desa;
+        
+        desaSelect.appendChild(option);
+        filterDesaSelect.appendChild(filterOption);
+    });
+}
             
-            // Kosongkan dropdown terlebih dahulu
-            desaSelect.innerHTML = '<option value="" selected disabled>Pilih desa</option>';
-            filterDesaSelect.innerHTML = '<option value="">Semua Desa</option>';
-            
-            // Daftar desa di Situbondo (diperbaiki)
-            const desaList = [
-                "Arjasa", "Awar-awar", "Badean", "Banyuputih", "Banyuputih Kidul", 
-                "Batuinan", "Besuki", "Blimbing", "Bungatan", "Curahtatal", "Jangkar", 
-                "Jatibanteng", "Kapongan", "Kendit", "Klatakan", "Kotakan", "Kumberejo", 
-                "Kumbo", "Landangan", "Mangaran", "Mlandingan", "Mojosari", "Panarukan", 
-                "Panji", "Patokan", "Peleyan", "Sumberanyar", "Sumberejo", "Sumberkencono", 
-                "Sumberkolak", "Sumbermalang", "Sumberwaru", "Talkandang", "Wringinanom"
-            ];
-            
-            // Urutkan dan isi dropdown
-            desaList.sort().forEach(desa => {
-                const option = document.createElement('option');
-                option.value = desa;
-                option.textContent = desa;
-                
-                const filterOption = option.cloneNode(true);
-                
-                desaSelect.appendChild(option);
-                filterDesaSelect.appendChild(filterOption);
-            });
-            
-            // Set tahun saat ini di info panel
-            document.getElementById('current-year').textContent = currentYear;
-        }
+           // Set tahun saat ini di info panel
+const currentYearElement = document.getElementById('current-year');
+if (currentYearElement) {
+    currentYearElement.textContent = currentYear;
+}
         
         // Fungsi untuk inisialisasi Google Maps Autocomplete
         function initMap() {
@@ -2057,110 +2059,60 @@
         }
         
         // Fungsi untuk mendapatkan lokasi menggunakan GPS
-        function getLocation() {
-            if (!navigator.geolocation) {
-                showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
-                return;
+function getLocation() {
+    if (!navigator.geolocation) {
+        showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
+        return;
+    }
+    
+    // Tampilkan loading state
+    const gpsButton = document.getElementById('gpsButton');
+    const originalText = gpsButton.innerHTML;
+    gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
+    gpsButton.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            // Dapatkan koordinat
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            
+            // Kembalikan state button
+            gpsButton.innerHTML = originalText;
+            gpsButton.disabled = false;
+            
+            // Isi field alamat dengan koordinat
+            document.getElementById('alamatLengkap').value = `Lokasi: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            
+            // Tampilkan koordinat di notifikasi
+            showNotification('Berhasil', `Lokasi berhasil didapatkan: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}. Silakan lengkapi alamat secara manual.`, 'success');
+        },
+        function(error) {
+            // Kembalikan state button
+            gpsButton.innerHTML = originalText;
+            gpsButton.disabled = false;
+            
+            let errorMessage;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Pengguna menolak permintaan geolokasi.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Informasi lokasi tidak tersedia.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
+                    break;
+                case error.UNKNOWN_ERROR:
+                    errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
+                    break;
             }
             
-            // Tampilkan loading state
-            const gpsButton = document.getElementById('gpsButton');
-            const originalText = gpsButton.innerHTML;
-            gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
-            gpsButton.disabled = true;
-            
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Dapatkan koordinat
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    
-                    // Gunakan Geocoding untuk mendapatkan alamat dari koordinat
-                    const geocoder = new google.maps.Geocoder();
-                    const latlng = { lat: latitude, lng: longitude };
-                    
-                    geocoder.geocode({ location: latlng }, function(results, status) {
-                        // Kembalikan state button
-                        gpsButton.innerHTML = originalText;
-                        gpsButton.disabled = false;
-                        
-                        if (status === 'OK') {
-                            if (results[0]) {
-                                // Isi field alamat dengan hasil geocoding
-                                document.getElementById('alamatLengkap').value = results[0].formatted_address.toUpperCase();
-                                
-                                // Coba dapatkan informasi desa dan kecamatan
-                                let desa = '';
-                                let kecamatan = '';
-                                
-                                for (let i = 0; i < results[0].address_components.length; i++) {
-                                    const component = results[0].address_components[i];
-                                    const types = component.types;
-                                    
-                                    if (types.includes('sublocality_level_2') || types.includes('sublocality_level_1') || 
-                                        types.includes('administrative_area_level_4') || types.includes('locality')) {
-                                        desa = component.long_name;
-                                    } else if (types.includes('administrative_area_level_3') || types.includes('locality')) {
-                                        kecamatan = component.long_name;
-                                    }
-                                }
-                                
-                                // Isi dropdown desa dan kecamatan jika ditemukan
-                                if (desa) {
-                                    const desaSelect = document.getElementById('desa');
-                                    for (let i = 0; i < desaSelect.options.length; i++) {
-                                        if (desaSelect.options[i].text === desa) {
-                                            desaSelect.value = desa;
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (kecamatan) {
-                                    const kecamatanSelect = document.getElementById('kecamatan');
-                                    for (let i = 0; i < kecamatanSelect.options.length; i++) {
-                                        if (kecamatanSelect.options[i].text === kecamatan) {
-                                            kecamatanSelect.value = kecamatan;
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                showNotification('Berhasil', 'Lokasi berhasil didapatkan.', 'success');
-                            } else {
-                                showNotification('Error', 'Tidak ada hasil yang ditemukan.', 'error');
-                            }
-                        } else {
-                            showNotification('Error', 'Geocoder gagal karena: ' + status, 'error');
-                        }
-                    });
-                },
-                function(error) {
-                    // Kembalikan state button
-                    gpsButton.innerHTML = originalText;
-                    gpsButton.disabled = false;
-                    
-                    let errorMessage;
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = 'Pengguna menolak permintaan geolokasi.';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = 'Informasi lokasi tidak tersedia.';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
-                            break;
-                    }
-                    
-                    showNotification('Error', errorMessage, 'error');
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-            );
-        }
+            showNotification('Error', errorMessage, 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+}
         
         // Fungsi untuk menampilkan modal login
         function showLoginModal() {
@@ -2833,9 +2785,9 @@
             // Total penerima
             document.getElementById('totalPenerima').textContent = dataBarjas.length;
             
-            // Total barang
+           // Total barang
             const totalBarang = dataBarjas.reduce((sum, item) => sum + item.jumlah, 0);
-            document.getElementById('totalBarang').textContent = totalBarbarang;
+            document.getElementById('totalBarang').textContent = totalBarang;
             
             // Tahun dengan data terbanyak
             const tahunCount = {};
@@ -3660,11 +3612,9 @@
         // Deteksi browser
         document.getElementById('infoBrowser').textContent = navigator.userAgent.split(' ')[0];
   
-     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
+        <script>
         // Mobile menu button
+    document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('mobileMenuBtn').addEventListener('click', function() {
             document.querySelector('.col-md-3.col-lg-2').classList.add('mobile-show');
             document.getElementById('sidebarOverlay').classList.add('mobile-show');
@@ -3677,10 +3627,11 @@
         });
         
         // Inisialisasi tab Bootstrap
-        var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+        var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'));
         triggerTabList.forEach(function(triggerEl) {
-            new bootstrap.Tab(triggerEl)
+            new bootstrap.Tab(triggerEl);
         });
+    });
     </script>
 </body>
 </html>
