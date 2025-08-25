@@ -1868,15 +1868,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcQS_0C5bZ8VcYVfDcL3pNQ4l4V6wX5jE&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcQS_0C5bZ8VcYVfDcL3pNQ4l4V6wX5jE&libraries=places" async defer></script>
     
     <script>
-        // Deklarasi variabel global
+         // Deklarasi variabel global
         let dataBarjas = [];
         let currentPage = 1;
         const itemsPerPage = 10;
         let securityCode = null;
         let map;
         let autocomplete;
+        
+        // Daftar password yang valid
+        const validPasswords = [
+            "S01634851", "V02468642", "X03579753", "I04445555", 
+            "Z05252525", "L06644228", "E07722277", "H08877665", 
+            "J09753123", "A01234567", "B02345678", "C03456789",
+            "D04567890", "F05678901", "G06789012", "K07890123",
+            "M08901234", "N09012345", "O00123456", "P01234567",
+            "Q02345678", "R03456789", "T04567890", "U05678901",
+            "W06789012", "Y07890123"
+        ];
+        
+        // Variabel untuk melacak percobaan login
+        let loginAttempts = 0;
+        const maxAttempts = 5;
+        let isBlocked = false;
+        let loginCountdownInterval;
         
         // Fungsi untuk inisialisasi aplikasi
         function initApp() {
@@ -1887,6 +1905,7 @@
             updateStats();
             renderTable();
             initParticles();
+            initMap(); // Panggil initMap secara langsung
             
             // Tampilkan welcome modal jika pertama kali
             if (!localStorage.getItem('barjas_welcomed')) {
@@ -1897,213 +1916,25 @@
                 }, 2000);
             }
             
-            // Tampilkan splash screen selama 8 detik
+            // Tampilkan modal login
             setTimeout(() => {
-                document.getElementById('welcomeSplash').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('welcomeSplash').style.display = 'none';
-                }, 500);
-            }, 8000);
-            
-            // Hitung mundur splash screen
-            let countdown = 8;
-            const countdownElement = document.getElementById('splashCountdown');
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                }
+                showLoginModal();
+                setupLoginEventListeners();
             }, 1000);
-        }
-        
-        // Fungsi untuk memuat data dari localStorage
-        function loadData() {
-            const savedData = localStorage.getItem('barjas_data');
-            if (savedData) {
-                dataBarjas = JSON.parse(savedData);
-                document.getElementById('total-data').textContent = dataBarjas.length;
-                document.getElementById('infoTotalData').textContent = dataBarjas.length + ' data';
-                
-                // Hitung ukuran penyimpanan
-                const storageSize = new Blob([savedData]).size;
-                document.getElementById('infoStorageSize').textContent = (storageSize / 1024).toFixed(2) + ' KB';
-            }
-            
-            // Load security code
-            const savedCode = localStorage.getItem('barjas_security_code');
-            if (savedCode) {
-                securityCode = savedCode;
-            }
-            
-            // Load last update time
-            const lastUpdate = localStorage.getItem('barjas_last_update');
-            if (lastUpdate) {
-                document.getElementById('infoLastUpdate').textContent = new Date(parseInt(lastUpdate)).toLocaleString();
-            }
-        }
-        
-        // Fungsi untuk menyimpan data ke localStorage
-        function saveData() {
-            localStorage.setItem('barjas_data', JSON.stringify(dataBarjas));
-            localStorage.setItem('barjas_last_update', Date.now().toString());
-            document.getElementById('infoLastUpdate').textContent = new Date().toLocaleString();
-            
-            // Hitung ukuran penyimpanan
-            const savedData = localStorage.getItem('barjas_data');
-            const storageSize = new Blob([savedData]).size;
-            document.getElementById('infoStorageSize').textContent = (storageSize / 1024).toFixed(2) + ' KB';
-        }
-        
-        // Fungsi untuk mengatur event listeners
-        function setupEventListeners() {
-            // Form submission
-            document.getElementById('inputForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                simpanData();
-            });
-            
-            // Reset form
-            document.getElementById('resetBtn').addEventListener('click', function() {
-                resetForm();
-            });
-            
-            // Filter events
-            document.getElementById('filterTahun').addEventListener('change', function() {
-                currentPage = 1;
-                renderTable();
-            });
-            
-            document.getElementById('filterKecamatan').addEventListener('change', function() {
-                currentPage = 1;
-                renderTable();
-            });
-            
-            document.getElementById('filterDesa').addEventListener('change', function() {
-                currentPage = 1;
-                renderTable();
-            });
-            
-            document.getElementById('searchInput').addEventListener('input', function() {
-                currentPage = 1;
-                renderTable();
-            });
-            
-            // Export buttons
-            document.getElementById('exportExcelBtn').addEventListener('click', function() {
-                exportToExcel();
-            });
-            
-            document.getElementById('exportPdfBtn').addEventListener('click', function() {
-                exportToPDF();
-            });
-            
-            document.getElementById('printBtn').addEventListener('click', function() {
-                printTable();
-            });
-            
-            // Backup buttons
-            document.getElementById('backupExcelBtn').addEventListener('click', function() {
-                backupToExcel();
-            });
-            
-            document.getElementById('backupJsonBtn').addEventListener('click', function() {
-                backupToJSON();
-            });
-            
-            document.getElementById('restoreBtn').addEventListener('click', function() {
-                restoreData();
-            });
-            
-            // Control panel buttons
-            document.getElementById('deleteAllBtn').addEventListener('click', function() {
-                showPasswordModal('deleteAll');
-            });
-            
-            document.getElementById('resetSettingsBtn').addEventListener('click', function() {
-                showPasswordModal('resetSettings');
-            });
-            
-            document.getElementById('setSecurityBtn').addEventListener('click', function() {
-                setSecurityCode();
-            });
-            
-            // Confirm password button
-            document.getElementById('confirmPasswordBtn').addEventListener('click', function() {
-                confirmPassword();
-            });
-            
-            // Quick actions
-            document.getElementById('quickBackupBtn').addEventListener('click', function() {
-                backupToExcel();
-            });
-            
-            document.getElementById('refreshDataBtn').addEventListener('click', function() {
-                loadData();
-                renderTable();
-                updateStats();
-                showNotification('Data diperbarui', 'Semua data telah diperbarui.', 'success');
-            });
-            
-            document.getElementById('clearFormBtn').addEventListener('click', function() {
-                resetForm();
-                showNotification('Form dibersihkan', 'Form input telah dikosongkan.', 'info');
-            });
-            
-            // View links button
-            document.getElementById('viewLinksBtn').addEventListener('click', function() {
-                viewAllLinks();
-            });
-            
-            // Add link button
-            document.getElementById('addLinkBtn').addEventListener('click', function() {
-                addLink();
-            });
-            
-            // Mobile menu button
-            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-                document.querySelector('.col-md-3.col-lg-2').classList.add('mobile-show');
-                document.getElementById('sidebarOverlay').classList.add('mobile-show');
-            });
-            
-            // Sidebar overlay
-            document.getElementById('sidebarOverlay').addEventListener('click', function() {
-                document.querySelector('.col-md-3.col-lg-2').classList.remove('mobile-show');
-                this.classList.remove('mobile-show');
-            });
-            
-            // FAB button
-            document.getElementById('fabBtn').addEventListener('click', function() {
-                document.getElementById('inputForm').scrollIntoView({ behavior: 'smooth' });
-            });
-            
-            // Close splash button
-            document.getElementById('closeSplash').addEventListener('click', function() {
-                document.getElementById('welcomeSplash').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('welcomeSplash').style.display = 'none';
-                }, 500);
-            });
-            
-            // Close welcome modal button
-            document.getElementById('closeWelcomeBtn').addEventListener('click', function() {
-                $('#welcomeModal').modal('hide');
-            });
-            
-            // GPS Button
-            document.getElementById('gpsButton').addEventListener('click', function() {
-                getLocation();
-            });
         }
         
         // Fungsi untuk mengisi dropdown dengan opsi
         function populateDropdowns() {
-            // Isi dropdown tahun anggaran (2020-2090)
+            // Isi dropdown tahun anggaran (2020-2030)
             const tahunAnggaranSelect = document.getElementById('tahunAnggaran');
             const filterTahunSelect = document.getElementById('filterTahun');
             const currentYear = new Date().getFullYear();
             
-            for (let year = 2020; year <= 2090; year++) {
+            // Kosongkan dropdown terlebih dahulu
+            tahunAnggaranSelect.innerHTML = '<option value="" selected disabled>Pilih tahun anggaran</option>';
+            filterTahunSelect.innerHTML = '<option value="">Semua Tahun</option>';
+            
+            for (let year = 2020; year <= 2030; year++) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
@@ -2122,13 +1953,21 @@
             const desaSelect = document.getElementById('desa');
             const filterDesaSelect = document.getElementById('filterDesa');
             
+            // Kosongkan dropdown terlebih dahulu
+            desaSelect.innerHTML = '<option value="" selected disabled>Pilih desa</option>';
+            filterDesaSelect.innerHTML = '<option value="">Semua Desa</option>';
+            
+            // Daftar desa di Situbondo (diperbaiki)
             const desaList = [
-                "Arjasa", "Awar-awar", "Badean", "Banyuputih", "Banyuputih Kidul", "Batuinan", "Besuki", "Blimbing", "Bungatan", 
-                "Curahtatal", "Jangkar", "Jatibanteng", "Kapongan", "Kendit", "Klatakan", "Kotakan", "Kumberejo", "Kumbo", 
-                "Landangan", "Mangaran", "Mlandingan", "Mojosari", "Panarukan", "Panji", "Patokan", "Peleyan", "Sumberanyar", 
-                "Sumberejo", "Sumberkencono", "Sumberkolak", "Sumbermalang", "Sumberwaru", "Talkandang", "Wringinanom"
+                "Arjasa", "Awar-awar", "Badean", "Banyuputih", "Banyuputih Kidul", 
+                "Batuinan", "Besuki", "Blimbing", "Bungatan", "Curahtatal", "Jangkar", 
+                "Jatibanteng", "Kapongan", "Kendit", "Klatakan", "Kotakan", "Kumberejo", 
+                "Kumbo", "Landangan", "Mangaran", "Mlandingan", "Mojosari", "Panarukan", 
+                "Panji", "Patokan", "Peleyan", "Sumberanyar", "Sumberejo", "Sumberkencono", 
+                "Sumberkolak", "Sumbermalang", "Sumberwaru", "Talkandang", "Wringinanom"
             ];
             
+            // Urutkan dan isi dropdown
             desaList.sort().forEach(desa => {
                 const option = document.createElement('option');
                 option.value = desa;
@@ -2142,6 +1981,261 @@
             
             // Set tahun saat ini di info panel
             document.getElementById('current-year').textContent = currentYear;
+        }
+        
+        // Fungsi untuk inisialisasi Google Maps Autocomplete
+        function initMap() {
+            console.log("Initializing Google Maps...");
+            
+            // Pastikan Google Maps API sudah dimuat
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                console.error("Google Maps API belum dimuat");
+                setTimeout(initMap, 1000); // Coba lagi setelah 1 detik
+                return;
+            }
+            
+            // Buat autocomplete untuk input alamat
+            const alamatInput = document.getElementById('alamatLengkap');
+            if (!alamatInput) {
+                console.error("Element alamatLengkap tidak ditemukan");
+                return;
+            }
+            
+            autocomplete = new google.maps.places.Autocomplete(alamatInput, {
+                types: ['geocode'],
+                componentRestrictions: { country: 'id' }
+            });
+            
+            // Tambahkan listener untuk ketika tempat dipilih
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    window.alert("Tidak ada detail yang tersedia untuk: " + place.name);
+                    return;
+                }
+                
+                // Dapatkan informasi alamat
+                let addressComponents = place.address_components;
+                let desa = '';
+                let kecamatan = '';
+                
+                // Cari desa dan kecamatan dari komponen alamat
+                for (let i = 0; i < addressComponents.length; i++) {
+                    let types = addressComponents[i].types;
+                    
+                    if (types.includes('sublocality_level_2') || types.includes('sublocality_level_1') || 
+                        types.includes('administrative_area_level_4') || types.includes('locality')) {
+                        desa = addressComponents[i].long_name;
+                    } else if (types.includes('administrative_area_level_3') || types.includes('locality')) {
+                        kecamatan = addressComponents[i].long_name;
+                    }
+                }
+                
+                // Isi dropdown desa dan kecamatan jika ditemukan
+                if (desa) {
+                    const desaSelect = document.getElementById('desa');
+                    for (let i = 0; i < desaSelect.options.length; i++) {
+                        if (desaSelect.options[i].text === desa) {
+                            desaSelect.value = desa;
+                            break;
+                        }
+                    }
+                }
+                
+                if (kecamatan) {
+                    const kecamatanSelect = document.getElementById('kecamatan');
+                    for (let i = 0; i < kecamatanSelect.options.length; i++) {
+                        if (kecamatanSelect.options[i].text === kecamatan) {
+                            kecamatanSelect.value = kecamatan;
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            console.log("Google Maps Autocomplete initialized");
+        }
+        
+        // Fungsi untuk mendapatkan lokasi menggunakan GPS
+        function getLocation() {
+            if (!navigator.geolocation) {
+                showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
+                return;
+            }
+            
+            // Tampilkan loading state
+            const gpsButton = document.getElementById('gpsButton');
+            const originalText = gpsButton.innerHTML;
+            gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
+            gpsButton.disabled = true;
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Dapatkan koordinat
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    // Gunakan Geocoding untuk mendapatkan alamat dari koordinat
+                    const geocoder = new google.maps.Geocoder();
+                    const latlng = { lat: latitude, lng: longitude };
+                    
+                    geocoder.geocode({ location: latlng }, function(results, status) {
+                        // Kembalikan state button
+                        gpsButton.innerHTML = originalText;
+                        gpsButton.disabled = false;
+                        
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                // Isi field alamat dengan hasil geocoding
+                                document.getElementById('alamatLengkap').value = results[0].formatted_address.toUpperCase();
+                                
+                                // Coba dapatkan informasi desa dan kecamatan
+                                let desa = '';
+                                let kecamatan = '';
+                                
+                                for (let i = 0; i < results[0].address_components.length; i++) {
+                                    const component = results[0].address_components[i];
+                                    const types = component.types;
+                                    
+                                    if (types.includes('sublocality_level_2') || types.includes('sublocality_level_1') || 
+                                        types.includes('administrative_area_level_4') || types.includes('locality')) {
+                                        desa = component.long_name;
+                                    } else if (types.includes('administrative_area_level_3') || types.includes('locality')) {
+                                        kecamatan = component.long_name;
+                                    }
+                                }
+                                
+                                // Isi dropdown desa dan kecamatan jika ditemukan
+                                if (desa) {
+                                    const desaSelect = document.getElementById('desa');
+                                    for (let i = 0; i < desaSelect.options.length; i++) {
+                                        if (desaSelect.options[i].text === desa) {
+                                            desaSelect.value = desa;
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                if (kecamatan) {
+                                    const kecamatanSelect = document.getElementById('kecamatan');
+                                    for (let i = 0; i < kecamatanSelect.options.length; i++) {
+                                        if (kecamatanSelect.options[i].text === kecamatan) {
+                                            kecamatanSelect.value = kecamatan;
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                showNotification('Berhasil', 'Lokasi berhasil didapatkan.', 'success');
+                            } else {
+                                showNotification('Error', 'Tidak ada hasil yang ditemukan.', 'error');
+                            }
+                        } else {
+                            showNotification('Error', 'Geocoder gagal karena: ' + status, 'error');
+                        }
+                    });
+                },
+                function(error) {
+                    // Kembalikan state button
+                    gpsButton.innerHTML = originalText;
+                    gpsButton.disabled = false;
+                    
+                    let errorMessage;
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Pengguna menolak permintaan geolokasi.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Informasi lokasi tidak tersedia.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
+                            break;
+                    }
+                    
+                    showNotification('Error', errorMessage, 'error');
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+            );
+        }
+        
+        // Fungsi untuk menampilkan modal login
+        function showLoginModal() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+            
+            // Tampilkan particles background
+            document.getElementById('login-particles').style.display = 'block';
+            initLoginParticles();
+            
+            // Load login state
+            loadLoginState();
+        }
+        
+        // Setup event listeners untuk login
+        function setupLoginEventListeners() {
+            document.getElementById('loginBtn').addEventListener('click', login);
+            
+            // Enter key to submit
+            document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isBlocked) {
+                    login();
+                }
+            });
+            
+            // Event ketika modal login ditutup
+            document.getElementById('loginModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('login-particles').style.display = 'none';
+            });
+        }
+        
+        // Fungsi untuk proses login
+        function login() {
+            if (isBlocked) return;
+            
+            const passwordInput = document.getElementById('loginPassword');
+            const password = passwordInput.value.trim();
+            
+            // Validasi format password
+            if (!isValidPasswordFormat(password)) {
+                showLoginError("Format kode keamanan tidak valid. Harus diawali huruf kapital (A-Z) diikuti angka.");
+                passwordInput.value = '';
+                return;
+            }
+            
+            // Cek apakah password valid
+            if (validPasswords.includes(password)) {
+                // Login berhasil
+                localStorage.removeItem('login_attempts');
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                document.getElementById('login-particles').style.display = 'none';
+                
+                // Tampilkan notifikasi sukses
+                showNotification('Akses Diberikan', 'Login berhasil. Selamat menggunakan aplikasi.', 'success');
+            } else {
+                // Login gagal
+                loginAttempts++;
+                localStorage.setItem('login_attempts', loginAttempts);
+                
+                if (loginAttempts >= maxAttempts) {
+                    blockLogin();
+                } else {
+                    showLoginError("Kode keamanan salah. Silakan coba lagi.");
+                    updateLoginAttemptsDisplay();
+                    // Animasi shake effect
+                    document.querySelector('.login-modal .modal-content').classList.add('login-shake');
+                    setTimeout(() => {
+                        document.querySelector('.login-modal .modal-content').classList.remove('login-shake');
+                    }, 600);
+                }
+                
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
         }
         
         // Fungsi untuk menyimpan data
