@@ -23,6 +23,7 @@
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
             --shadow-lg: 0 8px 28px rgba(0,0,0,0.15);
+             --login-gradient: linear-gradient(135deg, #0d47a1, #00695c, #ff8f00);
         }
           }
         
@@ -1064,9 +1065,268 @@
             width: 1rem;
             height: 1rem;
         }
+
+        /* Login Modal Styles */
+.login-modal .modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.login-header {
+    background: var(--login-gradient);
+    color: white;
+    text-align: center;
+    padding: 25px 20px;
+    position: relative;
+}
+
+.login-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 5px 0 0;
+}
+
+.login-body {
+    padding: 25px;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+}
+
+.login-form-label {
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.login-form-label i {
+    margin-right: 10px;
+    color: var(--dark-blue);
+}
+
+.login-form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    transition: all 0.3s;
+}
+
+.login-form-control:focus {
+    border-color: var(--dark-blue);
+    box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
+}
+
+.login-input-group-text {
+    background: var(--light-blue);
+    border: 2px solid #ddd;
+    border-left: none;
+}
+
+.btn-login {
+    background: var(--gradient-secondary);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 105, 92, 0.4);
+}
+
+.btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.login-security-notice {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.login-attempts-count {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ff8f00;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+.login-blocked-message {
+    text-align: center;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.login-countdown {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark-blue);
+}
+
+.login-developer-info {
+    background: var(--light-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.login-developer-logo {
+    max-width: 180px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.login-developer-contact a {
+    color: var(--dark-blue);
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+.login-developer-contact a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+    transform: translateY(-2px);
+}
+
+.login-copyright {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Animations */
+@keyframes login-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.login-shake {
+    animation: login-shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Login particle background */
+#login-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1040; /* Higher than modal backdrop */
+    display: none;
+}
     </style>
 </head>
 <body>
+     <!-- Login Modal -->
+    <div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h1 class="login-title">Akses Terkunci</h1>
+                    <p class="login-subtitle">Masukkan kode keamanan untuk mengakses aplikasi</p>
+                </div>
+                
+                <div class="login-body">
+                    <div class="login-form-group">
+                        <label for="loginUsername" class="login-form-label">
+                            <i class="fas fa-user"></i>Username
+                        </label>
+                        <div class="input-group">
+                            <input type="text" class="form-control login-form-control" id="loginUsername" value="Lentera Karya Situbondo" readonly>
+                            <span class="input-group-text login-input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                    </div>
+                    
+                    <div class="login-form-group">
+                        <label for="loginPassword" class="login-form-label">
+                            <i class="fas fa-key"></i>Kode Keamanan
+                        </label>
+                        <div class="input-group">
+                            <input type="password" class="form-control login-form-control" id="loginPassword" placeholder="Masukkan kode keamanan">
+                            <span class="input-group-text login-input-group-text"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <div class="login-attempts-count" id="loginAttemptsCount">
+                            Percobaan Maksimal: <span id="loginAttemptsLeft">5</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-login" id="loginBtn">
+                        <i class="fas fa-unlock-alt me-2"></i>Buka Akses
+                    </button>
+                    
+                    <div class="login-blocked-message" id="loginBlockedMessage" style="display: none;">
+                        <i class="fas fa-ban me-2"></i>
+                        <span id="loginBlockedText">Akses dibekukan sementara. Silakan coba lagi dalam </span>
+                        <span class="login-countdown" id="loginCountdown">05:00</span>
+                    </div>
+                    
+                    <div class="login-security-notice">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Kode keamanan diawali huruf kapital (A-Z) diikuti angka
+                    </div>
+                    
+                    <div class="login-developer-info">
+                        <img src="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png" alt="Lentera Karya Situbondo" class="login-developer-logo">
+                        <h5>Lentera Karya Situbondo</h5>
+                        <div class="login-developer-contact">
+                            <p><a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe me-2"></i>www.anekamarket.my.id</a></p>
+                            <p><a href="https://wa.me/6285647709114" target="_blank"><i class="fab fa-whatsapp me-2"></i>+62 856-4770-9114</a></p>
+                            <p><a href="mailto:admin@anekamarket.my.id" target="_blank"><i class="fas fa-envelope me-2"></i>admin@anekamarket.my.id</a></p>
+                            <p><a href="https://maps.google.com/?q=Wringinanom-Panarukan,Situbondo (68351) Jawa Timur" target="_blank"><i class="fas fa-map-marker-alt me-2"></i>Wringinanom-Panarukan, Situbondo</a></p>
+                        </div>
+                        <p class="mt-2 mb-0"><small>Dibuat sejak 1 April 2025</small></p>
+                    </div>
+                </div>
+                
+                <div class="modal-footer login-copyright">
+                    &copy; 2025 Lentera Karya Situbondo. Hak Cipta Dilindungi.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login particle background -->
+    <div id="login-particles"></div>
     
     <!-- Particle Background -->
     <div id="particles-js"></div>
@@ -1738,12 +1998,12 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="developer-info text-center">
-                                        <img src="https://via.placeholder.com/120x60/0d47a1/ffffff?text=Lentera+Karya" alt="Lentera Karya" class="developer-logo">
+                                        <img src="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png" alt="Lentera Karya" class="developer-logo">
                                         <h5>Lentera Karya Situbondo</h5>
                                         <p>Pengembang Aplikasi dan Solusi Teknologi</p>
                                         <div class="developer-contact">
-                                            <p><i class="fas fa-envelope me-2"></i> <a href="mailto:lenterakarya.situbondo@gmail.com">lenterakarya.situbondo@gmail.com</a></p>
-                                            <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/628123456789" target="_blank">+62 812-3456-789</a></p>
+                                            <p><i class="fas fa-envelope me-2"></i> <a href="mailto:lenterakarya.situbondo@gmail.com">admin@anekamarket.my.id</a></p>
+                                            <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/6285647709114" target="_blank">+62 856-4770-9114</a></p>
                                             <p><i class="fas fa-map-marker-alt me-2"></i> Situbondo, Jawa Timur, Indonesia</p>
                                         </div>
                                     </div>
@@ -1866,34 +2126,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script> 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcQS_0C5bZ8VcYVfDcL3pNQ4l4V6wX5jE&libraries=places" async defer></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+      
     <script>
-         // Deklarasi variabel global
+        // Deklarasi variabel global
         let dataBarjas = [];
         let currentPage = 1;
         const itemsPerPage = 10;
         let securityCode = null;
         let map;
         let autocomplete;
-        
-        // Daftar password yang valid
-        const validPasswords = [
-            "S01634851", "V02468642", "X03579753", "I04445555", 
-            "Z05252525", "L06644228", "E07722277", "H08877665", 
-            "J09753123", "A01234567", "B02345678", "C03456789",
-            "D04567890", "F05678901", "G06789012", "K07890123",
-            "M08901234", "N09012345", "O00123456", "P01234567",
-            "Q02345678", "R03456789", "T04567890", "U05678901",
-            "W06789012", "Y07890123"
-        ];
-        
-        // Variabel untuk melacak percobaan login
-        let loginAttempts = 0;
-        const maxAttempts = 5;
-        let isBlocked = false;
-        let loginCountdownInterval;
         
         // Fungsi untuk inisialisasi aplikasi
         function initApp() {
@@ -1904,7 +2146,6 @@
             updateStats();
             renderTable();
             initParticles();
-            initMap(); // Panggil initMap secara langsung
             
             // Tampilkan welcome modal jika pertama kali
             if (!localStorage.getItem('barjas_welcomed')) {
@@ -1915,25 +2156,213 @@
                 }, 2000);
             }
             
-            // Tampilkan modal login
+            // Tampilkan splash screen selama 8 detik
             setTimeout(() => {
-                showLoginModal();
-                setupLoginEventListeners();
+                document.getElementById('welcomeSplash').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('welcomeSplash').style.display = 'none';
+                }, 500);
+            }, 8000);
+            
+            // Hitung mundur splash screen
+            let countdown = 8;
+            const countdownElement = document.getElementById('splashCountdown');
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                }
             }, 1000);
+        }
+        
+        // Fungsi untuk memuat data dari localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('barjas_data');
+            if (savedData) {
+                dataBarjas = JSON.parse(savedData);
+                document.getElementById('total-data').textContent = dataBarjas.length;
+                document.getElementById('infoTotalData').textContent = dataBarjas.length + ' data';
+                
+                // Hitung ukuran penyimpanan
+                const storageSize = new Blob([savedData]).size;
+                document.getElementById('infoStorageSize').textContent = (storageSize / 1024).toFixed(2) + ' KB';
+            }
+            
+            // Load security code
+            const savedCode = localStorage.getItem('barjas_security_code');
+            if (savedCode) {
+                securityCode = savedCode;
+            }
+            
+            // Load last update time
+            const lastUpdate = localStorage.getItem('barjas_last_update');
+            if (lastUpdate) {
+                document.getElementById('infoLastUpdate').textContent = new Date(parseInt(lastUpdate)).toLocaleString();
+            }
+        }
+        
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveData() {
+            localStorage.setItem('barjas_data', JSON.stringify(dataBarjas));
+            localStorage.setItem('barjas_last_update', Date.now().toString());
+            document.getElementById('infoLastUpdate').textContent = new Date().toLocaleString();
+            
+            // Hitung ukuran penyimpanan
+            const savedData = localStorage.getItem('barjas_data');
+            const storageSize = new Blob([savedData]).size;
+            document.getElementById('infoStorageSize').textContent = (storageSize / 1024).toFixed(2) + ' KB';
+        }
+        
+        // Fungsi untuk mengatur event listeners
+        function setupEventListeners() {
+            // Form submission
+            document.getElementById('inputForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                simpanData();
+            });
+            
+            // Reset form
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                resetForm();
+            });
+            
+            // Filter events
+            document.getElementById('filterTahun').addEventListener('change', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            
+            document.getElementById('filterKecamatan').addEventListener('change', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            
+            document.getElementById('filterDesa').addEventListener('change', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            
+            document.getElementById('searchInput').addEventListener('input', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            
+            // Export buttons
+            document.getElementById('exportExcelBtn').addEventListener('click', function() {
+                exportToExcel();
+            });
+            
+            document.getElementById('exportPdfBtn').addEventListener('click', function() {
+                exportToPDF();
+            });
+            
+            document.getElementById('printBtn').addEventListener('click', function() {
+                printTable();
+            });
+            
+            // Backup buttons
+            document.getElementById('backupExcelBtn').addEventListener('click', function() {
+                backupToExcel();
+            });
+            
+            document.getElementById('backupJsonBtn').addEventListener('click', function() {
+                backupToJSON();
+            });
+            
+            document.getElementById('restoreBtn').addEventListener('click', function() {
+                restoreData();
+            });
+            
+            // Control panel buttons
+            document.getElementById('deleteAllBtn').addEventListener('click', function() {
+                showPasswordModal('deleteAll');
+            });
+            
+            document.getElementById('resetSettingsBtn').addEventListener('click', function() {
+                showPasswordModal('resetSettings');
+            });
+            
+            document.getElementById('setSecurityBtn').addEventListener('click', function() {
+                setSecurityCode();
+            });
+            
+            // Confirm password button
+            document.getElementById('confirmPasswordBtn').addEventListener('click', function() {
+                confirmPassword();
+            });
+            
+            // Quick actions
+            document.getElementById('quickBackupBtn').addEventListener('click', function() {
+                backupToExcel();
+            });
+            
+            document.getElementById('refreshDataBtn').addEventListener('click', function() {
+                loadData();
+                renderTable();
+                updateStats();
+                showNotification('Data diperbarui', 'Semua data telah diperbarui.', 'success');
+            });
+            
+            document.getElementById('clearFormBtn').addEventListener('click', function() {
+                resetForm();
+                showNotification('Form dibersihkan', 'Form input telah dikosongkan.', 'info');
+            });
+            
+            // View links button
+            document.getElementById('viewLinksBtn').addEventListener('click', function() {
+                viewAllLinks();
+            });
+            
+            // Add link button
+            document.getElementById('addLinkBtn').addEventListener('click', function() {
+                addLink();
+            });
+            
+            // Mobile menu button
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.querySelector('.col-md-3.col-lg-2').classList.add('mobile-show');
+                document.getElementById('sidebarOverlay').classList.add('mobile-show');
+            });
+            
+            // Sidebar overlay
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.querySelector('.col-md-3.col-lg-2').classList.remove('mobile-show');
+                this.classList.remove('mobile-show');
+            });
+            
+            // FAB button
+            document.getElementById('fabBtn').addEventListener('click', function() {
+                document.getElementById('inputForm').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Close splash button
+            document.getElementById('closeSplash').addEventListener('click', function() {
+                document.getElementById('welcomeSplash').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('welcomeSplash').style.display = 'none';
+                }, 500);
+            });
+            
+            // Close welcome modal button
+            document.getElementById('closeWelcomeBtn').addEventListener('click', function() {
+                $('#welcomeModal').modal('hide');
+            });
+            
+            // GPS Button
+            document.getElementById('gpsButton').addEventListener('click', function() {
+                getLocation();
+            });
         }
         
         // Fungsi untuk mengisi dropdown dengan opsi
         function populateDropdowns() {
-            // Isi dropdown tahun anggaran (2020-2030)
+            // Isi dropdown tahun anggaran (2020-2090)
             const tahunAnggaranSelect = document.getElementById('tahunAnggaran');
             const filterTahunSelect = document.getElementById('filterTahun');
             const currentYear = new Date().getFullYear();
             
-            // Kosongkan dropdown terlebih dahulu
-            tahunAnggaranSelect.innerHTML = '<option value="" selected disabled>Pilih tahun anggaran</option>';
-            filterTahunSelect.innerHTML = '<option value="">Semua Tahun</option>';
-            
-            for (let year = 2020; year <= 2030; year++) {
+            for (let year = 2020; year <= 2090; year++) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
@@ -1949,7 +2378,7 @@
             }
             
             // Isi dropdown desa untuk Kota Situbondo
-const desaSelect = document.getElementById('desa');
+            const desaSelect = document.getElementById('desa');
 const filterDesaSelect = document.getElementById('filterDesa');
 
 // Pastikan elemen ada sebelum memanipulasi
@@ -1984,211 +2413,6 @@ const currentYearElement = document.getElementById('current-year');
 if (currentYearElement) {
     currentYearElement.textContent = currentYear;
 }
-        
-        // Fungsi untuk inisialisasi Google Maps Autocomplete
-        function initMap() {
-            console.log("Initializing Google Maps...");
-            
-            // Pastikan Google Maps API sudah dimuat
-            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-                console.error("Google Maps API belum dimuat");
-                setTimeout(initMap, 1000); // Coba lagi setelah 1 detik
-                return;
-            }
-            
-            // Buat autocomplete untuk input alamat
-            const alamatInput = document.getElementById('alamatLengkap');
-            if (!alamatInput) {
-                console.error("Element alamatLengkap tidak ditemukan");
-                return;
-            }
-            
-            autocomplete = new google.maps.places.Autocomplete(alamatInput, {
-                types: ['geocode'],
-                componentRestrictions: { country: 'id' }
-            });
-            
-            // Tambahkan listener untuk ketika tempat dipilih
-            autocomplete.addListener('place_changed', function() {
-                const place = autocomplete.getPlace();
-                if (!place.geometry) {
-                    window.alert("Tidak ada detail yang tersedia untuk: " + place.name);
-                    return;
-                }
-                
-                // Dapatkan informasi alamat
-                let addressComponents = place.address_components;
-                let desa = '';
-                let kecamatan = '';
-                
-                // Cari desa dan kecamatan dari komponen alamat
-                for (let i = 0; i < addressComponents.length; i++) {
-                    let types = addressComponents[i].types;
-                    
-                    if (types.includes('sublocality_level_2') || types.includes('sublocality_level_1') || 
-                        types.includes('administrative_area_level_4') || types.includes('locality')) {
-                        desa = addressComponents[i].long_name;
-                    } else if (types.includes('administrative_area_level_3') || types.includes('locality')) {
-                        kecamatan = addressComponents[i].long_name;
-                    }
-                }
-                
-                // Isi dropdown desa dan kecamatan jika ditemukan
-                if (desa) {
-                    const desaSelect = document.getElementById('desa');
-                    for (let i = 0; i < desaSelect.options.length; i++) {
-                        if (desaSelect.options[i].text === desa) {
-                            desaSelect.value = desa;
-                            break;
-                        }
-                    }
-                }
-                
-                if (kecamatan) {
-                    const kecamatanSelect = document.getElementById('kecamatan');
-                    for (let i = 0; i < kecamatanSelect.options.length; i++) {
-                        if (kecamatanSelect.options[i].text === kecamatan) {
-                            kecamatanSelect.value = kecamatan;
-                            break;
-                        }
-                    }
-                }
-            });
-            
-            console.log("Google Maps Autocomplete initialized");
-        }
-        
-        // Fungsi untuk mendapatkan lokasi menggunakan GPS
-function getLocation() {
-    if (!navigator.geolocation) {
-        showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
-        return;
-    }
-    
-    // Tampilkan loading state
-    const gpsButton = document.getElementById('gpsButton');
-    const originalText = gpsButton.innerHTML;
-    gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
-    gpsButton.disabled = true;
-    
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            // Dapatkan koordinat
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            
-            // Kembalikan state button
-            gpsButton.innerHTML = originalText;
-            gpsButton.disabled = false;
-            
-            // Isi field alamat dengan koordinat
-            document.getElementById('alamatLengkap').value = `Lokasi: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-            
-            // Tampilkan koordinat di notifikasi
-            showNotification('Berhasil', `Lokasi berhasil didapatkan: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}. Silakan lengkapi alamat secara manual.`, 'success');
-        },
-        function(error) {
-            // Kembalikan state button
-            gpsButton.innerHTML = originalText;
-            gpsButton.disabled = false;
-            
-            let errorMessage;
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage = 'Pengguna menolak permintaan geolokasi.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage = 'Informasi lokasi tidak tersedia.';
-                    break;
-                case error.TIMEOUT:
-                    errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
-                    break;
-                case error.UNKNOWN_ERROR:
-                    errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
-                    break;
-            }
-            
-            showNotification('Error', errorMessage, 'error');
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    );
-}
-        
-        // Fungsi untuk menampilkan modal login
-        function showLoginModal() {
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
-            
-            // Tampilkan particles background
-            document.getElementById('login-particles').style.display = 'block';
-            initLoginParticles();
-            
-            // Load login state
-            loadLoginState();
-        }
-        
-        // Setup event listeners untuk login
-        function setupLoginEventListeners() {
-            document.getElementById('loginBtn').addEventListener('click', login);
-            
-            // Enter key to submit
-            document.getElementById('loginPassword').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !isBlocked) {
-                    login();
-                }
-            });
-            
-            // Event ketika modal login ditutup
-            document.getElementById('loginModal').addEventListener('hidden.bs.modal', function() {
-                document.getElementById('login-particles').style.display = 'none';
-            });
-        }
-        
-        // Fungsi untuk proses login
-        function login() {
-            if (isBlocked) return;
-            
-            const passwordInput = document.getElementById('loginPassword');
-            const password = passwordInput.value.trim();
-            
-            // Validasi format password
-            if (!isValidPasswordFormat(password)) {
-                showLoginError("Format kode keamanan tidak valid. Harus diawali huruf kapital (A-Z) diikuti angka.");
-                passwordInput.value = '';
-                return;
-            }
-            
-            // Cek apakah password valid
-            if (validPasswords.includes(password)) {
-                // Login berhasil
-                localStorage.removeItem('login_attempts');
-                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                loginModal.hide();
-                document.getElementById('login-particles').style.display = 'none';
-                
-                // Tampilkan notifikasi sukses
-                showNotification('Akses Diberikan', 'Login berhasil. Selamat menggunakan aplikasi.', 'success');
-            } else {
-                // Login gagal
-                loginAttempts++;
-                localStorage.setItem('login_attempts', loginAttempts);
-                
-                if (loginAttempts >= maxAttempts) {
-                    blockLogin();
-                } else {
-                    showLoginError("Kode keamanan salah. Silakan coba lagi.");
-                    updateLoginAttemptsDisplay();
-                    // Animasi shake effect
-                    document.querySelector('.login-modal .modal-content').classList.add('login-shake');
-                    setTimeout(() => {
-                        document.querySelector('.login-modal .modal-content').classList.remove('login-shake');
-                    }, 600);
-                }
-                
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
-        }
         
         // Fungsi untuk menyimpan data
         function simpanData() {
@@ -2785,7 +3009,7 @@ function getLocation() {
             // Total penerima
             document.getElementById('totalPenerima').textContent = dataBarjas.length;
             
-           // Total barang
+            // Total barang
             const totalBarang = dataBarjas.reduce((sum, item) => sum + item.jumlah, 0);
             document.getElementById('totalBarang').textContent = totalBarang;
             
@@ -3488,108 +3712,59 @@ function getLocation() {
         
         // Fungsi untuk mendapatkan lokasi menggunakan GPS
         function getLocation() {
-            if (!navigator.geolocation) {
-                showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
-                return;
+    if (!navigator.geolocation) {
+        showNotification('Error', 'Geolocation tidak didukung oleh browser Anda.', 'error');
+        return;
+    }
+    
+    // Tampilkan loading state
+    const gpsButton = document.getElementById('gpsButton');
+    const originalText = gpsButton.innerHTML;
+    gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
+    gpsButton.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            // Dapatkan koordinat
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            
+            // Kembalikan state button
+            gpsButton.innerHTML = originalText;
+            gpsButton.disabled = false;
+            
+            // Isi field alamat dengan koordinat
+            document.getElementById('alamatLengkap').value = `Lokasi: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            
+            // Tampilkan koordinat di notifikasi
+            showNotification('Berhasil', `Lokasi berhasil didapatkan: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}. Silakan lengkapi alamat secara manual.`, 'success');
+        },
+        function(error) {
+            // Kembalikan state button
+            gpsButton.innerHTML = originalText;
+            gpsButton.disabled = false;
+            
+            let errorMessage;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Pengguna menolak permintaan geolokasi.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Informasi lokasi tidak tersedia.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
+                    break;
+                case error.UNKNOWN_ERROR:
+                    errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
+                    break;
             }
             
-            // Tampilkan loading state
-            const gpsButton = document.getElementById('gpsButton');
-            const originalText = gpsButton.innerHTML;
-            gpsButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mendapatkan lokasi...';
-            gpsButton.disabled = true;
-            
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Dapatkan koordinat
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    
-                    // Gunakan Geocoding untuk mendapatkan alamat dari koordinat
-                    const geocoder = new google.maps.Geocoder();
-                    const latlng = { lat: latitude, lng: longitude };
-                    
-                    geocoder.geocode({ location: latlng }, function(results, status) {
-                        // Kembalikan state button
-                        gpsButton.innerHTML = originalText;
-                        gpsButton.disabled = false;
-                        
-                        if (status === 'OK') {
-                            if (results[0]) {
-                                // Isi field alamat dengan hasil geocoding
-                                document.getElementById('alamatLengkap').value = results[0].formatted_address.toUpperCase();
-                                
-                                // Coba dapatkan informasi desa dan kecamatan
-                                let desa = '';
-                                let kecamatan = '';
-                                
-                                for (let i = 0; i < results[0].address_components.length; i++) {
-                                    const component = results[0].address_components[i];
-                                    const types = component.types;
-                                    
-                                    if (types.includes('sublocality_level_2') || types.includes('sublocality_level_1')) {
-                                        desa = component.long_name;
-                                    } else if (types.includes('administrative_area_level_3') || types.includes('locality')) {
-                                        kecamatan = component.long_name;
-                                    }
-                                }
-                                
-                                // Isi dropdown desa dan kecamatan jika ditemukan
-                                if (desa) {
-                                    const desaSelect = document.getElementById('desa');
-                                    for (let i = 0; i < desaSelect.options.length; i++) {
-                                        if (desaSelect.options[i].text === desa) {
-                                            desaSelect.value = desa;
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (kecamatan) {
-                                    const kecamatanSelect = document.getElementById('kecamatan');
-                                    for (let i = 0; i < kecamatanSelect.options.length; i++) {
-                                        if (kecamatanSelect.options[i].text === kecamatan) {
-                                            kecamatanSelect.value = kecamatan;
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                showNotification('Berhasil', 'Lokasi berhasil didapatkan.', 'success');
-                            } else {
-                                showNotification('Error', 'Tidak ada hasil yang ditemukan.', 'error');
-                            }
-                        } else {
-                            showNotification('Error', 'Geocoder gagal karena: ' + status, 'error');
-                        }
-                    });
-                },
-                function(error) {
-                    // Kembalikan state button
-                    gpsButton.innerHTML = originalText;
-                    gpsButton.disabled = false;
-                    
-                    let errorMessage;
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = 'Pengguna menolak permintaan geolokasi.';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = 'Informasi lokasi tidak tersedia.';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = 'Permintaan untuk mendapatkan lokasi pengguna waktu habis.';
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            errorMessage = 'Terjadi kesalahan yang tidak diketahui.';
-                            break;
-                    }
-                    
-                    showNotification('Error', errorMessage, 'error');
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-            );
-        }
+            showNotification('Error', errorMessage, 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+}
         
         // Fungsi untuk countdown welcome modal
         function startWelcomeCountdown() {
@@ -3612,7 +3787,6 @@ function getLocation() {
         // Deteksi browser
         document.getElementById('infoBrowser').textContent = navigator.userAgent.split(' ')[0];
   
-        <script>
         // Mobile menu button
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('mobileMenuBtn').addEventListener('click', function() {
@@ -3632,6 +3806,302 @@ function getLocation() {
             new bootstrap.Tab(triggerEl);
         });
     });
+        
+        // TAMBAHKAN KODE DIBAWAH INI SEBELUM // Inisialisasi aplikasi saat dokumen siap
+
+        // Daftar password yang valid
+        // Daftar password yang valid
+        const validPasswords = [
+            "S01634851", "V02468642", "X03579753", "I04445555", 
+            "Z05252525", "L06644228", "E07722277", "H08877665", 
+            "J09753123", "A01234567", "B02345678", "C03456789",
+            "D04567890", "F05678901", "G06789012", "K07890123",
+            "M08901234", "N09012345", "O00123456", "P01234567",
+            "Q02345678", "R03456789", "T04567890", "U05678901",
+            "W06789012", "Y07890123"
+        ];
+        
+        // Variabel untuk melacak percobaan login
+        let loginAttempts = 0;
+        const maxAttempts = 5;
+        let isBlocked = false;
+        let loginCountdownInterval;
+        
+        // Fungsi untuk menampilkan modal login
+        function showLoginModal() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+            
+            // Tampilkan particles background
+            document.getElementById('login-particles').style.display = 'block';
+            initLoginParticles();
+            
+            // Load login state
+            loadLoginState();
+        }
+        
+        // Inisialisasi particles.js untuk latar login
+        function initLoginParticles() {
+            particlesJS('login-particles', {
+                particles: {
+                    number: { value: 40, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+        }
+        
+        // Setup event listeners untuk login
+        function setupLoginEventListeners() {
+            document.getElementById('loginBtn').addEventListener('click', login);
+            
+            // Enter key to submit
+            document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isBlocked) {
+                    login();
+                }
+            });
+            
+            // Event ketika modal login ditutup
+            document.getElementById('loginModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('login-particles').style.display = 'none';
+            });
+        }
+        
+        // Load login state from localStorage
+        function loadLoginState() {
+            const blockedUntil = localStorage.getItem('login_blocked_until');
+            const attempts = localStorage.getItem('login_attempts');
+            
+            if (blockedUntil) {
+                const currentTime = new Date().getTime();
+                const blockedTime = parseInt(blockedUntil);
+                
+                if (currentTime < blockedTime) {
+                    // Masih dalam status blocked
+                    isBlocked = true;
+                    loginAttempts = maxAttempts;
+                    startLoginCountdown(blockedTime - currentTime);
+                } else {
+                    // Waktu blocked sudah selesai
+                    localStorage.removeItem('login_blocked_until');
+                    isBlocked = false;
+                    loginAttempts = 0;
+                    localStorage.removeItem('login_attempts');
+                }
+            }
+            
+            if (attempts && !isBlocked) {
+                loginAttempts = parseInt(attempts);
+            }
+            
+            updateLoginAttemptsDisplay();
+            
+            // Jika masih dalam status blocked, nonaktifkan input
+            if (isBlocked) {
+                document.getElementById('loginBtn').disabled = true;
+                document.getElementById('loginBlockedMessage').style.display = 'block';
+                document.getElementById('loginPassword').disabled = true;
+            } else {
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loginBlockedMessage').style.display = 'none';
+                document.getElementById('loginPassword').disabled = false;
+            }
+        }
+        
+        // Fungsi untuk proses login
+        function login() {
+            if (isBlocked) return;
+            
+            const passwordInput = document.getElementById('loginPassword');
+            const password = passwordInput.value.trim();
+            
+            // Validasi format password
+            if (!isValidPasswordFormat(password)) {
+                showLoginError("Format kode keamanan tidak valid. Harus diawali huruf kapital (A-Z) diikuti angka.");
+                passwordInput.value = '';
+                return;
+            }
+            
+            // Cek apakah password valid
+            if (validPasswords.includes(password)) {
+                // Login berhasil
+                localStorage.removeItem('login_attempts');
+                localStorage.removeItem('login_blocked_until');
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                document.getElementById('login-particles').style.display = 'none';
+                
+                // Tampilkan notifikasi sukses
+                showNotification('Akses Diberikan', 'Login berhasil. Selamat menggunakan aplikasi.', 'success');
+            } else {
+                // Login gagal
+                loginAttempts++;
+                localStorage.setItem('login_attempts', loginAttempts);
+                
+                if (loginAttempts >= maxAttempts) {
+                    blockLogin();
+                } else {
+                    showLoginError("Kode keamanan salah. Silakan coba lagi.");
+                    updateLoginAttemptsDisplay();
+                    // Animasi shake effect
+                    document.querySelector('.login-modal .modal-content').classList.add('login-shake');
+                    setTimeout(() => {
+                        document.querySelector('.login-modal .modal-content').classList.remove('login-shake');
+                    }, 600);
+                }
+                
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        
+        // Validasi format password
+        function isValidPasswordFormat(password) {
+            const pattern = /^[A-Z][0-9]{8}$/;
+            return pattern.test(password);
+        }
+        
+        // Update tampilan sisa percobaan
+        function updateLoginAttemptsDisplay() {
+            const attemptsLeft = maxAttempts - loginAttempts;
+            document.getElementById('loginAttemptsLeft').textContent = attemptsLeft;
+            
+            if (attemptsLeft <= 2) {
+                document.getElementById('loginAttemptsCount').style.color = '#dc3545';
+                document.getElementById('loginAttemptsCount').style.fontWeight = 'bold';
+            } else {
+                document.getElementById('loginAttemptsCount').style.color = '';
+                document.getElementById('loginAttemptsCount').style.fontWeight = '';
+            }
+        }
+        
+        // Blokir login sementara
+        function blockLogin() {
+            isBlocked = true;
+            const blockDuration = 5 * 60 * 1000; // 5 menit dalam milidetik
+            const unblockTime = new Date().getTime() + blockDuration;
+            
+            localStorage.setItem('login_blocked_until', unblockTime);
+            localStorage.setItem('login_attempts', maxAttempts);
+            
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginBlockedMessage').style.display = 'block';
+            document.getElementById('loginPassword').disabled = true;
+            
+            startLoginCountdown(blockDuration);
+        }
+        
+        // Hitung mundur waktu blokir
+        function startLoginCountdown(duration) {
+            clearInterval(loginCountdownInterval);
+            
+            const countdownElement = document.getElementById('loginCountdown');
+            let timeLeft = duration;
+            
+            updateLoginCountdownDisplay(timeLeft, countdownElement);
+            
+            loginCountdownInterval = setInterval(() => {
+                timeLeft -= 1000;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(loginCountdownInterval);
+                    unblockLogin();
+                } else {
+                    updateLoginCountdownDisplay(timeLeft, countdownElement);
+                }
+            }, 1000);
+        }
+        
+        // Update tampilan countdown
+        function updateLoginCountdownDisplay(timeLeft, element) {
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Buka blokir login
+        function unblockLogin() {
+            isBlocked = false;
+            loginAttempts = 0;
+            
+            localStorage.removeItem('login_blocked_until');
+            localStorage.removeItem('login_attempts');
+            
+            document.getElementById('loginBtn').disabled = false;
+            document.getElementById('loginBlockedMessage').style.display = 'none';
+            document.getElementById('loginPassword').disabled = false;
+            
+            updateLoginAttemptsDisplay();
+        }
+        
+        // Tampilkan pesan error di login modal
+        function showLoginError(message) {
+            // Buat element untuk pesan error
+            let errorAlert = document.getElementById('loginError');
+            
+            if (!errorAlert) {
+                errorAlert = document.createElement('div');
+                errorAlert.id = 'loginError';
+                errorAlert.className = 'alert alert-danger';
+                errorAlert.style.marginTop = '15px';
+                document.querySelector('.login-body').insertBefore(errorAlert, document.querySelector('.login-security-notice'));
+            }
+            
+            errorAlert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> ${message}`;
+            errorAlert.style.display = 'block';
+            
+            // Sembunyikan setelah 5 detik
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Panggil fungsi showLoginModal setelah semua script dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tunggu sebentar untuk memastikan semua element sudah dimuat
+            setTimeout(() => {
+                showLoginModal();
+                setupLoginEventListeners();
+            }, 1000);
+        });
+
+        // Fungsi untuk menampilkan notifikasi (harus sudah ada di kode Anda)
+        function showNotification(title, message, type = 'info') {
+            // Implementasi fungsi notifikasi Anda
+            console.log(`${title}: ${message} (${type})`);
+        }
     </script>
 </body>
 </html>
