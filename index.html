@@ -23,6 +23,7 @@
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
             --shadow-lg: 0 8px 28px rgba(0,0,0,0.15);
+             --login-gradient: linear-gradient(135deg, #0d47a1, #00695c, #ff8f00);
         }
           }
         
@@ -1064,9 +1065,268 @@
             width: 1rem;
             height: 1rem;
         }
+
+        /* Login Modal Styles */
+.login-modal .modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.login-header {
+    background: var(--login-gradient);
+    color: white;
+    text-align: center;
+    padding: 25px 20px;
+    position: relative;
+}
+
+.login-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 5px 0 0;
+}
+
+.login-body {
+    padding: 25px;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+}
+
+.login-form-label {
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.login-form-label i {
+    margin-right: 10px;
+    color: var(--dark-blue);
+}
+
+.login-form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    transition: all 0.3s;
+}
+
+.login-form-control:focus {
+    border-color: var(--dark-blue);
+    box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
+}
+
+.login-input-group-text {
+    background: var(--light-blue);
+    border: 2px solid #ddd;
+    border-left: none;
+}
+
+.btn-login {
+    background: var(--gradient-secondary);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 105, 92, 0.4);
+}
+
+.btn-login:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.login-security-notice {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.login-attempts-count {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ff8f00;
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+.login-blocked-message {
+    text-align: center;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.login-countdown {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark-blue);
+}
+
+.login-developer-info {
+    background: var(--light-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.login-developer-logo {
+    max-width: 180px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.login-developer-contact a {
+    color: var(--dark-blue);
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+.login-developer-contact a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+    transform: translateY(-2px);
+}
+
+.login-copyright {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Animations */
+@keyframes login-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.login-shake {
+    animation: login-shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Login particle background */
+#login-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1040; /* Higher than modal backdrop */
+    display: none;
+}
     </style>
 </head>
 <body>
+    <!-- TAMBAHKAN KODE DIBAWAH INI SEBELUM </body> -->
+       <!-- Login Modal -->
+        <div class="modal fade login-modal" id="loginModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="login-header">
+                        <div class="login-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h1 class="login-title">Akses Terkunci</h1>
+                        <p class="login-subtitle">Masukkan kode keamanan untuk mengakses aplikasi</p>
+                    </div>
+                    
+                    <div class="login-body">
+                        <div class="login-form-group">
+                            <label for="loginUsername" class="login-form-label">
+                                <i class="fas fa-user"></i>Username
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control login-form-control" id="loginUsername" value="Lentera Karya Situbondo" readonly>
+                                <span class="input-group-text login-input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="login-form-group">
+                            <label for="loginPassword" class="login-form-label">
+                                <i class="fas fa-key"></i>Kode Keamanan
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control login-form-control" id="loginPassword" placeholder="Masukkan kode keamanan">
+                                <span class="input-group-text login-input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <div class="login-attempts-count" id="loginAttemptsCount">
+                                Percobaan tersisa: <span id="loginAttemptsLeft">5</span>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-login" id="loginBtn">
+                            <i class="fas fa-unlock-alt me-2"></i>Buka Akses
+                        </button>
+                        
+                        <div class="login-blocked-message" id="loginBlockedMessage" style="display: none;">
+                            <i class="fas fa-ban me-2"></i>
+                            <span id="loginBlockedText">Akses dibekukan sementara. Silakan coba lagi dalam </span>
+                            <span class="login-countdown" id="loginCountdown">05:00</span>
+                        </div>
+                        
+                        <div class="login-security-notice">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Kode keamanan diawali huruf kapital (A-Z) diikuti angka
+                        </div>
+                        
+                        <div class="login-developer-info">
+                            <img src="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png" alt="Lentera Karya Situbondo" class="login-developer-logo">
+                            <h5>Lentera Karya Situbondo</h5>
+                            <div class="login-developer-contact">
+                                <p><a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe me-2"></i>www.anekamarket.my.id</a></p>
+                                <p><a href="https://wa.me/6285647709114" target="_blank"><i class="fab fa-whatsapp me-2"></i>+62 856-4770-9114</a></p>
+                                <p><a href="mailto:admin@anekamarket.my.id" target="_blank"><i class="fas fa-envelope me-2"></i>admin@anekamarket.my.id</a></p>
+                                <p><a href="https://maps.google.com/?q=Wringinanom-Panarukan,Situbondo (68351) Jawa Timur" target="_blank"><i class="fas fa-map-marker-alt me-2"></i>Wringinanom-Panarukan, Situbondo</a></p>
+                            </div>
+                            <p class="mt-2 mb-0"><small>Dibuat sejak 1 April 2025</small></p>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer login-copyright">
+                        &copy; 2025 Lentera Karya Situbondo. Hak Cipta Dilindungi.
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Login particle background -->
+    <div id="login-particles"></div>
     
     <!-- Particle Background -->
     <div id="particles-js"></div>
@@ -3586,6 +3846,270 @@
         var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
         triggerTabList.forEach(function(triggerEl) {
             new bootstrap.Tab(triggerEl)
+        });
+
+        // TAMBAHKAN KODE DIBAWAH INI SEBELUM // Inisialisasi aplikasi saat dokumen siap
+
+        // Daftar password yang valid
+        const validPasswords = [
+            "S01634851", "V02468642", "X03579753", "I04445555", 
+            "Z05252525", "L06644228", "E07722277", "H08877665", 
+            "J09753123", "A01234567", "B02345678", "C03456789",
+            "D04567890", "F05678901", "G06789012", "K07890123",
+            "M08901234", "N09012345", "O00123456", "P01234567",
+            "Q02345678", "R03456789", "T04567890", "U05678901",
+            "W06789012", "Y07890123"
+        ];
+        
+        // Variabel untuk melacak percobaan login
+        let loginAttempts = 0;
+        const maxAttempts = 5;
+        let isBlocked = false;
+        let loginCountdownInterval;
+        
+        // Fungsi untuk menampilkan modal login
+        function showLoginModal() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+            
+            // Tampilkan particles background
+            document.getElementById('login-particles').style.display = 'block';
+            initLoginParticles();
+            
+            // Load login state
+            loadLoginState();
+        }
+        
+        // Inisialisasi particles.js untuk latar login
+        function initLoginParticles() {
+            particlesJS('login-particles', {
+                particles: {
+                    number: { value: 40, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#ffffff",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+        }
+        
+        // Setup event listeners untuk login
+        function setupLoginEventListeners() {
+            document.getElementById('loginBtn').addEventListener('click', login);
+            
+            // Enter key to submit
+            document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isBlocked) {
+                    login();
+                }
+            });
+            
+            // Event ketika modal login ditutup
+            document.getElementById('loginModal').addEventListener('hidden.bs.modal', function() {
+                document.getElementById('login-particles').style.display = 'none';
+            });
+        }
+        
+        // Load login state from localStorage
+        function loadLoginState() {
+            const blockedUntil = localStorage.getItem('login_blocked_until');
+            const attempts = localStorage.getItem('login_attempts');
+            
+            if (blockedUntil) {
+                const currentTime = new Date().getTime();
+                const blockedTime = parseInt(blockedUntil);
+                
+                if (currentTime < blockedTime) {
+                    // Masih dalam status blocked
+                    isBlocked = true;
+                    startLoginCountdown(blockedTime - currentTime);
+                } else {
+                    // Waktu blocked sudah selesai
+                    localStorage.removeItem('login_blocked_until');
+                }
+            }
+            
+            if (attempts) {
+                loginAttempts = parseInt(attempts);
+                updateLoginAttemptsDisplay();
+            }
+        }
+        
+        // Fungsi untuk proses login
+        function login() {
+            if (isBlocked) return;
+            
+            const passwordInput = document.getElementById('loginPassword');
+            const password = passwordInput.value.trim();
+            
+            // Validasi format password
+            if (!isValidPasswordFormat(password)) {
+                showLoginError("Format kode keamanan tidak valid. Harus diawali huruf kapital (A-Z) diikuti angka.");
+                passwordInput.value = '';
+                return;
+            }
+            
+            // Cek apakah password valid
+            if (validPasswords.includes(password)) {
+                // Login berhasil
+                localStorage.removeItem('login_attempts');
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                document.getElementById('login-particles').style.display = 'none';
+                
+                // Tampilkan notifikasi sukses
+                showNotification('Akses Diberikan', 'Login berhasil. Selamat menggunakan aplikasi.', 'success');
+            } else {
+                // Login gagal
+                loginAttempts++;
+                localStorage.setItem('login_attempts', loginAttempts);
+                
+                if (loginAttempts >= maxAttempts) {
+                    blockLogin();
+                } else {
+                    showLoginError("Kode keamanan salah. Silakan coba lagi.");
+                    updateLoginAttemptsDisplay();
+                    // Animasi shake effect
+                    document.querySelector('.login-modal .modal-content').classList.add('login-shake');
+                    setTimeout(() => {
+                        document.querySelector('.login-modal .modal-content').classList.remove('login-shake');
+                    }, 600);
+                }
+                
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        
+        // Validasi format password
+        function isValidPasswordFormat(password) {
+            const pattern = /^[A-Z][0-9]{8}$/;
+            return pattern.test(password);
+        }
+        
+        // Update tampilan sisa percobaan
+        function updateLoginAttemptsDisplay() {
+            const attemptsLeft = maxAttempts - loginAttempts;
+            document.getElementById('loginAttemptsLeft').textContent = attemptsLeft;
+        }
+        
+        // Blokir login sementara
+        function blockLogin() {
+            isBlocked = true;
+            const blockDuration = 5 * 60 * 1000; // 5 menit dalam milidetik
+            const unblockTime = new Date().getTime() + blockDuration;
+            
+            localStorage.setItem('login_blocked_until', unblockTime);
+            
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginBlockedMessage').style.display = 'block';
+            document.getElementById('loginPassword').disabled = true;
+            
+            startLoginCountdown(blockDuration);
+        }
+        
+        // Hitung mundur waktu blokir
+        function startLoginCountdown(duration) {
+            clearInterval(loginCountdownInterval);
+            
+            const countdownElement = document.getElementById('loginCountdown');
+            let timeLeft = duration;
+            
+            updateLoginCountdownDisplay(timeLeft, countdownElement);
+            
+            loginCountdownInterval = setInterval(() => {
+                timeLeft -= 1000;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(loginCountdownInterval);
+                    unblockLogin();
+                } else {
+                    updateLoginCountdownDisplay(timeLeft, countdownElement);
+                }
+            }, 1000);
+        }
+        
+        // Update tampilan countdown
+        function updateLoginCountdownDisplay(timeLeft, element) {
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            element.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Buka blokir login
+        function unblockLogin() {
+            isBlocked = false;
+            loginAttempts = 0;
+            
+            localStorage.removeItem('login_blocked_until');
+            localStorage.removeItem('login_attempts');
+            
+            document.getElementById('loginBtn').disabled = false;
+            document.getElementById('loginBlockedMessage').style.display = 'none';
+            document.getElementById('loginPassword').disabled = false;
+            
+            updateLoginAttemptsDisplay();
+        }
+        
+        // Tampilkan pesan error di login modal
+        function showLoginError(message) {
+            // Buat element untuk pesan error
+            let errorAlert = document.getElementById('loginError');
+            
+            if (!errorAlert) {
+                errorAlert = document.createElement('div');
+                errorAlert.id = 'loginError';
+                errorAlert.className = 'alert alert-danger';
+                errorAlert.style.marginTop = '15px';
+                document.querySelector('.login-body').insertBefore(errorAlert, document.querySelector('.login-security-notice'));
+            }
+            
+            errorAlert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> ${message}`;
+            errorAlert.style.display = 'block';
+            
+            // Sembunyikan setelah 5 detik
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Panggil fungsi showLoginModal setelah semua script dimuat
+        // TAMBAHKAN BARIS INI DI AKHIR SETELAH SEMUA FUNGSI LOGIN
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tunggu sebentar untuk memastikan semua element sudah dimuat
+            setTimeout(() => {
+                showLoginModal();
+                setupLoginEventListeners();
+            }, 1000);
         });
     </script>
 </body>
